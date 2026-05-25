@@ -12,7 +12,8 @@ export default function TopRated() {
         async function loadHospitals() {
             try {
                 const data = await getHospitals();
-                setHospitals(data || []);
+                const topRatedHospitals = (data || []).filter(h => h.rating >= 4.5);
+                setHospitals(topRatedHospitals);
             } catch (err) {
                 console.error("Failed to load", err);
             }
@@ -44,8 +45,10 @@ export default function TopRated() {
                         <HospitalCard hospital={hospital} key={hospital.id} />
                     ))}
                     {hospitals.length === 0 && (
-                        <div className="col-span-full text-center py-20 text-zinc-500">
-                            No hospitals have been rated yet.
+                        <div className="col-span-full text-center py-20 text-zinc-500 bg-white rounded-2xl border border-zinc-100 shadow-sm">
+                            <Star className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
+                            <p className="text-zinc-600 font-medium">No 4.5+ rated hospitals yet.</p>
+                            <p className="text-zinc-400 text-sm mt-1">Be the first to review one!</p>
                         </div>
                     )}
                 </div>
