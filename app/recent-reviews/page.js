@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { getHospitals } from '@/lib/data';
+import { getHospitals } from '@/lib/actions';
 import { Star, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
@@ -9,30 +9,33 @@ export default function RecentReviews() {
     const [reviews, setReviews] = useState([]);
     
     useEffect(() => {
-        try {
-            const data = getHospitals() || [];
-            
-            // Extract all reviews and add hospital info to each
-            let allReviews = [];
-            data.forEach(hospital => {
-                if (hospital.reviews && hospital.reviews.length > 0) {
-                    hospital.reviews.forEach(review => {
-                        allReviews.push({
-                            ...review,
-                            hospitalId: hospital.id,
-                            hospitalName: hospital.name,
-                            timestamp: parseInt(review.id) || 0
+        async function loadReviews() {
+            try {
+                const data = await getHospitals() || [];
+                
+                // Extract all reviews and add hospital info to each
+                let allReviews = [];
+                data.forEach(hospital => {
+                    if (hospital.reviews && hospital.reviews.length > 0) {
+                        hospital.reviews.forEach(review => {
+                            allReviews.push({
+                                ...review,
+                                hospitalId: hospital.id,
+                                hospitalName: hospital.name,
+                                timestamp: review.created_at ? new Date(review.created_at).getTime() : (parseInt(review.id) || 0)
+                            });
                         });
-                    });
-                }
-            });
-            
-            // Sort by timestamp descending
-            allReviews.sort((a, b) => b.timestamp - a.timestamp);
-            setReviews(allReviews);
-        } catch (err) {
-            console.error("Failed to load", err);
+                    }
+                });
+                
+                // Sort by timestamp descending
+                allReviews.sort((a, b) => b.timestamp - a.timestamp);
+                setReviews(allReviews);
+            } catch (err) {
+                console.error("Failed to load", err);
+            }
         }
+        loadReviews();
     }, []);
     
     const renderStars = (rating) => {

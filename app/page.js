@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Utensils, Users, MessageSquare, Star, TrendingUp, Building2, AlertTriangle, UtensilsCrossed, MapPin } from 'lucide-react';
-import { getHospitals } from '@/lib/data';
+import { getHospitals } from '@/lib/actions';
 import Header from '@/components/Header';
 import HospitalCard from '@/components/HospitalCard';
 import Link from 'next/link';
@@ -18,14 +18,17 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    try {
-      const data = getHospitals();
-      setHospitals(data || []);
-    } catch (err) {
-      console.error("Failed to load hospitals:", err);
-    } finally {
-      setLoading(false);
+    async function loadHospitals() {
+      try {
+        const data = await getHospitals();
+        setHospitals(data || []);
+      } catch (err) {
+        console.error("Failed to load hospitals:", err);
+      } finally {
+        setLoading(false);
+      }
     }
+    loadHospitals();
   }, []);
 
   // Close dropdown when clicking outside

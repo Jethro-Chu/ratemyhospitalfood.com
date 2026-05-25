@@ -2,21 +2,23 @@
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import HospitalCard from '@/components/HospitalCard';
-import { getHospitals } from '@/lib/data';
+import { getHospitals } from '@/lib/actions';
 import { Star } from 'lucide-react';
 
 export default function TopRated() {
     const [hospitals, setHospitals] = useState([]);
     
     useEffect(() => {
-        try {
-            const data = getHospitals() || [];
-            // Sort by rating descending
-            const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-            setHospitals(sorted);
-        } catch (err) {
-            console.error("Failed to load", err);
+        async function loadHospitals() {
+            try {
+                const data = await getHospitals();
+                const sorted = [...(data || [])].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                setHospitals(sorted);
+            } catch (err) {
+                console.error("Failed to load", err);
+            }
         }
+        loadHospitals();
     }, []);
     
     return (

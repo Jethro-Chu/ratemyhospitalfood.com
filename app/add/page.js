@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Header from '@/components/Header';
-import { saveHospital } from '@/lib/data';
+import { createHospitalClient } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import { Building2, MapPin, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -17,9 +17,9 @@ export default function AddHospital() {
         const name = formData.get('name');
         const location = formData.get('location');
         
-        const result = saveHospital({ name, location });
+        const result = await createHospitalClient({ name, location });
         
-        if (!result) {
+        if (!result || !result.id) {
              alert('Failed to save hospital');
              setIsLoading(false);
              return;

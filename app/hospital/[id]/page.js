@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
-import { getHospitalById } from '@/lib/data';
+import { getHospitalById } from '@/lib/actions';
 import RatingModal from '@/components/RatingModal';
 import Link from 'next/link';
 import { MapPin, ArrowLeft, Star, Calendar, MessageSquare, PenLine } from 'lucide-react';
@@ -26,20 +26,30 @@ export default function HospitalDetail({ params }) {
 
     // Fetch data using the Server Action
     useEffect(() => {
-        try {
-            const data = getHospitalById(params.id);
-            setHospital(data);
-        } catch (err) {
-            console.error("Failed to load hospital", err);
-        } finally {
-            setLoading(false);
+        async function loadHospital() {
+            try {
+                const data = await getHospitalById(params.id);
+                if (data) {
+                    setHospital(data);
+                } else {
+                    setNotFound(true);
+                }
+            } catch (err) {
+                console.error("Failed to load hospital:", err);
+                setNotFound(true);
+            } finally {
+                setLoading(false);
+            }
+        }
+        if (params.id) {
+            loadHospital();
         }
     }, [params.id]);
 
-    const handleCloseInternal = () => {
+    const handleCloseInternal = async () => {
        setIsModalOpen(false);
        // Refetch data to show new review immediately
-       const updated = getHospitalById(params.id);
+       const updated = await getHospitalById(params.id);
        setHospital(updated);
     };
 

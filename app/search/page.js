@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, Building2, UtensilsCrossed, ArrowRight, Plus } from 'lucide-react';
-import { getHospitals } from '@/lib/data';
+import { getHospitals } from '@/lib/actions';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -16,12 +16,15 @@ export default function SearchHospital() {
   const router = useRouter();
 
   useEffect(() => {
-    try {
-      const data = getHospitals();
-      setHospitals(data || []);
-    } catch (err) {
-      console.error("Failed to load hospitals:", err);
+    async function loadHospitals() {
+      try {
+        const data = await getHospitals();
+        setHospitals(data || []);
+      } catch (err) {
+        console.error("Failed to load hospitals:", err);
+      }
     }
+    loadHospitals();
   }, []);
 
   // Close dropdown when clicking outside
