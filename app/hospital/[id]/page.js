@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { getHospitalById } from '@/lib/actions';
 import RatingModal from '@/components/RatingModal';
 import Link from 'next/link';
@@ -314,13 +315,7 @@ export default function HospitalDetail({ params }) {
             </div>
 
             {/* Footer */}
-            <footer className="border-t border-slate-100 bg-white py-8 mt-auto">
-                <div className="container mx-auto max-w-6xl px-4 text-center">
-                    <p className="text-sm text-slate-400">
-                        © {new Date().getFullYear()} Rate My Hospital Food — Helping you find better meals, one cafeteria at a time.
-                    </p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

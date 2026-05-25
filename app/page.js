@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Utensils, Users, MessageSquare, Star, TrendingUp, Building2, AlertTriangle, UtensilsCrossed, MapPin } from 'lucide-react';
 import { getHospitals, getHeroReviews, getHomepageStats } from '@/lib/actions';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import HospitalCard from '@/components/HospitalCard';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -405,13 +406,7 @@ export default function Home() {
       </main>
 
       {/* 5. Footer */}
-      <footer className="border-t border-slate-100 bg-white py-8">
-        <div className="container mx-auto max-w-6xl px-4 text-center">
-          <p className="text-sm text-slate-400">
-            © {new Date().getFullYear()} Rate My Hospital Food — Helping you find better meals, one cafeteria at a time.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
