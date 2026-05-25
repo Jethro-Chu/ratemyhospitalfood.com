@@ -254,58 +254,55 @@ export default function Home() {
             </div>
 
             {/* Right Side: Floating Cards */}
-            <div className="w-full lg:w-1/2 relative h-[500px] hidden lg:block mt-10 lg:mt-0 perspective-1000">
-               {/* Decorative floating cards container */}
-               <div className="absolute inset-0">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center gap-5 sm:gap-6 mt-12 lg:mt-0 relative">
                  
                  {heroReviews.length > 0 && heroReviews[0] && (
-                   <div className="absolute top-4 right-4 xl:right-12 warm-glass rounded-2xl p-5 w-80 float-soft shadow-xl border border-orange-200/50">
+                   <div className="warm-glass rounded-2xl p-5 w-full max-w-[380px] self-end lg:mr-8 xl:mr-12 float-soft shadow-xl border border-orange-200/50">
                      <div className="flex justify-between items-start mb-3">
                        <div>
-                         <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[0].hospitalName}</div>
+                         <div className="font-bold text-zinc-800 text-[15px] line-clamp-1">{heroReviews[0].hospitalName}</div>
                          <div className="flex items-center gap-1 mt-1"><Star className="w-4 h-4 fill-amber-500 text-amber-500"/><span className="text-sm font-bold text-zinc-700">{Number(heroReviews[0].rating).toFixed(1)}</span></div>
                        </div>
-                       <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${heroReviews[0].type === 'positive' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                       <span className={`shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${heroReviews[0].type === 'positive' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                          {heroReviews[0].badge}
                        </span>
                      </div>
-                     <p className="text-zinc-700 text-sm italic leading-relaxed">&ldquo;{heroReviews[0].comment.length > 80 ? heroReviews[0].comment.substring(0, 80) + '...' : heroReviews[0].comment}&rdquo;</p>
+                     <p className="text-zinc-700 text-sm italic leading-relaxed line-clamp-3">&ldquo;{heroReviews[0].comment}&rdquo;</p>
                    </div>
                  )}
 
                  {heroReviews.length > 1 && heroReviews[1] && (
-                   <div className="absolute top-44 left-4 xl:left-0 warm-glass rounded-2xl p-5 w-80 float-soft-delay shadow-xl border border-orange-200/50 z-10">
+                   <div className="warm-glass rounded-2xl p-5 w-full max-w-[380px] self-start lg:ml-4 xl:ml-8 float-soft-delay shadow-xl border border-orange-200/50 hidden sm:block">
                      <div className="flex justify-between items-start mb-3">
                        <div>
-                         <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[1].hospitalName}</div>
+                         <div className="font-bold text-zinc-800 text-[15px] line-clamp-1">{heroReviews[1].hospitalName}</div>
                          <div className="flex items-center gap-1 mt-1"><Star className="w-4 h-4 fill-amber-500 text-amber-500"/><span className="text-sm font-bold text-zinc-700">{Number(heroReviews[1].rating).toFixed(1)}</span></div>
                        </div>
-                       <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                       <span className="shrink-0 bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
                          {heroReviews[1].badge}
                        </span>
                      </div>
-                     <p className="text-zinc-700 text-sm italic leading-relaxed">&ldquo;{heroReviews[1].comment.length > 80 ? heroReviews[1].comment.substring(0, 80) + '...' : heroReviews[1].comment}&rdquo;</p>
+                     <p className="text-zinc-700 text-sm italic leading-relaxed line-clamp-3">&ldquo;{heroReviews[1].comment}&rdquo;</p>
                    </div>
                  )}
 
                  {heroReviews.length > 2 && heroReviews[2] && (
-                   <div className={`absolute bottom-8 right-12 xl:right-24 warm-glass rounded-2xl p-5 w-72 float-soft shadow-xl border ${heroReviews[2].type === 'warning' ? 'border-amber-300' : 'border-orange-200/50'}`}>
+                   <div className={`warm-glass rounded-2xl p-5 w-full max-w-[340px] self-end float-soft shadow-xl border hidden md:block ${heroReviews[2].type === 'warning' ? 'border-amber-300' : 'border-orange-200/50'}`}>
                      <div className="flex items-center justify-between mb-3">
                        <div className="flex items-center gap-2">
                          {heroReviews[2].type === 'warning' && (
                            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0"><AlertTriangle className="w-4 h-4 text-amber-600"/></div>
                          )}
                          <div>
-                           <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[2].hospitalName}</div>
+                           <div className="font-bold text-zinc-800 text-[15px] line-clamp-1">{heroReviews[2].hospitalName}</div>
                            <div className="flex items-center gap-1 mt-0.5"><Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500"/><span className="text-xs font-bold text-zinc-700">{Number(heroReviews[2].rating).toFixed(1)}</span></div>
                          </div>
                        </div>
                      </div>
-                     <p className="text-zinc-700 text-sm leading-relaxed">&ldquo;{heroReviews[2].comment.length > 70 ? heroReviews[2].comment.substring(0, 70) + '...' : heroReviews[2].comment}&rdquo;</p>
+                     <p className="text-zinc-700 text-sm leading-relaxed line-clamp-3">&ldquo;{heroReviews[2].comment}&rdquo;</p>
                    </div>
                  )}
 
-               </div>
             </div>
 
           </div>
