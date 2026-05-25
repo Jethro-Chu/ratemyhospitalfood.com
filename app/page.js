@@ -271,6 +271,9 @@ export default function Home() {
                        </span>
                      </div>
                      <p className="text-zinc-700 text-sm italic leading-relaxed line-clamp-3">&ldquo;{heroReviews[0].comment}&rdquo;</p>
+                     <div className="mt-3 pt-3 border-t border-zinc-100 flex items-center justify-end">
+                       <span className="text-xs text-zinc-500 font-medium">— {heroReviews[0].firstName}</span>
+                     </div>
                    </div>
                  )}
 
@@ -286,6 +289,9 @@ export default function Home() {
                        </span>
                      </div>
                      <p className="text-zinc-700 text-sm italic leading-relaxed line-clamp-3">&ldquo;{heroReviews[1].comment}&rdquo;</p>
+                     <div className="mt-3 pt-3 border-t border-zinc-100 flex items-center justify-end">
+                       <span className="text-xs text-zinc-500 font-medium">— {heroReviews[1].firstName}</span>
+                     </div>
                    </div>
                  )}
 
@@ -303,6 +309,9 @@ export default function Home() {
                        </div>
                      </div>
                      <p className="text-zinc-700 text-sm leading-relaxed line-clamp-3">&ldquo;{heroReviews[2].comment}&rdquo;</p>
+                     <div className="mt-3 pt-3 border-t border-zinc-100 flex items-center justify-end">
+                       <span className="text-xs text-zinc-500 font-medium">— {heroReviews[2].firstName}</span>
+                     </div>
                    </div>
                  )}
 
