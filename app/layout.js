@@ -20,10 +20,10 @@ export const metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Rate My Hospital Food Preview Image',
+        url: '/icon.png',
+        width: 512,
+        height: 512,
+        alt: 'Rate My Hospital Food Logo',
       },
     ],
   },
@@ -31,7 +31,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Rate My Hospital Food',
     description: 'Read reviews, check ratings, and avoid the mystery meat at hospitals near you.',
-    images: ['/og-image.png'],
+    images: ['/icon.png'],
   },
 };
 
