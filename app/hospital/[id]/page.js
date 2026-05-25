@@ -10,6 +10,7 @@ import { MapPin, ArrowLeft, Star, Calendar, MessageSquare, PenLine } from 'lucid
 export default function HospitalDetail({ params }) {
     const [hospital, setHospital] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Auto-open review modal if coming from 'Add Review' flow
@@ -43,6 +44,9 @@ export default function HospitalDetail({ params }) {
         }
         if (params.id) {
             loadHospital();
+        } else {
+            setNotFound(true);
+            setLoading(false);
         }
     }, [params.id]);
 
