@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Utensils, Users, MessageSquare, Star, TrendingUp, Building2, AlertTriangle, UtensilsCrossed, MapPin } from 'lucide-react';
-import { getHospitals } from '@/lib/actions';
+import { getHospitals, getHeroReviews } from '@/lib/actions';
 import Header from '@/components/Header';
 import HospitalCard from '@/components/HospitalCard';
 import Link from 'next/link';
@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [hospitals, setHospitals] = useState([]);
+  const [heroReviews, setHeroReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -18,17 +19,21 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    async function loadHospitals() {
+    async function loadData() {
       try {
-        const data = await getHospitals();
+        const [data, reviewsData] = await Promise.all([
+          getHospitals(),
+          getHeroReviews()
+        ]);
         setHospitals(data || []);
+        setHeroReviews(reviewsData || []);
       } catch (err) {
-        console.error("Failed to load hospitals:", err);
+        console.error("Failed to load data:", err);
       } finally {
         setLoading(false);
       }
     }
-    loadHospitals();
+    loadData();
   }, []);
 
   // Close dropdown when clicking outside
@@ -253,35 +258,52 @@ export default function Home() {
                {/* Decorative floating cards container */}
                <div className="absolute inset-0">
                  
-                 <div className="absolute top-4 right-4 xl:right-12 warm-glass rounded-2xl p-4 w-72 float-soft shadow-xl border border-orange-200/50">
-                   <div className="flex justify-between items-start mb-2">
-                     <div>
-                       <div className="font-bold text-zinc-800 text-sm">City of Hope</div>
-                       <div className="flex items-center gap-1 mt-0.5"><Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500"/><span className="text-xs font-bold text-zinc-700">4.6</span></div>
+                 {heroReviews.length > 0 && heroReviews[0] && (
+                   <div className="absolute top-4 right-4 xl:right-12 warm-glass rounded-2xl p-5 w-80 float-soft shadow-xl border border-orange-200/50">
+                     <div className="flex justify-between items-start mb-3">
+                       <div>
+                         <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[0].hospitalName}</div>
+                         <div className="flex items-center gap-1 mt-1"><Star className="w-4 h-4 fill-amber-500 text-amber-500"/><span className="text-sm font-bold text-zinc-700">{Number(heroReviews[0].rating).toFixed(1)}</span></div>
+                       </div>
+                       <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${heroReviews[0].type === 'positive' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                         {heroReviews[0].badge}
+                       </span>
                      </div>
-                     <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">Fresh Pick</span>
+                     <p className="text-zinc-700 text-sm italic leading-relaxed">&ldquo;{heroReviews[0].comment.length > 80 ? heroReviews[0].comment.substring(0, 80) + '...' : heroReviews[0].comment}&rdquo;</p>
                    </div>
-                   <p className="text-zinc-600 text-xs italic">&ldquo;Soup was actually fire. Cafeteria was clean and easy to find.&rdquo;</p>
-                 </div>
+                 )}
 
-                 <div className="absolute top-44 left-4 xl:left-0 warm-glass rounded-2xl p-4 w-72 float-soft-delay shadow-xl border border-orange-200/50 z-10">
-                   <div className="flex justify-between items-start mb-2">
-                     <div>
-                       <div className="font-bold text-zinc-800 text-sm">Cedars-Sinai</div>
-                       <div className="flex items-center gap-1 mt-0.5"><Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500"/><span className="text-xs font-bold text-zinc-700">4.8</span></div>
+                 {heroReviews.length > 1 && heroReviews[1] && (
+                   <div className="absolute top-44 left-4 xl:left-0 warm-glass rounded-2xl p-5 w-80 float-soft-delay shadow-xl border border-orange-200/50 z-10">
+                     <div className="flex justify-between items-start mb-3">
+                       <div>
+                         <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[1].hospitalName}</div>
+                         <div className="flex items-center gap-1 mt-1"><Star className="w-4 h-4 fill-amber-500 text-amber-500"/><span className="text-sm font-bold text-zinc-700">{Number(heroReviews[1].rating).toFixed(1)}</span></div>
+                       </div>
+                       <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                         {heroReviews[1].badge}
+                       </span>
                      </div>
-                     <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">Top Rated</span>
+                     <p className="text-zinc-700 text-sm italic leading-relaxed">&ldquo;{heroReviews[1].comment.length > 80 ? heroReviews[1].comment.substring(0, 80) + '...' : heroReviews[1].comment}&rdquo;</p>
                    </div>
-                   <p className="text-zinc-600 text-xs italic">&ldquo;Way better than expected. The salmon plate carried.&rdquo;</p>
-                 </div>
+                 )}
 
-                 <div className="absolute bottom-8 right-12 xl:right-24 warm-glass rounded-2xl p-4 w-64 float-soft shadow-xl border border-amber-300">
-                   <div className="flex items-center gap-2 mb-2">
-                     <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0"><AlertTriangle className="w-4 h-4 text-amber-600"/></div>
-                     <div className="font-bold text-zinc-800 text-sm">Mystery Meat Alert</div>
+                 {heroReviews.length > 2 && heroReviews[2] && (
+                   <div className={`absolute bottom-8 right-12 xl:right-24 warm-glass rounded-2xl p-5 w-72 float-soft shadow-xl border ${heroReviews[2].type === 'warning' ? 'border-amber-300' : 'border-orange-200/50'}`}>
+                     <div className="flex items-center justify-between mb-3">
+                       <div className="flex items-center gap-2">
+                         {heroReviews[2].type === 'warning' && (
+                           <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0"><AlertTriangle className="w-4 h-4 text-amber-600"/></div>
+                         )}
+                         <div>
+                           <div className="font-bold text-zinc-800 text-[15px]">{heroReviews[2].hospitalName}</div>
+                           <div className="flex items-center gap-1 mt-0.5"><Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500"/><span className="text-xs font-bold text-zinc-700">{Number(heroReviews[2].rating).toFixed(1)}</span></div>
+                         </div>
+                       </div>
+                     </div>
+                     <p className="text-zinc-700 text-sm leading-relaxed">&ldquo;{heroReviews[2].comment.length > 70 ? heroReviews[2].comment.substring(0, 70) + '...' : heroReviews[2].comment}&rdquo;</p>
                    </div>
-                   <p className="text-zinc-600 text-xs">&ldquo;Check the reviews before you order.&rdquo;</p>
-                 </div>
+                 )}
 
                </div>
             </div>
