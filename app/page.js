@@ -376,13 +376,13 @@ export default function Home() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Trending</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Popular Picks</span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">
-                  Popular Cafeterias
+                  Most Trusted Cafeterias
                 </h2>
                 <p className="text-slate-500 text-sm mt-1">
-                  Highest rated hospital dining halls this week
+                  Highly rated hospital cafeterias with the most review activity
                 </p>
               </div>
               <Link 

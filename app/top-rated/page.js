@@ -12,8 +12,7 @@ export default function TopRated() {
         async function loadHospitals() {
             try {
                 const data = await getHospitals();
-                const sorted = [...(data || [])].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                setHospitals(sorted);
+                setHospitals(data || []);
             } catch (err) {
                 console.error("Failed to load", err);
             }
