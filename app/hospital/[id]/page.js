@@ -119,15 +119,21 @@ export default function HospitalDetail({ params }) {
     let ratingLabel = 'Not yet rated';
     
     if (rating > 0) {
-        if (rating >= 4) {
+        if (rating >= 4.5) {
             ratingBg = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-            ratingLabel = 'Excellent';
+            ratingLabel = 'Shockingly good';
+        } else if (rating >= 3.5) {
+            ratingBg = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            ratingLabel = 'Would eat again';
         } else if (rating >= 2.5) {
             ratingBg = 'bg-amber-50 text-amber-700 border-amber-200';
-            ratingLabel = 'Average';
+            ratingLabel = 'It did the job';
+        } else if (rating >= 1.5) {
+            ratingBg = 'bg-rose-50 text-rose-700 border-rose-200';
+            ratingLabel = 'Pack snacks';
         } else {
             ratingBg = 'bg-rose-50 text-rose-700 border-rose-200';
-            ratingLabel = 'Below Average';
+            ratingLabel = 'Pray before eating';
         }
     }
 
@@ -232,11 +238,12 @@ export default function HospitalDetail({ params }) {
                             const revRating = Number(review.rating || 0);
                             let rBg = 'bg-slate-50 text-slate-600 border-slate-200';
                             let rLabel = '';
-                            if (revRating === 5) rLabel = 'Excellent';
-                            else if (revRating >= 4) rLabel = 'Good';
-                            else if (revRating >= 3) rLabel = 'Okay';
-                            else if (revRating >= 2) rLabel = 'Poor';
-                            else if (revRating >= 1) rLabel = 'Bad';
+                            let badge = '';
+                            if (revRating === 5) { rLabel = 'Shockingly good'; badge = 'Hidden Gem 💎'; }
+                            else if (revRating >= 4) { rLabel = 'Would eat again'; badge = 'Solid Pick 👍'; }
+                            else if (revRating >= 3) { rLabel = 'It did the job'; badge = 'Cafeteria Classic ☕'; }
+                            else if (revRating >= 2) { rLabel = 'Pack snacks'; badge = 'Bring Your Own Sauce 🧂'; }
+                            else if (revRating >= 1) { rLabel = 'Pray before eating'; badge = 'Needs Salt 🧂'; }
 
                             return (
                                 <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.04)] p-5 transition-all duration-200 hover:shadow-md">
@@ -255,6 +262,11 @@ export default function HospitalDetail({ params }) {
                                                 {rLabel && (
                                                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                                                         {rLabel}
+                                                    </span>
+                                                )}
+                                                {badge && (
+                                                    <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md ml-auto border border-orange-100/50">
+                                                        {badge}
                                                     </span>
                                                 )}
                                             </div>
@@ -300,7 +312,7 @@ export default function HospitalDetail({ params }) {
                             </div>
                             <h3 className="text-lg font-bold text-slate-800 mb-1">No reviews yet</h3>
                             <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
-                                Be the first to share your experience with the food here!
+                                Someone has to take the first bite.
                             </p>
                             <button 
                                 onClick={() => setIsModalOpen(true)}

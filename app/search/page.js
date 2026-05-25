@@ -154,7 +154,7 @@ export default function SearchHospital() {
             
             {showSuggestions && searchTerm.trim().length > 0 && suggestions.length === 0 && (
               <div className="absolute top-full left-0 right-0 mt-3 bg-white border border-orange-100 shadow-xl shadow-orange-100/50 rounded-2xl overflow-hidden py-8 text-center animate-fade-in origin-top">
-                <p className="text-zinc-500 mb-2">No hospitals found matching &quot;{searchTerm}&quot;</p>
+                <p className="text-zinc-500 mb-2">No hospital found. Either we missed it, or the cafeteria is hiding.</p>
                 <Link 
                   href="/add" 
                   className="text-[#E8733A] font-semibold hover:underline inline-flex items-center gap-1"

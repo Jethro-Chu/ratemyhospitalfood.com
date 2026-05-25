@@ -227,16 +227,23 @@ export default function Home() {
                     ))}
                   </div>
                 )}
+                
+                {showSuggestions && searchTerm.trim().length > 0 && suggestions.length === 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-orange-200/30 border border-orange-100 overflow-hidden z-50 p-6 text-center">
+                    <p className="text-zinc-500 text-sm font-medium">No hospital found. Either we missed it, or the cafeteria is hiding.</p>
+                  </div>
+                )}
               </div>
 
-              {/* Subtle add hospital link */}
-              <div className="flex items-center gap-2 mt-5 animate-fade-rise-delay-2">
+              {/* Fun CTA */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-6 animate-fade-rise-delay-2 text-sm">
+                <span className="text-zinc-500 font-medium">Had hospital food today? Rate it before your lunch break ends.</span>
                 <Link
                   href="/add"
-                  className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-[#E8733A] font-medium transition-colors duration-200 group"
+                  className="inline-flex items-center gap-1.5 text-[#E8733A] hover:text-[#D4622A] font-bold transition-colors duration-200 group bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg"
                 >
-                  <Plus className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                  Add a hospital
+                  <Plus className="w-3.5 h-3.5" />
+                  Add missing hospital
                 </Link>
               </div>
 

@@ -47,8 +47,8 @@ export default function TopRated() {
                     {hospitals.length === 0 && (
                         <div className="col-span-full text-center py-20 text-zinc-500 bg-white rounded-2xl border border-zinc-100 shadow-sm">
                             <Star className="w-8 h-8 text-zinc-300 mx-auto mb-3" />
-                            <p className="text-zinc-600 font-medium">No 4.5+ rated hospitals yet.</p>
-                            <p className="text-zinc-400 text-sm mt-1">Be the first to review one!</p>
+                            <p className="text-zinc-600 font-medium">No 4.5+ cafeterias yet.</p>
+                            <p className="text-zinc-400 text-sm mt-1">The search for edible hospital food continues.</p>
                         </div>
                     )}
                 </div>

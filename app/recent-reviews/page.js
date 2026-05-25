@@ -71,19 +71,32 @@ export default function RecentReviews() {
                 </div>
                 
                 <div className="flex flex-col gap-4">
-                    {reviews.length > 0 ? reviews.map(review => (
+                    {reviews.length > 0 ? reviews.map(review => {
+                        const revRating = Number(review.rating || 0);
+                        let rLabel = '';
+                        let badge = '';
+                        if (revRating === 5) { rLabel = 'Shockingly good'; badge = 'Hidden Gem 💎'; }
+                        else if (revRating >= 4) { rLabel = 'Would eat again'; badge = 'Solid Pick 👍'; }
+                        else if (revRating >= 3) { rLabel = 'It did the job'; badge = 'Cafeteria Classic ☕'; }
+                        else if (revRating >= 2) { rLabel = 'Pack snacks'; badge = 'Bring Your Own Sauce 🧂'; }
+                        else if (revRating >= 1) { rLabel = 'Pray before eating'; badge = 'Needs Salt 🧂'; }
+
+                        return (
                         <div key={review.id} className="bg-white rounded-2xl border border-orange-100 shadow-[0_2px_8px_rgba(234,88,12,0.04)] p-5 md:p-6 hover:shadow-md transition-shadow duration-200">
                             {/* Top Row: Hospital & Stars */}
                             <div className="flex flex-col mb-3">
                                 <Link href={`/hospital/${review.hospitalId}`} className="font-bold text-lg text-zinc-800 hover:text-orange-600 transition-colors inline-block mb-1">
                                     {review.hospitalName}
                                 </Link>
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 flex-wrap">
                                     <div className="flex items-center gap-0.5">
                                         {renderStars(review.rating)}
                                     </div>
-                                    <span className="text-xs font-bold text-zinc-400 bg-zinc-50 px-1.5 py-0.5 rounded-md border border-zinc-100">
-                                        {Number(review.rating).toFixed(1)}
+                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                                        {rLabel}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100/50">
+                                        {badge}
                                     </span>
                                 </div>
                             </div>
@@ -120,9 +133,10 @@ export default function RecentReviews() {
                                 <span className="text-zinc-500 text-[13px]">{review.date}</span>
                             </div>
                         </div>
-                    )) : (
+                        );
+                    }) : (
                         <div className="text-center py-20 bg-white rounded-2xl border border-orange-100 shadow-sm text-zinc-500">
-                            No reviews have been posted yet.
+                            No reviews yet. Someone has to take the first bite.
                         </div>
                     )}
                 </div>

@@ -162,7 +162,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
         }
     };
 
-    const ratingLabels = ['', 'Terrible', 'Poor', 'Average', 'Great', 'Amazing!'];
+    const ratingLabels = ['', 'Pray before eating', 'Pack snacks', 'It did the job', 'Would eat again', 'Shockingly good'];
 
     // Compression savings
     const savedPercent = selectedFile && originalSize > 0
@@ -311,7 +311,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                         </label>
                         <textarea
                             name="comment"
-                            placeholder="What was good? What was bad? How was the coffee?"
+                            placeholder="What did you eat, and did it deserve a discharge order? Would you recommend it to a hungry nurse on break?"
                             rows={3}
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 focus-ring text-sm text-slate-800 placeholder-slate-400 transition-all duration-200 resize-none bg-white"
                         />
