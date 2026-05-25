@@ -50,7 +50,7 @@ export default function SearchHospital() {
         const aStarts = a.name.toLowerCase().startsWith(term) ? 0 : 1;
         const bStarts = b.name.toLowerCase().startsWith(term) ? 0 : 1;
         return aStarts - bStarts;
-      }).slice(0, 8) // Limit to 8 suggestions
+      }).slice(0, 50) // Limit to 50 suggestions for scrolling
     : [];
 
   const handleSearchChange = (e) => {
@@ -128,7 +128,10 @@ export default function SearchHospital() {
 
             {/* Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-md border border-orange-100 shadow-xl shadow-orange-100/50 rounded-2xl overflow-hidden py-2 animate-fade-in origin-top">
+              <div 
+                className="absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-md border border-orange-100 shadow-xl shadow-orange-100/50 rounded-2xl overflow-y-auto max-h-[300px] md:max-h-[360px] py-2 animate-fade-in origin-top z-50"
+                style={{ scrollbarWidth: 'thin', scrollbarColor: '#FED7AA transparent' }}
+              >
                 {suggestions.map((hospital, index) => (
                   <button
                     key={hospital.id}

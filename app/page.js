@@ -63,7 +63,7 @@ export default function Home() {
         const aStarts = a.name.toLowerCase().startsWith(term) ? 0 : 1;
         const bStarts = b.name.toLowerCase().startsWith(term) ? 0 : 1;
         return aStarts - bStarts;
-      }).slice(0, 8) // Limit to 8 suggestions
+      }).slice(0, 50) // Limit to 50 suggestions for scrolling
     : [];
 
   // Filter for the results grid below (uses includes for broader matching)
@@ -188,7 +188,8 @@ export default function Home() {
                 {/* Autocomplete Dropdown */}
                 {showSuggestions && suggestions.length > 0 && (
                   <div 
-                    className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-orange-200/30 border border-orange-100 overflow-hidden z-50"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-orange-200/30 border border-orange-100 overflow-y-auto max-h-[300px] md:max-h-[360px] z-50"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: '#FED7AA transparent' }}
                     role="listbox"
                     id="search-suggestions"
                   >
