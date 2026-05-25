@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Utensils, Users, MessageSquare, Star, TrendingUp, Building2, AlertTriangle, UtensilsCrossed, MapPin } from 'lucide-react';
-import { getHospitals, getHeroReviews } from '@/lib/actions';
+import { getHospitals, getHeroReviews, getHomepageStats } from '@/lib/actions';
 import Header from '@/components/Header';
 import HospitalCard from '@/components/HospitalCard';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [hospitals, setHospitals] = useState([]);
   const [heroReviews, setHeroReviews] = useState([]);
+  const [stats, setStats] = useState({ totalHospitals: 0, totalReviews: 0, topScore: "0.0" });
   const [loading, setLoading] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -21,12 +22,14 @@ export default function Home() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [data, reviewsData] = await Promise.all([
+        const [data, reviewsData, statsData] = await Promise.all([
           getHospitals(),
-          getHeroReviews()
+          getHeroReviews(),
+          getHomepageStats()
         ]);
         setHospitals(data || []);
         setHeroReviews(reviewsData || []);
+        setStats(statsData || { totalHospitals: 0, totalReviews: 0, topScore: "0.0" });
       } catch (err) {
         console.error("Failed to load data:", err);
       } finally {
@@ -239,15 +242,15 @@ export default function Home() {
               <div className="flex flex-wrap gap-3 mt-12 animate-fade-rise-delay-2">
                 <div className="warm-glass rounded-2xl px-4 py-2 flex items-center gap-3">
                   <div className="bg-orange-100 p-1.5 rounded-lg text-orange-600"><Star className="w-4 h-4 fill-orange-500" /></div>
-                  <div><div className="font-bold text-zinc-800">2,400+</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Reviews</div></div>
+                  <div><div className="font-bold text-zinc-800">{stats.totalReviews}</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{stats.totalReviews === 1 ? 'Review' : 'Reviews'}</div></div>
                 </div>
                 <div className="warm-glass rounded-2xl px-4 py-2 flex items-center gap-3">
                   <div className="bg-orange-100 p-1.5 rounded-lg text-orange-600"><Building2 className="w-4 h-4" /></div>
-                  <div><div className="font-bold text-zinc-800">120+</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Hospitals</div></div>
+                  <div><div className="font-bold text-zinc-800">{stats.totalHospitals}</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{stats.totalHospitals === 1 ? 'Hospital' : 'Hospitals'}</div></div>
                 </div>
                 <div className="warm-glass rounded-2xl px-4 py-2 flex items-center gap-3">
                   <div className="bg-orange-100 p-1.5 rounded-lg text-orange-600"><TrendingUp className="w-4 h-4" /></div>
-                  <div><div className="font-bold text-zinc-800">4.8</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Top Score</div></div>
+                  <div><div className="font-bold text-zinc-800">{stats.topScore}</div><div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Top Score</div></div>
                 </div>
               </div>
 
