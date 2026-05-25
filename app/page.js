@@ -103,35 +103,10 @@ export default function Home() {
     }
   };
 
-  const trendingHospitals = [
-    {
-      id: 'placeholder-1',
-      name: "Children's Hospital Los Angeles (CHLA)",
-      location: 'Los Angeles, CA',
-      rating: 4,
-      numRatings: 12,
-      reviewSnippet: '"The cafeteria actually has decent sushi on Thursdays, and the grill station is solid."',
-      tags: ['Grill', 'Sushi', 'Cafeteria']
-    },
-    {
-      id: 'placeholder-2',
-      name: 'Kaiser Permanente Los Angeles',
-      location: 'Los Angeles, CA',
-      rating: 3,
-      numRatings: 8,
-      reviewSnippet: '"Typical hospital food, but the salad bar is surprisingly fresh and well-stocked."',
-      tags: ['Salad Bar', 'Healthy', 'Snacks']
-    },
-    {
-      id: 'placeholder-3',
-      name: 'Huntington Hospital',
-      location: 'Pasadena, CA',
-      rating: 5,
-      numRatings: 25,
-      reviewSnippet: '"Best hospital food I\'ve ever had. Their mac and cheese is legendary among the staff."',
-      tags: ['Mac & Cheese', 'Coffee', 'Desserts']
-    }
-  ];
+  // Dynamically take the top 3 highest-rated hospitals from the database
+  const trendingHospitals = hospitals && hospitals.length > 0 
+    ? hospitals.slice(0, 3) 
+    : [];
 
   return (
     <div className="min-h-screen bg-[#FFF7ED] font-sans flex flex-col antialiased">
