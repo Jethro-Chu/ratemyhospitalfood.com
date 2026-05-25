@@ -10,28 +10,19 @@ const inter = Inter({
 export const metadata = {
   metadataBase: new URL('https://ratemyhospitalfood.com'),
   title: 'Rate My Hospital Food',
-  description: 'Read reviews, check ratings, and avoid the mystery meat at hospitals near you.',
+  description: 'Find and review hospital cafeteria food.',
   openGraph: {
     title: 'Rate My Hospital Food',
-    description: 'Read reviews, check ratings, and avoid the mystery meat at hospitals near you.',
+    description: 'Find and review hospital cafeteria food.',
     url: 'https://ratemyhospitalfood.com',
     siteName: 'Rate My Hospital Food',
     locale: 'en_US',
     type: 'website',
-    images: [
-      {
-        url: '/icon.png',
-        width: 512,
-        height: 512,
-        alt: 'Rate My Hospital Food Logo',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Rate My Hospital Food',
-    description: 'Read reviews, check ratings, and avoid the mystery meat at hospitals near you.',
-    images: ['/icon.png'],
+    description: 'Find and review hospital cafeteria food.',
   },
 };
 
