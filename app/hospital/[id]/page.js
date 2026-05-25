@@ -230,56 +230,47 @@ export default function HospitalDetail({ params }) {
                         hospital.reviews.map((review, i) => {
                             const revRating = Number(review.rating || 0);
                             let rBg = 'bg-slate-50 text-slate-600 border-slate-200';
-                            let rLabel = 'Average';
-                            
-                            if (revRating >= 4) {
-                                rBg = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                                rLabel = 'Great';
-                            } else if (revRating >= 2.5) {
-                                rBg = 'bg-amber-50 text-amber-700 border-amber-200';
-                                rLabel = 'Okay';
-                            } else {
-                                rBg = 'bg-rose-50 text-rose-700 border-rose-200';
-                                rLabel = 'Poor';
-                            }
+                            let rLabel = '';
+                            if (revRating === 5) rLabel = 'Excellent';
+                            else if (revRating >= 4) rLabel = 'Good';
+                            else if (revRating >= 3) rLabel = 'Okay';
+                            else if (revRating >= 2) rLabel = 'Poor';
+                            else if (revRating >= 1) rLabel = 'Bad';
 
                             return (
-                                <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-[0_1px_4px_rgba(15,23,42,0.04)] p-5 md:p-6 transition-all duration-200 hover:shadow-md">
+                                <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.04)] p-5 transition-all duration-200 hover:shadow-md">
                                     <div className="flex gap-4 items-start">
                                         {/* Score badge */}
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-md border shrink-0 ${rBg}`}>
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-lg border shrink-0 ${rBg}`}>
                                             {revRating.toFixed(1)}
                                         </div>
                                         
                                         <div className="flex-grow min-w-0">
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-1.5 mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <h4 className="font-bold text-slate-800 leading-tight">
+                                            {/* Top Row: Stars & Sentiment */}
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="flex items-center gap-0.5">
+                                                    {renderStars(revRating, 'w-3.5 h-3.5')}
+                                                </div>
+                                                {rLabel && (
+                                                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">
                                                         {rLabel}
-                                                    </h4>
-                                                    <div className="flex items-center gap-0.5">
-                                                        {renderStars(revRating, 'w-3 h-3')}
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                                                    <Calendar className="w-3.5 h-3.5 shrink-0" />
-                                                    <span>{review.date}</span>
-                                                </div>
+                                                    </span>
+                                                )}
                                             </div>
                                             
-                                            <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                                            {/* Main Review Text */}
+                                            <p className="text-slate-700 text-[15px] leading-relaxed whitespace-pre-wrap">
                                                 {review.comment || "No comment provided."}
                                             </p>
 
                                             {/* Review Photo */}
                                             {review.image_url && (
-                                                <div className="mt-3">
+                                                <div className="mt-3.5">
                                                     <a href={review.image_url} target="_blank" rel="noopener noreferrer" className="block w-fit">
                                                         <img
                                                             src={review.image_url}
                                                             alt="Food photo"
-                                                            className="rounded-xl border border-slate-100 max-h-52 max-w-[280px] w-auto object-cover hover:opacity-90 transition-opacity duration-200 shadow-sm"
+                                                            className="rounded-xl border border-slate-200/60 max-h-56 max-w-[280px] sm:max-w-[320px] w-auto object-cover hover:opacity-90 transition-opacity duration-200 shadow-sm"
                                                             loading="lazy"
                                                             decoding="async"
                                                         />
@@ -287,11 +278,14 @@ export default function HospitalDetail({ params }) {
                                                 </div>
                                             )}
                                             
-                                            <div className="mt-3 pt-3 border-t border-slate-50 flex items-center gap-1.5 text-xs text-slate-400">
-                                                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-[10px] font-bold shrink-0">
+                                            {/* Bottom Row: Avatar, Name, Date */}
+                                            <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2 text-sm">
+                                                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-[11px] font-bold shrink-0">
                                                     {(review.name || 'A').charAt(0).toUpperCase()}
                                                 </div>
-                                                <span className="font-semibold text-slate-500">{review.name || 'Anonymous'}</span>
+                                                <span className="font-semibold text-slate-700">{review.name || 'Anonymous'}</span>
+                                                <span className="text-slate-300 mx-0.5">&middot;</span>
+                                                <span className="text-slate-500 text-[13px]">{review.date}</span>
                                             </div>
                                         </div>
                                     </div>
