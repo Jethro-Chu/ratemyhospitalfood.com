@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { createHospitalClient } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import { Building2, MapPin, ArrowLeft } from 'lucide-react';
@@ -13,108 +14,99 @@ export default function AddHospital() {
 
     async function handleSubmit(formData) {
         setIsLoading(true);
-        
         const name = formData.get('name');
         const location = formData.get('location');
-        
         const result = await createHospitalClient({ name, location });
-        
         if (!result || !result.id) {
              alert('Failed to save hospital');
              setIsLoading(false);
              return;
         }
-        
         router.push(`/hospital/${result.id}?review=true`);
     }
 
     return (
-        <div className="min-h-screen bg-[#FAFBFC] flex flex-col antialiased">
+        <div className="min-h-screen bg-white font-sans flex flex-col antialiased">
             <Header />
-            
-            {/* Decorative top banner */}
-            <div className="bg-gradient-to-b from-blue-50/60 to-[#FAFBFC] pt-28 pb-6 border-b border-slate-100">
-                <div className="container mx-auto px-4 max-w-xl">
-                    <Link 
-                        href="/" 
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+
+            <div className="bg-zinc-50 border-b border-zinc-100 pt-24 pb-4">
+                <div className="max-w-lg mx-auto px-4">
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-zinc-700 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Back to all hospitals
+                        Back
                     </Link>
                 </div>
             </div>
 
-            <div className="flex-grow container mx-auto px-4 py-10 md:py-16 flex flex-col justify-center max-w-xl">
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_24px_rgba(15,23,42,0.04)] p-6 md:p-10 fade-in-up">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="w-14 h-14 bg-gradient-to-b from-blue-50 to-blue-100 border border-blue-200/60 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <Building2 className="w-7 h-7 text-blue-600" />
+            <div className="flex-grow flex flex-col justify-center max-w-lg mx-auto w-full px-4 py-12">
+                <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-6 sm:p-8 animate-fade-up">
+                    <div className="text-center mb-7">
+                        <div className="w-12 h-12 bg-brand-50 border border-brand-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <Building2 className="w-6 h-6 text-brand-600" />
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">
+                        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
                             Add a Dining Hall
                         </h1>
-                        <p className="text-slate-500 text-sm mt-2 max-w-sm mx-auto">
-                            Help others find and rate healthcare dining facilities near them.
+                        <p className="text-zinc-400 text-sm mt-1.5">
+                            Help others find and rate hospital dining near them.
                         </p>
                     </div>
 
-                    <form action={handleSubmit} className="space-y-5">
-                        {/* Name input */}
+                    <form action={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-xs font-semibold text-slate-600 mb-2">
+                            <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
                                 Hospital / Dining Hall Name
                             </label>
-                            <div className="relative flex items-center">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
                                     <Building2 className="w-4 h-4" />
                                 </div>
                                 <input
                                     name="name"
                                     type="text"
                                     placeholder="e.g. St. Jude Cafeteria"
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 focus-ring text-sm text-slate-800 placeholder-slate-400 transition-all duration-200 bg-white"
+                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-zinc-200 focus-ring text-sm text-zinc-800 placeholder-zinc-400 bg-white"
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Location input */}
                         <div>
-                            <label className="block text-xs font-semibold text-slate-600 mb-2">
+                            <label className="block text-xs font-semibold text-zinc-600 mb-1.5">
                                 Location (City, State)
                             </label>
-                            <div className="relative flex items-center">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
                                     <MapPin className="w-4 h-4" />
                                 </div>
                                 <input
                                     name="location"
                                     type="text"
                                     placeholder="e.g. Memphis, TN"
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 focus-ring text-sm text-slate-800 placeholder-slate-400 transition-all duration-200 bg-white"
+                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-zinc-200 focus-ring text-sm text-zinc-800 placeholder-zinc-400 bg-white"
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 px-4 rounded-xl text-sm shadow-md shadow-blue-600/10 hover:shadow-lg hover:shadow-blue-600/15 active:scale-[0.98] transition-all duration-200 mt-2"
+                            className="w-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white font-semibold py-3 px-4 rounded-lg text-sm transition-all active:scale-[0.98] mt-2"
                         >
-                            {isLoading ? 'Adding Hospital...' : 'Add Hospital'}
+                            {isLoading ? 'Adding...' : 'Add Hospital'}
                         </button>
                     </form>
                 </div>
 
-                {/* Helper text */}
-                <p className="text-center text-xs text-slate-400 mt-6">
-                    Duplicate entries will be automatically detected.
+                <p className="text-center text-xs text-zinc-300 mt-5">
+                    Duplicate entries are automatically detected.
                 </p>
             </div>
+            <Footer />
         </div>
     );
 }
