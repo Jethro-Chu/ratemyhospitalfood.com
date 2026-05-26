@@ -123,8 +123,8 @@ export default function Home() {
           <source src="https://videos.pexels.com/video-files/30141959/12925634_1920_1080_24fps.mp4" type="video/mp4" />
         </video>
 
-        {/* Blue overlay — matches header transparent color for seamless blend */}
-        <div className="absolute inset-0 bg-blue-950/60" />
+        {/* Blue overlay — dark enough to make all text pop */}
+        <div className="absolute inset-0 bg-blue-950/72" />
         {/* Fade to white at the bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
 
@@ -135,7 +135,7 @@ export default function Home() {
             {/* Left: headline + search */}
             <div className="w-full lg:w-[56%] flex flex-col">
 
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 text-blue-100 rounded-full px-4 py-1.5 text-[11px] font-semibold w-fit mb-6 animate-fade-up">
+              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/25 text-white rounded-full px-4 py-1.5 text-[11px] font-semibold w-fit mb-6 animate-fade-up">
                 <Sparkles className="w-3 h-3" />
                 Real reviews from real patients &amp; staff
               </div>
@@ -145,7 +145,7 @@ export default function Home() {
                 <span className="text-blue-300">hospital food.</span>
               </h1>
 
-              <p className="text-[17px] text-blue-100/75 mt-5 max-w-md leading-relaxed animate-fade-up-delay-2">
+              <p className="text-[17px] text-blue-100 mt-5 max-w-md leading-relaxed animate-fade-up-delay-2">
                 Find out what the cafeteria is actually serving. Read reviews, check ratings, and avoid the mystery meat.
               </p>
 
@@ -223,8 +223,8 @@ export default function Home() {
 
               {/* Can't find yours nudge */}
               <div className="flex items-center gap-3 mt-4 animate-fade-up-delay-2">
-                <span className="text-blue-200/55 text-sm">Hospital not listed?</span>
-                <Link href="/add" className="inline-flex items-center gap-1 text-blue-300 hover:text-white font-semibold text-sm transition-colors">
+                <span className="text-blue-200/80 text-sm">Hospital not listed?</span>
+                <Link href="/add" className="inline-flex items-center gap-1 text-blue-200 hover:text-white font-semibold text-sm transition-colors">
                   <Plus className="w-3.5 h-3.5" />Add it
                 </Link>
               </div>
@@ -242,7 +242,7 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="text-[22px] font-bold text-white leading-none">{value}</div>
-                      <div className="text-[10px] text-blue-200/55 font-semibold uppercase tracking-widest mt-0.5">{label}</div>
+                      <div className="text-[10px] text-blue-300/80 font-semibold uppercase tracking-widest mt-0.5">{label}</div>
                     </div>
                   </div>
                 ))}
@@ -261,7 +261,7 @@ export default function Home() {
                 return (
                   <div
                     key={review.id || i}
-                    className={`bg-white/92 backdrop-blur-xl rounded-2xl border border-white/50 p-5 shadow-2xl shadow-blue-950/25 transition-all duration-300 ${
+                    className={`bg-white rounded-2xl border border-zinc-100 p-5 shadow-2xl shadow-blue-950/30 transition-all duration-300 ${
                       i === 0 ? 'animate-fade-up lg:ml-6' :
                       i === 1 ? 'animate-fade-up-delay lg:mr-6' :
                                 'animate-fade-up-delay-2 lg:ml-10'

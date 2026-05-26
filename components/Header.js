@@ -34,7 +34,7 @@ export default function Header() {
     return (
         <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
             transparent
-                ? 'bg-blue-950/55 backdrop-blur-md border-b border-white/10'
+                ? 'bg-blue-950/70 backdrop-blur-md border-b border-white/10'
                 : 'bg-white/92 backdrop-blur-xl border-b border-zinc-100 shadow-sm shadow-zinc-100/60'
         }`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
