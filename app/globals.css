@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #18181B;
+  --foreground: #09090B;
   --background: #FFFFFF;
 }
 
@@ -22,6 +22,7 @@ body {
   background: var(--background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 a {
@@ -29,30 +30,26 @@ a {
   text-decoration: none;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: #A1A1AA; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4D4D8;
-  border-radius: 100px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #A1A1AA;
-}
-
+/* Focus ring */
 .focus-ring {
   outline: none;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
-
 .focus-ring:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   border-color: #3B82F6;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
