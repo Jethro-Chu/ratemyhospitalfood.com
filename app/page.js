@@ -9,6 +9,9 @@ import { getHospitals, getHeroReviews, getHomepageStats } from '@/lib/actions';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HospitalCard from '@/components/HospitalCard';
+import FoodShowcase from '@/components/FoodShowcase';
+import HowItWorks from '@/components/HowItWorks';
+import AnimatedSection from '@/components/AnimatedSection';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -317,6 +320,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── SCROLL-DRIVEN STORY (only when not actively searching) ── */}
+      {!searchTerm && (
+        <>
+          <FoodShowcase />
+          <HowItWorks />
+        </>
+      )}
+
       {/* ── MAIN CONTENT ── */}
       <main id="search-results" className="flex-grow bg-cream-50 border-t border-cream-300/60">
         <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-16">
@@ -337,8 +348,10 @@ export default function Home() {
                 <LoadingState />
               ) : filteredHospitals.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredHospitals.map(hospital => (
-                    <HospitalCard hospital={hospital} key={hospital.id} />
+                  {filteredHospitals.map((hospital, i) => (
+                    <AnimatedSection key={hospital.id} delay={Math.min(i, 8) * 60} distance={16}>
+                      <HospitalCard hospital={hospital} />
+                    </AnimatedSection>
                   ))}
                 </div>
               ) : (
@@ -378,8 +391,10 @@ export default function Home() {
                 <LoadingState />
               ) : trendingHospitals.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {trendingHospitals.map((hospital) => (
-                    <HospitalCard hospital={hospital} key={hospital.id} />
+                  {trendingHospitals.map((hospital, i) => (
+                    <AnimatedSection key={hospital.id} delay={i * 80} distance={20}>
+                      <HospitalCard hospital={hospital} />
+                    </AnimatedSection>
                   ))}
                 </div>
               ) : (
