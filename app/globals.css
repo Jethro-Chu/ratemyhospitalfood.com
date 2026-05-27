@@ -54,11 +54,6 @@ input:focus, textarea:focus, button:focus-visible {
   outline: none;
 }
 
-input:focus-visible, textarea:focus-visible {
-  box-shadow: 0 0 0 3px rgba(242, 93, 44, 0.18);
-  border-color: #F25D2C;
-}
-
 /* Display font helper */
 .font-display {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
