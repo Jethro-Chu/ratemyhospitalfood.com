@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, Building2, ArrowRight, Plus } from 'lucide-react';
+import { Search, Building2, ArrowRight, Plus, PenLine, Star, MapPin } from 'lucide-react';
 import { getHospitals } from '@/lib/actions';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function SearchHospital() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [hospitals, setHospitals] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchTerm, setSearchTerm]             = useState('');
+  const [hospitals, setHospitals]               = useState([]);
+  const [showSuggestions, setShowSuggestions]   = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchContainerRef = useRef(null);
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function SearchHospital() {
         const data = await getHospitals();
         setHospitals(data || []);
       } catch (err) {
-        console.error("Failed to load hospitals:", err);
+        console.error('Failed to load hospitals:', err);
       }
     }
     loadHospitals();
@@ -41,9 +41,11 @@ export default function SearchHospital() {
   const suggestions = searchTerm.trim().length > 0
     ? hospitals.filter(h => {
         const term = searchTerm.toLowerCase();
-        return h.name.toLowerCase().startsWith(term) ||
-               h.name.toLowerCase().includes(term) ||
-               h.location.toLowerCase().includes(term);
+        return (
+          h.name.toLowerCase().startsWith(term) ||
+          h.name.toLowerCase().includes(term)   ||
+          h.location.toLowerCase().includes(term)
+        );
       }).sort((a, b) => {
         const term = searchTerm.toLowerCase();
         const aStarts = a.name.toLowerCase().startsWith(term) ? 0 : 1;
@@ -83,30 +85,36 @@ export default function SearchHospital() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans flex flex-col antialiased">
+    <div className="min-h-screen bg-cream-100 flex flex-col antialiased relative overflow-hidden">
       <Header />
 
-      <main className="flex-grow flex flex-col items-center justify-center px-4 pt-24 pb-16">
+      <div className="absolute top-1/4 right-0 -z-10 w-[500px] h-[500px] bg-brand-200/30 rounded-full blur-3xl translate-x-1/3" aria-hidden="true" />
+      <div className="absolute bottom-1/4 left-0 -z-10 w-[400px] h-[400px] bg-honey-200/30 rounded-full blur-3xl -translate-x-1/3" aria-hidden="true" />
+
+      <main className="flex-grow flex flex-col items-center justify-center px-4 py-16 sm:py-20">
         <div className="w-full max-w-xl animate-fade-up flex flex-col items-center text-center">
 
-          <div className="w-14 h-14 bg-brand-50 border border-brand-100 rounded-xl flex items-center justify-center mb-6">
-            <Search className="w-7 h-7 text-brand-500" />
+          <div className="inline-flex items-center gap-1.5 bg-brand-50 border border-brand-100 text-brand-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest mb-5">
+            <PenLine className="w-3 h-3" />
+            Write a Review
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 mb-3">
-            Find a hospital to review
+          <h1 className="font-display text-[36px] sm:text-[44px] lg:text-[52px] font-semibold tracking-tight text-ink-900 leading-[1.05] mb-3">
+            Find a hospital<br />
+            <span className="gradient-text">to review.</span>
           </h1>
-          <p className="text-base text-zinc-400 mb-8 max-w-md">
-            Search for the facility you visited and share your dining experience.
+          <p className="text-[16px] text-ink-600 mb-8 max-w-md leading-relaxed">
+            Search for the cafeteria you visited and share what you ate.
           </p>
 
+          {/* Search box */}
           <div className="w-full relative z-50 text-left" ref={searchContainerRef}>
-            <div className="bg-white rounded-xl border border-zinc-200 shadow-sm flex items-center px-4 focus-within:border-brand-300 focus-within:shadow-md focus-within:shadow-brand-100/30 transition-all duration-200">
-              <Search className="w-5 h-5 text-zinc-400 shrink-0" />
+            <div className="bg-cream-50 rounded-2xl border-2 border-cream-300 shadow-warm-md flex items-center pl-4 pr-2 py-2 focus-within:border-brand-400 focus-within:shadow-warm-lg transition-all duration-200">
+              <Search className="w-5 h-5 text-ink-400 shrink-0" />
               <input
                 type="text"
-                placeholder="Type a hospital name or city..."
-                className="flex-grow bg-transparent border-none outline-none text-zinc-800 placeholder:text-zinc-400 text-[15px] py-3.5 pl-3 w-full"
+                placeholder="Type a hospital name or city…"
+                className="flex-grow bg-transparent border-none outline-none text-ink-900 placeholder:text-ink-400 text-[15px] py-2.5 pl-3 w-full font-medium"
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onKeyDown={handleKeyDown}
@@ -116,38 +124,51 @@ export default function SearchHospital() {
                 aria-expanded={showSuggestions && suggestions.length > 0}
                 aria-haspopup="listbox"
                 aria-autocomplete="list"
+                aria-label="Search hospitals"
                 autoFocus
               />
             </div>
 
             {showSuggestions && suggestions.length > 0 && (
               <div
-                className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-y-auto max-h-[300px] z-50"
+                className="absolute top-full left-0 right-0 mt-2 bg-cream-50 rounded-2xl shadow-warm-xl border border-cream-300 overflow-y-auto max-h-[340px] z-50"
                 style={{ scrollbarWidth: 'thin' }}
+                role="listbox"
               >
                 {suggestions.map((hospital, index) => (
                   <button
                     key={hospital.id}
                     onClick={() => handleSelectSuggestion(hospital)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                      index === highlightedIndex ? 'bg-brand-50' : 'hover:bg-zinc-50'
-                    } ${index !== suggestions.length - 1 ? 'border-b border-zinc-50' : ''}`}
+                      index === highlightedIndex ? 'bg-brand-50' : 'hover:bg-cream-100'
+                    } ${index !== suggestions.length - 1 ? 'border-b border-cream-200' : ''}`}
+                    role="option"
+                    aria-selected={index === highlightedIndex}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
-                      <Building2 className="w-4 h-4 text-zinc-500" />
+                    <div className="w-9 h-9 rounded-lg bg-brand-100 flex items-center justify-center shrink-0">
+                      <Building2 className="w-4 h-4 text-brand-600" />
                     </div>
-                    <div>
-                      <div className="font-medium text-zinc-800 text-sm">{hospital.name}</div>
-                      <div className="text-xs text-zinc-400">{hospital.location}</div>
+                    <div className="flex-grow min-w-0">
+                      <div className="font-semibold text-ink-900 text-sm truncate">{hospital.name}</div>
+                      <div className="text-xs text-ink-500 flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3" />{hospital.location}
+                      </div>
                     </div>
+                    {hospital.rating > 0 && (
+                      <div className="flex items-center gap-1 shrink-0 bg-honey-50 px-2 py-1 rounded-md">
+                        <Star className="w-3 h-3 fill-honey-400 text-honey-400" />
+                        <span className="text-xs font-bold text-ink-700">{Number(hospital.rating).toFixed(1)}</span>
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
             )}
 
             {showSuggestions && searchTerm.trim().length > 0 && suggestions.length === 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl shadow-zinc-200/50 border border-zinc-100 py-6 text-center z-50">
-                <p className="text-zinc-400 text-sm mb-2">No hospital found.</p>
+              <div className="absolute top-full left-0 right-0 mt-2 bg-cream-50 rounded-2xl shadow-warm-xl border border-cream-300 py-6 px-4 text-center z-50">
+                <p className="text-ink-600 text-sm mb-2">Couldn’t find that one.</p>
                 <Link
                   href="/add"
                   className="text-brand-600 font-semibold text-sm hover:underline inline-flex items-center gap-1"
@@ -159,10 +180,10 @@ export default function SearchHospital() {
           </div>
 
           <div className="mt-10">
-            <p className="text-zinc-300 text-sm mb-2.5">Can&apos;t find your hospital?</p>
+            <p className="text-ink-500 text-[13.5px] mb-3">Can&apos;t find your hospital?</p>
             <Link
               href="/add"
-              className="inline-flex items-center gap-1.5 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200 text-sm font-medium py-2.5 px-5 rounded-lg transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 bg-cream-50 hover:bg-cream-200/70 text-ink-800 border border-cream-300 text-sm font-semibold py-2.5 px-5 rounded-xl transition-all active:scale-95 shadow-warm-sm"
             >
               <Plus className="w-4 h-4" />
               Add Hospital

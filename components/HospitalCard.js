@@ -1,18 +1,19 @@
 import Link from 'next/link';
 import { Star, MapPin, ArrowRight } from 'lucide-react';
 
-function getRatingAccent(rating) {
-    if (rating >= 4.5) return 'bg-emerald-500';
-    if (rating >= 4)   return 'bg-green-400';
-    if (rating >= 3)   return 'bg-amber-400';
-    if (rating >= 2)   return 'bg-orange-400';
-    return 'bg-red-400';
+function getRatingTone(rating) {
+    if (rating >= 4.5) return { chip: 'bg-emerald-100 text-emerald-700 ring-emerald-200', label: 'Shockingly good' };
+    if (rating >= 4)   return { chip: 'bg-green-100 text-green-700 ring-green-200',       label: 'Would eat again' };
+    if (rating >= 3)   return { chip: 'bg-honey-100 text-honey-700 ring-honey-200',       label: 'Did the job'     };
+    if (rating >= 2)   return { chip: 'bg-orange-100 text-orange-700 ring-orange-200',    label: 'Pack snacks'     };
+    if (rating > 0)    return { chip: 'bg-red-100 text-red-700 ring-red-200',             label: 'Pray first'      };
+    return                    { chip: 'bg-cream-200 text-ink-500 ring-cream-300',         label: 'Not yet rated'   };
 }
 
 export default function HospitalCard({ hospital }) {
-    const rating = Number(hospital.rating || 0);
+    const rating     = Number(hospital.rating || 0);
     const numRatings = Number(hospital.numRatings || 0);
-    const accentClass = getRatingAccent(rating);
+    const tone       = getRatingTone(rating);
 
     const renderStars = () => {
         const stars = [];
@@ -21,10 +22,10 @@ export default function HospitalCard({ hospital }) {
             stars.push(
                 <Star
                     key={i}
-                    className={`w-3 h-3 ${
+                    className={`w-3.5 h-3.5 ${
                         i <= rounded
-                            ? 'text-amber-400 fill-amber-400'
-                            : 'text-zinc-200 fill-zinc-200'
+                            ? 'text-honey-400 fill-honey-400'
+                            : 'text-cream-300 fill-cream-300'
                     }`}
                 />
             );
@@ -33,72 +34,56 @@ export default function HospitalCard({ hospital }) {
     };
 
     return (
-        <Link href={`/hospital/${hospital.id}`} className="block h-full group">
-            <div className="h-full bg-white rounded-2xl border border-zinc-100 hover:border-blue-100 hover:shadow-xl hover:shadow-blue-50/80 transition-all duration-250 hover:-translate-y-1 flex flex-col overflow-hidden">
+        <Link
+            href={`/hospital/${hospital.id}`}
+            className="block h-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100 rounded-2xl"
+        >
+            <article className="h-full bg-cream-50 rounded-2xl border border-cream-300/70 hover:border-brand-200 shadow-warm-sm hover:shadow-warm-md transition-all duration-200 hover:-translate-y-1 flex flex-col overflow-hidden">
 
-                {/* Rating progress bar */}
-                {rating > 0 && (
-                    <div className="h-[3px] w-full bg-zinc-100 rounded-t-2xl overflow-hidden">
-                        <div
-                            className={`h-full ${accentClass} transition-all duration-500`}
-                            style={{ width: `${(rating / 5) * 100}%` }}
-                        />
-                    </div>
-                )}
-
+                {/* Top row – big rating chip + meta */}
                 <div className="p-5 flex flex-col flex-grow">
-                    <div className="flex items-center justify-between mb-3 gap-2">
-                        <div className="flex items-center gap-1.5">
-                            <div className="flex items-center gap-0.5">
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                        <div className={`inline-flex items-center justify-center min-w-[52px] h-13 px-3 py-2 rounded-xl ring-1 ${tone.chip} font-display font-semibold text-2xl leading-none`}>
+                            {rating > 0 ? rating.toFixed(1) : '—'}
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="flex items-center gap-0.5" aria-label={`${rating} stars`}>
                                 {renderStars()}
                             </div>
-                            {rating > 0 && (
-                                <span className="text-[13px] font-bold text-zinc-800 ml-0.5">
-                                    {rating.toFixed(1)}
-                                </span>
-                            )}
+                            <span className="text-[11px] text-ink-400 font-medium">
+                                {numRatings === 0 ? 'No reviews yet' : `${numRatings} ${numRatings === 1 ? 'review' : 'reviews'}`}
+                            </span>
                         </div>
-                        <span className="text-[11px] text-zinc-400 font-medium whitespace-nowrap">
-                            {numRatings === 0 ? 'No reviews' : `${numRatings} ${numRatings === 1 ? 'review' : 'reviews'}`}
-                        </span>
                     </div>
 
-                    <h3 className="text-[15px] font-semibold text-zinc-900 leading-snug group-hover:text-brand-600 transition-colors duration-150 mb-1.5">
+                    <h3 className="font-display text-[18px] font-semibold text-ink-900 leading-snug group-hover:text-brand-700 transition-colors mb-1.5">
                         {hospital.name}
                     </h3>
 
-                    <p className="text-zinc-400 text-[13px] flex items-center gap-1 mb-3 flex-grow">
-                        <MapPin className="w-3 h-3 shrink-0" />
+                    <p className="text-ink-500 text-[13px] flex items-center gap-1.5 mb-3">
+                        <MapPin className="w-3.5 h-3.5 shrink-0 text-ink-400" />
                         <span className="line-clamp-1">{hospital.location}</span>
                     </p>
 
                     {hospital.reviewSnippet && (
-                        <div className="mb-3 bg-zinc-50 rounded-xl px-3 py-2.5 border border-zinc-100/80">
-                            <p className="text-zinc-500 text-xs italic line-clamp-2 leading-relaxed">
+                        <div className="mb-3 bg-cream-100 rounded-xl px-3.5 py-2.5 border border-cream-300/70 flex-grow">
+                            <p className="text-ink-600 text-[13px] italic line-clamp-2 leading-relaxed">
                                 &ldquo;{hospital.reviewSnippet}&rdquo;
                             </p>
                         </div>
                     )}
 
-                    {hospital.tags && hospital.tags.length > 0 && (
-                        <div className="flex gap-1.5 flex-wrap mt-auto pt-1">
-                            {hospital.tags.slice(0, 3).map(tag => (
-                                <span
-                                    key={tag}
-                                    className="bg-brand-50 text-brand-600 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                    )}
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                        <span className={`text-[11px] font-bold uppercase tracking-wider ${rating > 0 ? 'text-brand-600' : 'text-ink-400'}`}>
+                            {tone.label}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-ink-500 group-hover:text-brand-600 group-hover:gap-2 transition-all">
+                            View
+                            <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
+                    </div>
                 </div>
-
-                <div className="px-5 py-3 border-t border-zinc-50 bg-zinc-50/60 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-200">
-                    <span className="text-xs font-semibold text-brand-600">View details</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-brand-500 translate-x-0 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-            </div>
+            </article>
         </Link>
     );
 }

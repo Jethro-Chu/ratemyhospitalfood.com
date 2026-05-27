@@ -1,46 +1,55 @@
 import Link from 'next/link';
+import { Utensils, Heart } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-zinc-100 bg-white py-12 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row items-start justify-between gap-8">
+    <footer className="border-t border-cream-300/60 bg-cream-50 mt-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-10">
 
           {/* Brand */}
-          <div className="max-w-xs">
-            <p className="text-sm font-bold text-zinc-900">Rate My Hospital Food</p>
-            <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-              A community-driven project helping patients and staff discover the best (and worst) hospital cafeterias.
+          <div className="sm:col-span-1">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-warm">
+                <Utensils className="w-4 h-4 text-cream-50" strokeWidth={2.5} />
+              </div>
+              <p className="font-display font-semibold text-[15px] text-ink-900">Rate My Hospital Food</p>
+            </div>
+            <p className="text-[13px] text-ink-500 leading-relaxed max-w-xs">
+              A community-driven guide to the best (and worst) hospital cafeterias.
+              Real reviews from patients, staff, and visitors.
             </p>
           </div>
 
-          {/* Links */}
-          <div className="flex flex-col sm:flex-row gap-8 text-sm">
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Explore</span>
-              <Link href="/" className="text-zinc-500 hover:text-zinc-900 transition-colors">Home</Link>
-              <Link href="/top-rated" className="text-zinc-500 hover:text-zinc-900 transition-colors">Top Rated</Link>
-              <Link href="/recent-reviews" className="text-zinc-500 hover:text-zinc-900 transition-colors">Recent Reviews</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Contribute</span>
-              <Link href="/add" className="text-zinc-500 hover:text-zinc-900 transition-colors">Add Hospital</Link>
-              <Link href="/search" className="text-zinc-500 hover:text-zinc-900 transition-colors">Write a Review</Link>
-            </div>
+          {/* Explore */}
+          <div>
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-ink-400 mb-3">Explore</h3>
+            <ul className="flex flex-col gap-2 text-[14px]">
+              <li><Link href="/"               className="text-ink-600 hover:text-brand-600 transition-colors">Home</Link></li>
+              <li><Link href="/top-rated"      className="text-ink-600 hover:text-brand-600 transition-colors">Top Rated</Link></li>
+              <li><Link href="/recent-reviews" className="text-ink-600 hover:text-brand-600 transition-colors">Recent Reviews</Link></li>
+            </ul>
+          </div>
+
+          {/* Contribute */}
+          <div>
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-ink-400 mb-3">Contribute</h3>
+            <ul className="flex flex-col gap-2 text-[14px]">
+              <li><Link href="/add"    className="text-ink-600 hover:text-brand-600 transition-colors">Add a Hospital</Link></li>
+              <li><Link href="/search" className="text-ink-600 hover:text-brand-600 transition-colors">Write a Review</Link></li>
+            </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} Rate My Hospital Food. For entertainment purposes.
-          </p>
-          <p className="text-xs text-zinc-400">
-            Built by{' '}
+        <div className="mt-10 pt-6 border-t border-cream-300/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-ink-400">
+          <p>&copy; {new Date().getFullYear()} Rate My Hospital Food. For entertainment purposes.</p>
+          <p className="inline-flex items-center gap-1.5">
+            Built with <Heart className="w-3 h-3 fill-brand-500 text-brand-500" /> by{' '}
             <a
               href="https://www.instagram.com/jethrochu"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-zinc-600 hover:text-blue-600 transition-colors"
+              className="font-medium text-ink-700 hover:text-brand-600 transition-colors"
             >
               @jethrochu
             </a>
