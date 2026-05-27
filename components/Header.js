@@ -38,8 +38,8 @@ export default function Header() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
 
                 <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Rate My Hospital Food home">
-                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 shadow-warm flex items-center justify-center transition-transform group-hover:scale-105 group-hover:-rotate-3 duration-200">
-                        <Utensils className="w-5 h-5 text-cream-50" strokeWidth={2.5} />
+                    <div className="w-10 h-10 rounded-2xl bg-brand-500 ring-1 ring-brand-600/30 shadow-warm-md flex items-center justify-center transition-transform group-hover:scale-105 group-hover:-rotate-3 duration-200">
+                        <Utensils className="w-5 h-5 text-white" strokeWidth={2.5} />
                     </div>
                     <div className="flex flex-col leading-none">
                         <span className="font-display font-semibold text-[17px] text-ink-900 tracking-tight whitespace-nowrap">

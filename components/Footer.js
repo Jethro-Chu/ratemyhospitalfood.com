@@ -10,8 +10,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-1">
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-warm">
-                <Utensils className="w-4 h-4 text-cream-50" strokeWidth={2.5} />
+              <div className="w-9 h-9 rounded-xl bg-brand-500 ring-1 ring-brand-600/30 flex items-center justify-center shadow-warm-md">
+                <Utensils className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <p className="font-display font-semibold text-[15px] text-ink-900">Rate My Hospital Food</p>
             </div>
