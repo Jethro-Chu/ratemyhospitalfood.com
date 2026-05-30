@@ -10,6 +10,7 @@ const navLinks = [
     { href: '/top-rated',      label: 'Top Rated'      },
     { href: '/recent-reviews', label: 'Recent Reviews' },
     { href: '/add',            label: 'Add Hospital'   },
+    { href: '/games',          label: 'Games'          },
 ];
 
 export default function Header() {

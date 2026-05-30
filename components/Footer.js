@@ -28,6 +28,7 @@ export default function Footer() {
               <li><Link href="/"               className="text-ink-600 hover:text-brand-600 transition-colors">Home</Link></li>
               <li><Link href="/top-rated"      className="text-ink-600 hover:text-brand-600 transition-colors">Top Rated</Link></li>
               <li><Link href="/recent-reviews" className="text-ink-600 hover:text-brand-600 transition-colors">Recent Reviews</Link></li>
+              <li><Link href="/games"          className="text-ink-600 hover:text-brand-600 transition-colors">Games</Link></li>
             </ul>
           </div>
 
