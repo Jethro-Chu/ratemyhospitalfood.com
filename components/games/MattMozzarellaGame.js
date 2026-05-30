@@ -20,7 +20,7 @@ export default function MattMozzarellaGame() {
     const [screen, setScreen] = useState('start'); // start|howto|chapters|intro|playing|paused|levelcomplete|gameover|endcutscene|victory
     const [levelIndex, setLevelIndex] = useState(0);
     const [hud, setHud] = useState({ hearts: 3, score: 0, crumbs: 0, totalCrumbs: 0, levelName: '', hasCookie: false });
-    const [dialogue, setDialogue] = useState(null);
+    const [toast, setToast] = useState(null);        // non-blocking notification
     const [cutscene, setCutscene] = useState(null); // { cards:[], index, next:'playing'|'levelcomplete' }
     const [result, setResult] = useState(null);     // level-complete summary
     const [muted, setMuted] = useState(false);
@@ -28,8 +28,20 @@ export default function MattMozzarellaGame() {
     // refs mirrored for engine callbacks (avoid stale closures)
     const screenRef = useRef(screen);
     const levelRef = useRef(levelIndex);
+    const toastTimer = useRef(null);
     useEffect(() => { screenRef.current = screen; }, [screen]);
     useEffect(() => { levelRef.current = levelIndex; }, [levelIndex]);
+
+    // Show a toast that auto-dismisses (duration scales with text length).
+    const showToast = useCallback((t) => {
+        if (!t) return;
+        setToast(t);
+        if (toastTimer.current) clearTimeout(toastTimer.current);
+        const dur = Math.min(6000, 2400 + t.text.length * 42);
+        toastTimer.current = setTimeout(() => setToast(null), dur);
+    }, []);
+
+    useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
 
     // ---- engine bootstrap ------------------------------------------------
     useEffect(() => {
@@ -37,7 +49,7 @@ export default function MattMozzarellaGame() {
         const engine = new GameEngine(canvasRef.current, {
             audio: audioRef.current,
             onHud: (h) => setHud(h),
-            onDialogue: (d) => setDialogue(d),
+            onToast: (t) => showToast(t),
             onReachGoal: () => {
                 const lvl = LEVELS[levelRef.current];
                 setCutscene({ cards: lvl.endCutscene || [], index: 0, next: 'levelcomplete' });
@@ -73,6 +85,7 @@ export default function MattMozzarellaGame() {
     const goPlay = useCallback((idx) => {
         const engine = engineRef.current;
         if (!engine) return;
+        setToast(null);
         engine.loadLevel(LEVELS[idx]);
         engine.resume();
         engine.start();
@@ -123,6 +136,7 @@ export default function MattMozzarellaGame() {
 
     const restartLevel = useCallback(() => {
         tap();
+        setToast(null);
         const e = engineRef.current;
         e.loadLevel(LEVELS[levelRef.current]);
         e.resume();
@@ -228,32 +242,28 @@ export default function MattMozzarellaGame() {
                     </div>
                 )}
 
-                {/* Dialogue box overlay */}
-                {isPlaying && dialogue && dialogue.lines[0] && (
-                    <button
-                        onClick={() => { tap(); engineRef.current?.advanceDialogue(); }}
-                        className="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-left pointer-events-auto"
-                        aria-label="Continue dialogue"
+                {/* Non-blocking toast — slides in near the top, never pauses play */}
+                {isPlaying && toast && (
+                    <div
+                        key={toast.id}
+                        className="absolute top-11 sm:top-12 left-1/2 -translate-x-1/2 w-[88%] max-w-[440px] z-20 pointer-events-none animate-fade-up"
                     >
-                        <div className="max-w-[640px] mx-auto bg-cream-50/95 backdrop-blur border border-cream-300 rounded-2xl shadow-warm-lg p-3.5 sm:p-4 flex items-start gap-3">
-                            {dialogue.lines[0].sprite && (
-                                <div className="shrink-0 bg-cream-100 rounded-xl p-1.5 border border-cream-300/70">
-                                    <PixelSprite spriteKey={dialogue.lines[0].sprite} scale={3} alt={dialogue.lines[0].speaker} />
+                        <div className="bg-cream-50/95 backdrop-blur border border-cream-300 rounded-2xl shadow-warm-md px-3.5 py-2.5 flex items-start gap-2.5">
+                            {toast.sprite && (
+                                <div className="shrink-0 bg-cream-100 rounded-lg p-1 border border-cream-300/70">
+                                    <PixelSprite spriteKey={toast.sprite} scale={3} alt={toast.speaker} />
                                 </div>
                             )}
                             <div className="min-w-0">
-                                <div className="text-[10px] font-bold uppercase tracking-widest text-brand-600 mb-0.5">
-                                    {dialogue.lines[0].speaker}
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-brand-600 mb-0.5">
+                                    {toast.speaker}
                                 </div>
-                                <p className="text-ink-800 text-[13px] sm:text-[14px] leading-snug">
-                                    {dialogue.lines[0].text}
+                                <p className="text-ink-800 text-[12px] sm:text-[13px] leading-snug">
+                                    {toast.text}
                                 </p>
-                                <div className="text-[10px] text-ink-400 mt-1.5 flex items-center gap-1">
-                                    Tap to continue <ChevronRight className="w-3 h-3" />
-                                </div>
                             </div>
                         </div>
-                    </button>
+                    </div>
                 )}
 
                 {/* ===== SCREEN OVERLAYS ===== */}
