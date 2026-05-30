@@ -106,6 +106,15 @@ export default function MattMozzarellaGame() {
         }
     }, [goPlay]);
 
+    // Dev/testing: jump straight to a level via ?level=2 (1-based, unlocked only)
+    useEffect(() => {
+        const n = parseInt(new URLSearchParams(window.location.search).get('level'), 10);
+        if (!Number.isNaN(n) && n >= 1 && n <= LEVELS.length && !LEVELS[n - 1].locked) {
+            beginLevel(n - 1);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [beginLevel]);
+
     const advanceCutscene = useCallback(() => {
         tap();
         setCutscene((cs) => {
@@ -224,6 +233,29 @@ export default function MattMozzarellaGame() {
                                 className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/15 hover:bg-white/25 text-white transition-colors">
                                 <Pause className="w-3.5 h-3.5" />
                             </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Boss health bar (valves opened) */}
+                {isPlaying && hud.boss && (
+                    <div className="absolute top-9 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-white drop-shadow">
+                            {hud.boss.defeated ? 'Defeated!' : hud.boss.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 bg-ink-900/50 rounded-full px-2.5 py-1">
+                            {Array.from({ length: hud.boss.total }).map((_, i) => (
+                                <span
+                                    key={i}
+                                    aria-label={i < hud.boss.valves ? 'valve open' : 'valve closed'}
+                                    className={`w-2.5 h-2.5 rounded-full border ${
+                                        i < hud.boss.valves
+                                            ? 'bg-honey-400 border-honey-300'
+                                            : 'bg-brand-500/80 border-white/40'
+                                    }`}
+                                />
+                            ))}
+                            <span className="text-[8px] font-bold uppercase tracking-wider text-white/70 ml-1">valves</span>
                         </div>
                     </div>
                 )}
@@ -409,12 +441,19 @@ export default function MattMozzarellaGame() {
                             <Row label="Total"><span className="text-honey-300 font-extrabold">{result.score}</span></Row>
                         </div>
                         <div className="flex flex-col items-center gap-2 mt-5 w-full px-8 max-w-xs">
+                            {result.nextIndex !== null && !LEVELS[result.nextIndex]?.locked && (
+                                <BigButton onClick={() => beginLevel(result.nextIndex)} primary>
+                                    Next Level <ChevronRight className="w-4 h-4" />
+                                </BigButton>
+                            )}
                             {result.nextIndex !== null && LEVELS[result.nextIndex]?.locked && (
                                 <div className="text-cream-100/70 text-[12px] flex items-center gap-1.5">
-                                    <Lock className="w-3 h-3" /> Level {result.nextIndex + 1}: {LEVELS[result.nextIndex].name} — coming soon
+                                    <Lock className="w-3 h-3" /> Next: {LEVELS[result.nextIndex].name} — coming soon
                                 </div>
                             )}
-                            <BigButton onClick={restartLevel} primary><RotateCcw className="w-4 h-4" /> Play Again</BigButton>
+                            <BigButton onClick={restartLevel} primary={result.nextIndex === null || LEVELS[result.nextIndex]?.locked}>
+                                <RotateCcw className="w-4 h-4" /> Play Again
+                            </BigButton>
                             <BigButton onClick={() => { tap(); setScreen('chapters'); }}>Chapters</BigButton>
                             <Link href="/games" className="text-cream-100/60 hover:text-white text-[12px] mt-1 inline-flex items-center gap-1 transition-colors">
                                 <Home className="w-3 h-3" /> Back to Games
