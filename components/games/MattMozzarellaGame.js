@@ -261,7 +261,7 @@ export default function MattMozzarellaGame() {
                     <Overlay>
                         <PixelSprite spriteKey="matt_idle" scale={5} alt="Matt Mozzarella" className="mb-3 animate-bounce" />
                         <h1 className="font-display text-[26px] sm:text-[34px] font-semibold text-white leading-[1.05] px-4">
-                            Matt Mozzarella<br />
+                            Matt&rsquo;s Mozzarella<br />
                             <span className="text-honey-300">and the Sweetheart Quest</span>
                         </h1>
                         <p className="text-cream-100/80 text-[12px] sm:text-[13.5px] max-w-md mt-3 px-6 leading-relaxed">

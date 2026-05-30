@@ -72,7 +72,7 @@ export default function GamesPage() {
                                     2D Pixel Food Adventure
                                 </span>
                                 <h2 className="font-display text-[26px] sm:text-[30px] font-semibold text-ink-900 leading-tight">
-                                    Matt Mozzarella and the Sweetheart Quest
+                                    Matt&rsquo;s Mozzarella and the Sweetheart Quest
                                 </h2>
                                 <p className="text-ink-600 text-[14.5px] leading-relaxed mt-3">
                                     Run, jump, and throw marinara through five food-filled levels to rescue Princess Peach Tart from King Charbroil.
