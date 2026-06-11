@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Utensils, Heart } from 'lucide-react';
+import { Utensils, Heart, Radar } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -43,7 +43,17 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-cream-300/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-ink-400">
-          <p>&copy; {new Date().getFullYear()} Rate My Hospital Food. For entertainment purposes.</p>
+          <p className="inline-flex items-center gap-2">
+            &copy; {new Date().getFullYear()} Rate My Hospital Food. For entertainment purposes.
+            <Link
+              href="/abyss"
+              aria-label="Signal detected below safe depth"
+              title="Signal detected below safe depth"
+              className="opacity-30 hover:opacity-100 hover:text-cyan-600 transition-all duration-300"
+            >
+              <Radar className="w-3.5 h-3.5" />
+            </Link>
+          </p>
           <p className="inline-flex items-center gap-1.5">
             Built with <Heart className="w-3 h-3 fill-brand-500 text-brand-500" /> by{' '}
             <a
