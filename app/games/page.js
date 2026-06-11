@@ -4,12 +4,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AnimatedSection from '@/components/AnimatedSection';
 import PixelSprite from '@/components/games/PixelSprite';
+import { SPRITES as DASH_SPRITES } from '@/lib/games/trayDash/sprites';
 import Link from 'next/link';
-import { Gamepad2, Play, Sparkles, Star, Smartphone, Layers, Lock } from 'lucide-react';
+import { Gamepad2, Play, Sparkles, Star, Smartphone, Layers, Lock, Zap, Trophy } from 'lucide-react';
 
 const COMING_SOON = [
     { title: 'Mystery Meat Match', tag: 'Memory Game', blurb: 'Flip cafeteria trays and match the mystery dishes before the lunch bell.', emoji: '🍖' },
-    { title: 'Tray Dash', tag: 'Endless Runner', blurb: 'Dash down the lunch line grabbing jello and dodging spilled soup.', emoji: '🍮' },
     { title: 'Soup or Nope', tag: 'Quick Decisions', blurb: 'Swipe yes or no on each bowl. Trust your gut. Survive the broth.', emoji: '🥣' },
 ];
 
@@ -95,6 +95,63 @@ export default function GamesPage() {
                     </div>
                 </AnimatedSection>
 
+                {/* Featured game #2 — Tray Dash */}
+                <AnimatedSection delay={100} className="mt-8">
+                    <div className="relative overflow-hidden rounded-3xl border border-cream-300/70 shadow-warm-lg bg-cream-50">
+                        <div className="grid grid-cols-1 lg:grid-cols-2">
+
+                            {/* Pixel scene — checkered cafeteria floor */}
+                            <div className="relative p-8 sm:p-10 flex items-end justify-center min-h-[240px] overflow-hidden lg:order-2 bg-[#f8e9c9]">
+                                <div className="absolute top-5 left-5 inline-flex items-center gap-1.5 bg-cream-50/90 border border-brand-200/60 text-brand-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest shadow-warm-sm z-10">
+                                    <Sparkles className="w-3 h-3" /> Now Playable
+                                </div>
+                                <div className="absolute top-10 right-10 animate-float"><PixelSprite sprite={DASH_SPRITES.jello} scale={4} alt="Jello cup" /></div>
+                                <div className="absolute top-24 right-28 animate-float-delay"><PixelSprite sprite={DASH_SPRITES.shield_bubble} scale={3} alt="Jello Shield" /></div>
+                                <div className="absolute top-16 left-10 animate-float-delay"><PixelSprite sprite={DASH_SPRITES.tray_fly} scale={3} alt="Flying tray" /></div>
+                                <div className="flex items-end gap-5 mb-2">
+                                    <PixelSprite sprite={DASH_SPRITES.tot_run1} scale={6} alt="Scooter Tot running" />
+                                    <PixelSprite sprite={DASH_SPRITES.meatball_roll} scale={5} alt="Runaway meatball" />
+                                </div>
+                                {/* checkered floor strip */}
+                                <div
+                                    className="absolute bottom-0 inset-x-0 h-7"
+                                    style={{
+                                        background: 'repeating-linear-gradient(90deg, #f0e1c0 0 28px, #e0caa0 28px 56px)',
+                                        borderTop: '3px solid #b98d52',
+                                    }}
+                                />
+                            </div>
+
+                            {/* Details */}
+                            <div className="p-7 sm:p-9 flex flex-col lg:order-1">
+                                <span className="inline-flex items-center gap-1.5 bg-honey-100 text-honey-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest w-fit mb-3">
+                                    Endless Runner
+                                </span>
+                                <h2 className="font-display text-[26px] sm:text-[30px] font-semibold text-ink-900 leading-tight">
+                                    Tray Dash
+                                </h2>
+                                <p className="text-ink-600 text-[14.5px] leading-relaxed mt-3">
+                                    Sprint down an endless lunch line — leap soup spills, slide under flying trays,
+                                    and grab every jello cup as the rush gets faster and faster. One crash and it&rsquo;s over!
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mt-5">
+                                    <Feature icon={Zap}>Gets faster forever</Feature>
+                                    <Feature icon={Smartphone}>Phone &amp; desktop</Feature>
+                                    <Feature icon={Trophy}>Beat your best</Feature>
+                                </div>
+
+                                <Link
+                                    href="/games/tray-dash"
+                                    className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold py-3.5 px-7 rounded-xl text-[15px] transition-all active:scale-[0.97] shadow-warm hover:shadow-warm-md w-full sm:w-fit"
+                                >
+                                    <Play className="w-4 h-4" /> Play Now
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </AnimatedSection>
+
                 {/* Coming soon library */}
                 <AnimatedSection delay={120} className="mt-14">
                     <div className="flex items-center gap-2 mb-5">
@@ -103,7 +160,7 @@ export default function GamesPage() {
                             In the kitchen
                         </span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {COMING_SOON.map((g, i) => (
                             <AnimatedSection key={g.title} delay={i * 100}>
                                 <div className="relative h-full bg-cream-50 border border-cream-300/70 rounded-3xl p-6 shadow-warm-sm">

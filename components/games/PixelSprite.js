@@ -3,12 +3,14 @@ import { useEffect, useRef } from 'react';
 import { SPRITES, getSpriteCanvas } from '@/lib/games/mattMozzarella/sprites';
 
 /**
- * Renders a single pixel-art sprite (by key) to a crisp upscaled canvas.
+ * Renders a single pixel-art sprite to a crisp upscaled canvas.
  * Used for HUD icons, cutscene portraits, and the games-page card art.
+ * Accepts either a `spriteKey` from the Matt Mozzarella set or a raw
+ * `sprite` object (e.g. from another game's sprite sheet).
  */
-export default function PixelSprite({ spriteKey, scale = 4, className = '', alt = '' }) {
+export default function PixelSprite({ spriteKey, sprite: spriteProp, scale = 4, className = '', alt = '' }) {
     const ref = useRef(null);
-    const sprite = SPRITES[spriteKey];
+    const sprite = spriteProp || SPRITES[spriteKey];
 
     useEffect(() => {
         const canvas = ref.current;
