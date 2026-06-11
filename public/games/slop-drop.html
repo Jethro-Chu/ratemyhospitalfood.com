@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Slop Drop — Rate My Hospital Food</title>
+<!--
+  SLOP DROP — a hospital-cafeteria physics merge game.
+  One self-contained file. No backend, no build step, no AI.
+  Only external resource: matter.js from cdnjs.
+-->
+<style>
+  :root {
+    --mint: #e7efe9;
+    --mint-deep: #d8e4dc;
+    --steel: #aeb7bf;
+    --steel-dark: #8d969e;
+    --ink: #2b221b;
+    --ink-soft: #4e4334;
+    --cream: #fff7ec;
+    --cream-2: #fcefdb;
+    --brand: #f25d2c;
+    --brand-dark: #dd4a1b;
+    --honey: #ea9c0e;
+    --gold: #d9a514;
+    --red: #d94f3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: var(--mint);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--ink);
+    -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #stage-wrap {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 79px, rgba(0,0,0,0.025) 79px 80px),
+      repeating-linear-gradient(90deg, transparent 0 79px, rgba(0,0,0,0.025) 79px 80px),
+      var(--mint);
+  }
+  #stage {
+    position: relative;
+    touch-action: none;
+  }
+  canvas { display: block; touch-action: none; }
+
+  /* ---------- HUD ---------- */
+  #hud {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 10px 12px 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(255, 252, 247, 0.92);
+    border: 1px solid rgba(43, 34, 27, 0.12);
+    border-radius: 12px;
+    padding: 6px 10px;
+    box-shadow: 0 2px 8px -2px rgba(101, 32, 11, 0.10);
+  }
+  #score-card { min-width: 96px; }
+  #score-label, #next-label {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #998976;
+  }
+  #score { font: 700 22px ui-monospace, 'SF Mono', Menlo, 'Courier New', monospace; line-height: 1.1; }
+  #best { font: 600 10px ui-monospace, Menlo, 'Courier New', monospace; color: #6f6152; }
+  #combo-chip {
+    display: none; margin-top: 3px;
+    font-size: 11px; font-weight: 800; color: var(--brand-dark);
+  }
+  #right-hud { display: flex; gap: 8px; align-items: flex-start; pointer-events: auto; }
+  #next-card { text-align: center; }
+  #next-emoji { font-size: 24px; line-height: 1.2; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border: 1px solid rgba(43, 34, 27, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 252, 247, 0.92);
+    font-size: 17px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px -2px rgba(101, 32, 11, 0.10);
+  }
+  .icon-btn:active { transform: scale(0.94); }
+
+  /* ---------- review toast ---------- */
+  #toast {
+    position: absolute; top: 64px; left: 50%;
+    transform: translateX(-50%);
+    width: min(86%, 360px);
+    background: var(--cream);
+    border: 1px solid rgba(43, 34, 27, 0.15);
+    border-left: 4px solid var(--gold);
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: 0 8px 24px -8px rgba(101, 32, 11, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 6;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.hide { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  #toast-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  }
+  #toast-name {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #toast-stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+  #toast-line {
+    margin-top: 3px;
+    font: 12px/1.45 ui-monospace, 'SF Mono', Menlo, 'Courier New', monospace;
+    color: var(--ink);
+  }
+
+  /* ---------- jackpot banner ---------- */
+  #jackpot {
+    position: absolute; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 7;
+    text-align: center;
+  }
+  #jackpot.show { display: flex; animation: jackpotIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  #jackpot-stars { font-size: 30px; letter-spacing: 4px; text-shadow: 0 2px 12px rgba(217, 165, 20, 0.8); }
+  #jackpot-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(20px, 7vw, 32px); font-weight: 700;
+    color: var(--ink);
+    background: linear-gradient(180deg, #fff7df, #ffe9ad);
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 10px 18px; margin: 8px 14px 0;
+    box-shadow: 0 16px 40px -10px rgba(140, 90, 4, 0.45);
+  }
+  #jackpot-sub {
+    margin-top: 8px;
+    font: 12px ui-monospace, Menlo, monospace; color: var(--ink-soft);
+    background: rgba(255, 252, 247, 0.9);
+    padding: 4px 10px; border-radius: 8px;
+  }
+  @keyframes jackpotIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ---------- overlays ---------- */
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(43, 34, 27, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 10;
+    padding: 16px;
+  }
+  .menu-card {
+    width: min(100%, 380px);
+    max-height: 94%;
+    overflow-y: auto;
+    background: var(--cream);
+    border: 1px solid rgba(43, 34, 27, 0.2);
+    border-radius: 18px;
+    box-shadow: 0 30px 60px -15px rgba(19, 16, 11, 0.5);
+    padding: 22px 20px 18px;
+    text-align: center;
+  }
+  .menu-rule {
+    height: 0; border-top: 2px dashed rgba(43, 34, 27, 0.18);
+    margin: 12px 0;
+  }
+  .eyebrow {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #998976;
+  }
+  h1.title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 40px; line-height: 1; letter-spacing: 0.01em;
+    margin-top: 4px; color: var(--ink);
+  }
+  h1.title .drop { color: var(--brand); }
+  .subtitle { margin-top: 6px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .howto {
+    margin-top: 10px;
+    font: 11.5px/1.6 ui-monospace, Menlo, 'Courier New', monospace;
+    color: var(--ink-soft);
+    background: var(--cream-2);
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .best-chip {
+    display: inline-block; margin-top: 10px;
+    font: 700 12px ui-monospace, Menlo, monospace;
+    background: #fff1c7; color: #8e5a04;
+    border: 1px solid #ffe08c;
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .big-btn {
+    display: block; width: 100%;
+    margin-top: 14px;
+    background: var(--brand); color: #fff;
+    border: 0; border-radius: 14px;
+    padding: 14px;
+    font-size: 16px; font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 8px 24px -8px rgba(181, 57, 20, 0.5);
+  }
+  .big-btn:active { transform: scale(0.97); background: var(--brand-dark); }
+  .ghost-btn {
+    display: block; width: 100%;
+    margin-top: 8px;
+    background: transparent; color: var(--ink-soft);
+    border: 1px solid rgba(43, 34, 27, 0.2);
+    border-radius: 14px;
+    padding: 10px;
+    font-size: 13px; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .menu-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 6px; margin-top: 10px;
+  }
+  .menu-item {
+    background: #fffcf7;
+    border: 1px solid rgba(43, 34, 27, 0.12);
+    border-radius: 10px;
+    padding: 6px 2px 5px;
+  }
+  .menu-item .mi-emoji { font-size: 20px; }
+  .menu-item .mi-name {
+    font-size: 7.5px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-soft);
+    margin-top: 2px; line-height: 1.25;
+  }
+  .menu-item.locked { opacity: 0.55; }
+  .menu-item.locked .mi-emoji { filter: grayscale(1); opacity: 0.5; }
+  .menu-item.gold {
+    background: linear-gradient(180deg, #fff7df, #ffeebb);
+    border-color: var(--gold);
+  }
+  .micro {
+    margin-top: 12px;
+    font-size: 9.5px; color: #998976; line-height: 1.5;
+  }
+  .card-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px; color: var(--ink); margin-top: 4px;
+  }
+  #over-line {
+    margin-top: 6px;
+    font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--ink-soft);
+  }
+  .stat-rows { margin-top: 12px; text-align: left; }
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--ink-soft);
+    padding: 5px 2px;
+    border-bottom: 1px dashed rgba(43, 34, 27, 0.12);
+  }
+  .stat-row b { font: 700 15px ui-monospace, Menlo, monospace; color: var(--ink); }
+  .newbest {
+    display: inline-block;
+    background: var(--honey); color: #fff;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+    padding: 2px 7px; border-radius: 999px;
+    margin-left: 6px; vertical-align: 2px;
+  }
+  #pause-overlay .menu-card, #error-overlay .menu-card { padding-top: 26px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="stage-wrap">
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="hud" class="hidden">
+      <div class="hud-card" id="score-card">
+        <div id="score-label">Score</div>
+        <div id="score">0</div>
+        <div id="best">Best 0</div>
+        <div id="combo-chip">COMBO ×2</div>
+      </div>
+      <div id="right-hud">
+        <div class="hud-card" id="next-card">
+          <div id="next-label">Next</div>
+          <div id="next-emoji">🧊</div>
+        </div>
+        <button class="icon-btn" id="mute-btn" aria-label="Mute">🔊</button>
+        <button class="icon-btn" id="pause-btn" aria-label="Pause">⏸</button>
+      </div>
+    </div>
+
+    <div id="toast">
+      <div id="toast-head">
+        <span id="toast-name">LIME JELL-O</span>
+        <span id="toast-stars">★★</span>
+      </div>
+      <div id="toast-line">Jiggles with confidence it hasn't earned.</div>
+    </div>
+
+    <div id="jackpot">
+      <div id="jackpot-stars">⭐⭐⭐⭐⭐</div>
+      <div id="jackpot-title">THE FABLED FIVE-STAR ENTRÉE</div>
+      <div id="jackpot-sub">+2000 — it should not exist in this building.</div>
+    </div>
+
+    <!-- start screen -->
+    <div class="overlay" id="start-overlay">
+      <div class="menu-card">
+        <div class="eyebrow">Hospital Cafeteria · Merge Service</div>
+        <h1 class="title">SLOP <span class="drop">DROP</span></h1>
+        <p class="subtitle">Drop the food in the bin. Two of the same slop merge into one greater slop. Do not overfill the bin. The bin has seen enough.</p>
+        <div class="howto">DRAG&nbsp; aim the ladle<br>RELEASE&nbsp; drop the item<br>KEYS&nbsp; ◀ ▶ aim · space drops</div>
+        <div class="best-chip" id="start-best">Best: 0</div>
+        <button class="big-btn" id="start-btn">Start Serving</button>
+        <div class="menu-rule"></div>
+        <div class="eyebrow">Today's Menu — items discovered</div>
+        <div class="menu-grid" id="menu-grid"></div>
+        <div class="micro">All reviews concern the food and only the food.<br>The food understands.</div>
+      </div>
+    </div>
+
+    <!-- game over -->
+    <div class="overlay hidden" id="over-overlay">
+      <div class="menu-card">
+        <div class="eyebrow">Service Suspended</div>
+        <div class="card-title">The bin runneth over.</div>
+        <div id="over-line">Maintenance has been notified. Maintenance is at lunch.</div>
+        <div class="stat-rows">
+          <div class="stat-row"><span>Final score</span><b id="over-score">0<span class="newbest hidden" id="over-newbest">NEW BEST</span></b></div>
+          <div class="stat-row"><span>Best score</span><b id="over-best">0</b></div>
+          <div class="stat-row"><span>Finest item served</span><b id="over-top">🧊 Ice Chips</b></div>
+        </div>
+        <button class="big-btn" id="retry-btn">Serve Another Tray</button>
+        <button class="ghost-btn" id="over-menu-btn">Back to Menu</button>
+      </div>
+    </div>
+
+    <!-- pause -->
+    <div class="overlay hidden" id="pause-overlay">
+      <div class="menu-card">
+        <div class="eyebrow">On Break</div>
+        <div class="card-title" style="margin-top:4px">Back in five.</div>
+        <button class="big-btn" id="resume-btn">Resume Service</button>
+        <button class="ghost-btn" id="pause-menu-btn">Back to Menu</button>
+      </div>
+    </div>
+
+    <!-- CDN failure -->
+    <div class="overlay hidden" id="error-overlay">
+      <div class="menu-card">
+        <div class="eyebrow">Kitchen Closed</div>
+        <div class="card-title" style="margin-top:4px">The physics didn't arrive.</div>
+        <p class="subtitle">Slop Drop needs a network connection the first time it loads (one small physics library). Check your connection and reload.</p>
+        <button class="big-btn" onclick="location.reload()">Reload</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+<script>
+'use strict';
+
+// ===========================================================================
+//  SLOP DROP — all hand-authored. No AI at runtime, no backend, no images.
+// ===========================================================================
+
+// ---------------------------------------------------------------- the menu
+// Eleven tiers of cafeteria reality. r = physics radius in world units.
+const TIERS = [
+  { name: 'Ice Chips',               emoji: '🧊', r: 15,  color: '#dceef2', rim: '#9fc4cd', stars: 1, pts: 0 },
+  { name: 'Lime Jell-O',             emoji: '🟩', r: 19,  color: '#b8e29a', rim: '#7cab5c', stars: 2, pts: 20 },
+  { name: 'Vanilla Pudding',         emoji: '🍮', r: 24,  color: '#f3e3bc', rim: '#c8a96a', stars: 2, pts: 40 },
+  { name: 'Applesauce Cup',          emoji: '🍎', r: 30,  color: '#f6d8b2', rim: '#cf9c5b', stars: 2, pts: 70 },
+  { name: 'Soggy Dinner Roll',       emoji: '🥖', r: 37,  color: '#e8d3ad', rim: '#b39660', stars: 2, pts: 110 },
+  { name: 'Rubber Scrambled Eggs',   emoji: '🍳', r: 45,  color: '#f9e9b0', rim: '#d1ae54', stars: 3, pts: 160 },
+  { name: 'Mystery Meatloaf',        emoji: '🍖', r: 54,  color: '#caa087', rim: '#8e6048', stars: 3, pts: 230 },
+  { name: 'Cafeteria Pizza Square',  emoji: '🍕', r: 64,  color: '#eec27e', rim: '#bb7f37', stars: 3, pts: 320 },
+  { name: 'Mashed Potato Mountain',  emoji: '⛰️', r: 75,  color: '#f1e9d2', rim: '#b8a87e', stars: 4, pts: 450 },
+  { name: 'The Full Tray',           emoji: '🍱', r: 87,  color: '#d8cbb4', rim: '#94815f', stars: 4, pts: 650 },
+  { name: 'Five-Star Entrée',        emoji: '🌟', r: 100, color: '#ffe9a8', rim: '#d9a514', stars: 5, pts: 2000 },
+];
+
+// The food critic. Deadpan. Tenured. Reviews the food and only the food.
+const REVIEWS = [
+  [ // 1 Ice Chips
+    'Crunchy water. The kitchen’s proudest achievement.',
+    'Served at the perfect temperature: cold, like the room.',
+    'Technically a beverage. Eventually.',
+    'The only item on the menu with zero complaints on record.',
+    'Pairs beautifully with waiting.',
+  ],
+  [ // 2 Lime Jell-O
+    'Jiggles with confidence it hasn’t earned.',
+    'Green. Aggressively, inexplicably green.',
+    'It moved before I touched it. Bold.',
+    'Flavor: lime, allegedly. Texture: ongoing legal dispute.',
+    'Holds its shape better than my expectations.',
+  ],
+  [ // 3 Vanilla Pudding
+    'The skin on top is doing structural work.',
+    'Vanilla in the way that beige is a color.',
+    'Arrived with the spoon already standing upright in it. Respect.',
+    'Smooth, cold, and emotionally distant.',
+    'A dessert that has clearly seen things.',
+  ],
+  [ // 4 Applesauce Cup
+    'The foil lid put up a real fight. The sauce did not.',
+    'Contains apple, sauce, and a faint sense of routine.',
+    'Somehow both too sweet and not sweet at all.',
+    'The expiration date is the most exciting thing about it.',
+    'Best enjoyed the way it was made: without enthusiasm.',
+  ],
+  [ // 5 Soggy Dinner Roll
+    'Absorbed something. Unclear what. Committed to it.',
+    'Less a roll, more a sponge with ambitions.',
+    'Tears apart like wet newspaper. Tastes similar.',
+    'Warm in the center. Damp everywhere else.',
+    'Would not survive a fall from the tray. Did not.',
+  ],
+  [ // 6 Rubber Scrambled Eggs
+    'Bounced once. We don’t talk about it.',
+    'Egg-adjacent. Squeaks faintly against the fork.',
+    'Cooked this morning. Which morning, no one will say.',
+    'The texture of a stress ball, with most of the flavor.',
+    'You could reupholster a waiting-room chair with these.',
+  ],
+  [ // 7 Mystery Meatloaf
+    'Identifiable as meat. A win, frankly.',
+    'The mystery is part of the seasoning.',
+    'Dense enough to have its own gravity. The gravy orbits it.',
+    'Sliced with confidence. Sourced with secrecy.',
+    'Every bite is a question. The ketchup is the answer.',
+  ],
+  [ // 8 Cafeteria Pizza Square
+    'A square pizza. Geometry’s loss is nobody’s gain.',
+    'The cheese reattached itself on the way down. Impressive.',
+    'Crust like drywall, sauce like a rumor.',
+    'The pepperoni count is one. Centered. Ceremonial.',
+    'Cut into squares so the corners can’t hurt anyone.',
+  ],
+  [ // 9 Mashed Potato Mountain
+    'An ice-cream scoop did this. The scars are visible.',
+    'Structurally sound. Flavor pending.',
+    'The gravy crater is load-bearing.',
+    'More sculpture than starch. I salute the wrist that built it.',
+    'Holds the butter like a secret.',
+  ],
+  [ // 10 The Full Tray
+    'Everything touching everything. As tradition demands.',
+    'A complete meal, in the way a junk drawer is complete.',
+    'The compartments have failed. The peas have annexed the pudding.',
+    'Balanced nutrition, balanced precariously.',
+    'Four compartments are beige. The fifth is also beige.',
+  ],
+  [ // 11 Five-Star Entrée
+    'I wept. This should not exist in this building.',
+    'Plated. Garnished. Seasoned. I checked the room number twice.',
+    'A vegetable, cooked on purpose. Astonishing.',
+    'Somewhere in that kitchen, a chef risked everything.',
+    'Five stars. Tell no one, or they’ll fix it.',
+  ],
+];
+
+// ------------------------------------------------------------ world layout
+const W = 480, H = 800;            // fixed logical world; canvas scales to fit
+const WALL_X_L = 24, WALL_X_R = 456;   // inner faces of the bin walls
+const WALL_T = 16;                 // wall thickness
+const FLOOR_Y = 756;               // top of the bin floor
+const RIM_Y = 216;                 // where the steel walls visually begin
+const FILL_Y = 258;                // the dreaded fill line
+const DROP_Y = 168;                // where items spawn
+const DROP_COOLDOWN = 520;         // ms between drops
+const DANGER_SECONDS = 3;          // continuous seconds over the line = done
+const DROP_WEIGHTS = [32, 26, 20, 13, 9]; // tiers 1-5
+
+const BEST_KEY = 'slopDropBest';
+const TIER_KEY = 'slopDropMaxTier';
+const MUTE_KEY = 'slopDropMuted';
+
+// ------------------------------------------------------------------- audio
+class Slounds {
+  constructor() { this.ctx = null; this.muted = false; }
+  init() {
+    if (this.ctx) return;
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { /* silence is also very cafeteria */ }
+  }
+  tone(freq, dur, type, gain, slideTo, delay) {
+    if (this.muted || !this.ctx || this.ctx.state !== 'running') return;
+    const t = this.ctx.currentTime + (delay || 0);
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  resume()  { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); }
+  suspend() { if (this.ctx && this.ctx.state === 'running') this.ctx.suspend(); }
+  bloop(tier) { this.tone(150 * Math.pow(1.14, tier), 0.13, 'sine', 0.12, 150 * Math.pow(1.14, tier) * 1.5); }
+  thud()      { this.tone(85, 0.06, 'sine', 0.05, 60); }
+  drop()      { this.tone(240, 0.04, 'square', 0.025, 200); }
+  ding()      { this.tone(1318, 0.5, 'triangle', 0.08); this.tone(2637, 0.35, 'triangle', 0.03); }
+  ui()        { this.tone(600, 0.05, 'square', 0.035, 720); }
+  jackpot()   {
+    [523, 659, 784, 1046, 1318].forEach((f, i) => this.tone(f, 0.22, 'triangle', 0.08, null, i * 0.09));
+    this.tone(2637, 0.7, 'triangle', 0.05, null, 0.45);
+  }
+  over() { this.tone(220, 0.9, 'sawtooth', 0.06, 70); this.tone(85, 0.4, 'sine', 0.06, 55, 0.15); }
+}
+const snd = new Slounds();
+
+// ----------------------------------------------------------------- helpers
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const starStr = (n) => '★'.repeat(n);
+
+function loadInt(key) { try { return parseInt(localStorage.getItem(key), 10) || 0; } catch (e) { return 0; } }
+function saveInt(key, v) { try { localStorage.setItem(key, String(v)); } catch (e) { /* ok */ } }
+
+// ------------------------------------------------------------------- state
+let engine = null, world = null;
+let running = false;       // a round is active
+let paused = false;
+let score = 0, best = loadInt(BEST_KEY);
+let maxTier = loadInt(TIER_KEY);   // highest tier ever (for the Menu)
+let runTopTier = 0;
+let combo = 0, lastMergeAt = -1e9;
+let aimX = W / 2;
+let currentTier = 0, nextTier = 0;
+let lastDropAt = -1e9;
+let dangerT = 0;
+let shake = 0;
+let mergeQueue = [];       // [{a, b}] resolved after each physics step
+let particles = [];
+let floaters = [];         // floating point texts (canvas)
+let jackpotLock = false;   // brief input pause during the celebration
+let toastTimer = 0, toastUntil = 0;
+let frame = 0;
+
+// canvas / scaling
+const canvas = $('game'), ctx = canvas.getContext('2d');
+let view = { scale: 1, dpr: 1 };
+
+function fitCanvas() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const scale = Math.min(vw / W, vh / H);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  canvas.width = Math.round(W * scale * dpr);
+  canvas.height = Math.round(H * scale * dpr);
+  view = { scale, dpr };
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('orientationchange', fitCanvas);
+
+// =========================================================== physics setup
+function buildWorld() {
+  const M = Matter;
+  engine = M.Engine.create({ enableSleeping: false });
+  engine.gravity.y = 1.35;
+  world = engine.world;
+
+  const opts = { isStatic: true, friction: 0.4, restitution: 0.1, label: 'bin' };
+  const wallH = FLOOR_Y - 40;       // walls reach well above the rim (invisible glass)
+  M.Composite.add(world, [
+    M.Bodies.rectangle(WALL_X_L - WALL_T / 2, 40 + wallH / 2, WALL_T, wallH, opts),
+    M.Bodies.rectangle(WALL_X_R + WALL_T / 2, 40 + wallH / 2, WALL_T, wallH, opts),
+    M.Bodies.rectangle(W / 2, FLOOR_Y + WALL_T / 2, W, WALL_T, opts),
+  ]);
+
+  M.Events.on(engine, 'collisionStart', (ev) => {
+    for (const pair of ev.pairs) {
+      const a = pair.bodyA, b = pair.bodyB;
+      // landing squash + thud for any decent food impact
+      const speed = Math.hypot(a.velocity.x - b.velocity.x, a.velocity.y - b.velocity.y);
+      if (speed > 5) {
+        if (a.foodTier !== undefined) a.squash = 1;
+        if (b.foodTier !== undefined) b.squash = 1;
+        if (speed > 7 && performance.now() - (snd.lastThud || 0) > 110) {
+          snd.lastThud = performance.now(); snd.thud();
+        }
+      }
+      // merge: same tier, both unclaimed, not the entrée
+      if (a.foodTier !== undefined && a.foodTier === b.foodTier &&
+          a.foodTier < TIERS.length - 1 && !a.merging && !b.merging) {
+        a.merging = b.merging = true;
+        mergeQueue.push({ a, b });
+      }
+    }
+  });
+}
+
+function foodBody(tier, x, y) {
+  const t = TIERS[tier];
+  const b = Matter.Bodies.circle(x, y, t.r, {
+    label: 'food',
+    restitution: 0.16,
+    friction: 0.32,
+    frictionStatic: 0.55,
+    frictionAir: 0.0075,
+    density: 0.0016,
+  });
+  b.foodTier = tier;
+  b.bornAt = performance.now();
+  b.squash = 0;
+  b.popT = 0;
+  return b;
+}
+
+function spawnFood(tier, x, y, popped) {
+  const b = foodBody(tier, x, y);
+  if (popped) { b.popT = 1; Matter.Body.setVelocity(b, { x: 0, y: -2.4 }); }
+  Matter.Composite.add(world, b);
+  return b;
+}
+
+// ============================================================ merge engine
+function processMerges() {
+  let done = 0;
+  while (mergeQueue.length && done < 6) {
+    const { a, b } = mergeQueue.shift();
+    const bodies = Matter.Composite.allBodies(world);
+    if (!bodies.includes(a) || !bodies.includes(b)) { continue; }
+    const tier = a.foodTier;
+    const nx = clamp((a.position.x + b.position.x) / 2, WALL_X_L + TIERS[tier + 1].r, WALL_X_R - TIERS[tier + 1].r);
+    const ny = Math.min((a.position.y + b.position.y) / 2, FLOOR_Y - TIERS[tier + 1].r - 2);
+    Matter.Composite.remove(world, a);
+    Matter.Composite.remove(world, b);
+    done++;
+
+    const newTier = tier + 1;
+    const now = performance.now();
+    combo = (now - lastMergeAt < 1500) ? combo + 1 : 1;
+    lastMergeAt = now;
+    const mult = Math.min(4, 1 + (combo - 1) * 0.5);
+    const gained = Math.round(TIERS[newTier].pts * mult);
+    score += gained;
+
+    if (newTier > runTopTier) runTopTier = newTier;
+    if (newTier > maxTier) { maxTier = newTier; saveInt(TIER_KEY, maxTier); }
+
+    burst(nx, ny, TIERS[tier].color, 10 + tier * 2);
+    floaters.push({ x: nx, y: ny - TIERS[newTier].r - 6, t: 0, txt: '+' + gained + (combo > 1 ? '  ×' + (mult % 1 ? mult.toFixed(1) : mult) : '') });
+    shake = Math.min(14, shake + 2 + newTier * 0.8);
+    snd.bloop(newTier);
+    if (newTier >= 8) snd.ding();
+    showReview(newTier);
+    updateHud();
+
+    if (newTier === TIERS.length - 1) {
+      jackpotTime(spawnFood(newTier, nx, ny, true));
+    } else {
+      spawnFood(newTier, nx, ny, true);
+    }
+  }
+  // anything still queued whose partner vanished: unflag survivors
+  if (!mergeQueue.length) return;
+  const bodies = Matter.Composite.allBodies(world);
+  mergeQueue = mergeQueue.filter(({ a, b }) => {
+    if (bodies.includes(a) && bodies.includes(b)) return true;
+    if (bodies.includes(a)) a.merging = false;
+    if (bodies.includes(b)) b.merging = false;
+    return false;
+  });
+}
+
+function jackpotTime(entree) {
+  jackpotLock = true;
+  $('jackpot').classList.add('show');
+  snd.jackpot();
+  shake = 16;
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: rand(40, W - 40), y: rand(120, 300),
+      vx: rand(-60, 60), vy: rand(-160, -20),
+      life: rand(0.8, 1.6), size: rand(2, 5),
+      color: pick(['#ffd700', '#ffec8b', '#f25d2c', '#fff7df']),
+      star: Math.random() < 0.4,
+    });
+  }
+  setTimeout(() => {
+    // the entrée is consumed by legend (and frees the bin)
+    if (Matter.Composite.allBodies(world).includes(entree)) {
+      burst(entree.position.x, entree.position.y, '#ffd700', 40, true);
+      Matter.Composite.remove(world, entree);
+    }
+    $('jackpot').classList.remove('show');
+    jackpotLock = false;
+  }, 1900);
+}
+
+// ====================================================== particles / juice
+function burst(x, y, color, n, stars) {
+  for (let i = 0; i < n; i++) {
+    const a = rand(0, Math.PI * 2), s = rand(40, 190);
+    particles.push({
+      x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 50,
+      life: rand(0.3, 0.7), size: rand(2, 4.5),
+      color, star: stars ? Math.random() < 0.5 : false,
+    });
+  }
+  if (particles.length > 220) particles.splice(0, particles.length - 220);
+}
+
+function stepFx(dt) {
+  for (const p of particles) {
+    p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 320 * dt;
+  }
+  particles = particles.filter((p) => p.life > 0);
+  for (const f of floaters) { f.t += dt; f.y -= 34 * dt; }
+  floaters = floaters.filter((f) => f.t < 1.1);
+  shake = Math.max(0, shake - dt * 26);
+}
+
+// ------------------------------------------------------------ review toast
+function showReview(tier) {
+  const now = performance.now();
+  // don't machine-gun the toast during chains; higher tiers always win
+  if (now < toastTimer && tier < 5) return;
+  toastTimer = now + 900;
+  toastUntil = now + 2400;
+  $('toast-name').textContent = TIERS[tier].name.toUpperCase();
+  $('toast-stars').textContent = starStr(TIERS[tier].stars);
+  $('toast-line').textContent = pick(REVIEWS[tier]);
+  const el = $('toast');
+  el.classList.remove('hide'); el.classList.add('show');
+}
+function tickToast() {
+  if (toastUntil && performance.now() > toastUntil) {
+    $('toast').classList.remove('show'); $('toast').classList.add('hide');
+    toastUntil = 0;
+  }
+}
+
+// --------------------------------------------------------------------- HUD
+function updateHud() {
+  $('score').textContent = score;
+  $('best').textContent = 'Best ' + Math.max(best, score);
+  $('next-emoji').textContent = TIERS[nextTier].emoji;
+  const cc = $('combo-chip');
+  if (combo > 1 && performance.now() - lastMergeAt < 1500) {
+    cc.style.display = 'block';
+    cc.textContent = 'COMBO ×' + (1 + (combo - 1) * 0.5).toFixed(1).replace('.0', '');
+  } else cc.style.display = 'none';
+}
+
+function buildMenuGrid() {
+  const grid = $('menu-grid');
+  grid.innerHTML = '';
+  TIERS.forEach((t, i) => {
+    const discovered = i <= maxTier;
+    const div = document.createElement('div');
+    div.className = 'menu-item' + (discovered ? '' : ' locked') + (discovered && i === TIERS.length - 1 ? ' gold' : '');
+    div.innerHTML = '<div class="mi-emoji">' + (discovered ? t.emoji : '❓') + '</div>' +
+      '<div class="mi-name">' + (discovered ? t.name : '— ? —') + '</div>';
+    grid.appendChild(div);
+  });
+}
+
+// ================================================================== rounds
+function rollDropTier() {
+  const total = DROP_WEIGHTS.reduce((s, w) => s + w, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < DROP_WEIGHTS.length; i++) { r -= DROP_WEIGHTS[i]; if (r <= 0) return i; }
+  return 0;
+}
+
+function startRound() {
+  if (engine) { Matter.Engine.clear(engine); }
+  buildWorld();
+  score = 0; combo = 0; lastMergeAt = -1e9;
+  runTopTier = 0; dangerT = 0; shake = 0;
+  mergeQueue = []; particles = []; floaters = [];
+  jackpotLock = false;
+  currentTier = rollDropTier(); nextTier = rollDropTier();
+  lastDropAt = -1e9;
+  aimX = W / 2;
+  running = true; paused = false;
+  $('start-overlay').classList.add('hidden');
+  $('over-overlay').classList.add('hidden');
+  $('pause-overlay').classList.add('hidden');
+  $('hud').classList.remove('hidden');
+  updateHud();
+}
+
+function endRound() {
+  running = false;
+  snd.over();
+  const isBest = score > best;
+  if (isBest) { best = score; saveInt(BEST_KEY, best); }
+  $('over-score').firstChild.textContent = score;
+  $('over-newbest').classList.toggle('hidden', !isBest);
+  $('over-best').textContent = best;
+  const top = TIERS[runTopTier];
+  $('over-top').textContent = top.emoji + ' ' + top.name;
+  $('hud').classList.add('hidden');
+  $('over-overlay').classList.remove('hidden');
+  buildMenuGrid();
+}
+
+function dropFood() {
+  if (!running || paused || jackpotLock) return;
+  const now = performance.now();
+  if (now - lastDropAt < DROP_COOLDOWN) return;
+  lastDropAt = now;
+  const r = TIERS[currentTier].r;
+  const x = clamp(aimX, WALL_X_L + r + 2, WALL_X_R - r - 2);
+  spawnFood(currentTier, x, DROP_Y, false);
+  snd.drop();
+  currentTier = nextTier;
+  nextTier = rollDropTier();
+  updateHud();
+}
+
+// =========================================================== danger / tidy
+function checkDanger(dt) {
+  const now = performance.now();
+  let over = false;
+  for (const b of Matter.Composite.allBodies(world)) {
+    if (b.foodTier === undefined) continue;
+    if (now - b.bornAt < 1200) continue;        // fresh drops get a pass
+    if (b.position.y - TIERS[b.foodTier].r < FILL_Y) { over = true; break; }
+  }
+  if (over) dangerT += dt; else dangerT = Math.max(0, dangerT - dt * 1.6);
+  if (dangerT >= DANGER_SECONDS) endRound();
+}
+
+function tidyWorld() {
+  for (const b of Matter.Composite.allBodies(world)) {
+    if (b.foodTier === undefined) continue;
+    // clamp runaway physics
+    const v = b.velocity;
+    const sp = Math.hypot(v.x, v.y);
+    if (sp > 26) Matter.Body.setVelocity(b, { x: v.x * 26 / sp, y: v.y * 26 / sp });
+    if (Math.abs(b.angularVelocity) > 1.1) Matter.Body.setAngularVelocity(b, Math.sign(b.angularVelocity) * 1.1);
+    // despawn escapees / NaN ghosts
+    if (!isFinite(b.position.x) || !isFinite(b.position.y) ||
+        b.position.y > H + 140 || b.position.x < -90 || b.position.x > W + 90) {
+      Matter.Composite.remove(world, b);
+    }
+  }
+}
+
+// ================================================================ rendering
+function draw(nowMs) {
+  const M = Matter;
+  ctx.setTransform(view.scale * view.dpr, 0, 0, view.scale * view.dpr, 0, 0);
+  // wall
+  ctx.fillStyle = '#e7efe9';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(43,34,27,0.05)';
+  ctx.lineWidth = 1;
+  for (let gx = 0; gx <= W; gx += 80) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+  for (let gy = 0; gy <= H; gy += 80) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+  // fluorescent fixture
+  ctx.fillStyle = '#cfd8d2';
+  ctx.fillRect(W / 2 - 110, 6, 220, 10);
+  const glow = ctx.createLinearGradient(0, 16, 0, 70);
+  glow.addColorStop(0, 'rgba(255,255,245,0.55)');
+  glow.addColorStop(1, 'rgba(255,255,245,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(W / 2 - 130, 16, 260, 54);
+  ctx.fillStyle = '#f4f8f2';
+  ctx.fillRect(W / 2 - 104, 8, 208, 6);
+
+  // screen shake
+  ctx.save();
+  if (shake > 0.2) ctx.translate(rand(-shake, shake) * 0.55, rand(-shake, shake) * 0.55);
+
+  drawBinBack();
+  drawFillLine(nowMs);
+
+  // food
+  for (const b of M.Composite.allBodies(world)) {
+    if (b.foodTier !== undefined) drawFood(b, nowMs);
+  }
+
+  drawBinWalls();
+  if (running && !paused) drawDropper(nowMs);
+
+  // particles
+  for (const p of particles) {
+    ctx.globalAlpha = clamp(p.life * 2.2, 0, 1);
+    ctx.fillStyle = p.color;
+    if (p.star) {
+      ctx.font = (p.size * 3.2) + 'px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('★', p.x, p.y);
+    } else {
+      ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  // floating points
+  for (const f of floaters) {
+    ctx.globalAlpha = clamp(1.4 - f.t * 1.3, 0, 1);
+    ctx.font = '700 17px ui-monospace, Menlo, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,252,247,0.9)';
+    ctx.strokeText(f.txt, f.x, f.y);
+    ctx.fillStyle = '#b53914';
+    ctx.fillText(f.txt, f.x, f.y);
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+function drawBinBack() {
+  // interior backdrop
+  const g = ctx.createLinearGradient(0, RIM_Y, 0, FLOOR_Y);
+  g.addColorStop(0, '#dde4e6');
+  g.addColorStop(1, '#c6cdd2');
+  ctx.fillStyle = g;
+  ctx.fillRect(WALL_X_L, RIM_Y, WALL_X_R - WALL_X_L, FLOOR_Y - RIM_Y);
+  // molded tray ridges
+  ctx.strokeStyle = 'rgba(90,100,108,0.14)';
+  ctx.lineWidth = 2;
+  for (let y = RIM_Y + 34; y < FLOOR_Y - 8; y += 30) {
+    ctx.beginPath(); ctx.moveTo(WALL_X_L + 8, y); ctx.lineTo(WALL_X_R - 8, y); ctx.stroke();
+  }
+  // wall inner shadows
+  const sh = ctx.createLinearGradient(WALL_X_L, 0, WALL_X_L + 50, 0);
+  sh.addColorStop(0, 'rgba(60,70,76,0.25)'); sh.addColorStop(1, 'rgba(60,70,76,0)');
+  ctx.fillStyle = sh; ctx.fillRect(WALL_X_L, RIM_Y, 50, FLOOR_Y - RIM_Y);
+  const sh2 = ctx.createLinearGradient(WALL_X_R, 0, WALL_X_R - 50, 0);
+  sh2.addColorStop(0, 'rgba(60,70,76,0.25)'); sh2.addColorStop(1, 'rgba(60,70,76,0)');
+  ctx.fillStyle = sh2; ctx.fillRect(WALL_X_R - 50, RIM_Y, 50, FLOOR_Y - RIM_Y);
+}
+
+function drawFillLine(nowMs) {
+  const danger = dangerT > 0.03;
+  const pulse = danger ? (0.55 + 0.45 * Math.sin(nowMs / 90)) : 1;
+  ctx.save();
+  ctx.strokeStyle = danger ? `rgba(217,79,58,${0.35 + 0.6 * pulse})` : 'rgba(110,130,120,0.45)';
+  ctx.lineWidth = danger ? 3 : 2;
+  ctx.setLineDash([10, 8]);
+  ctx.beginPath();
+  ctx.moveTo(WALL_X_L + 4, FILL_Y);
+  ctx.lineTo(WALL_X_R - 4, FILL_Y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // tag
+  ctx.font = '800 9px ui-sans-serif, system-ui, sans-serif';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = danger ? '#d94f3a' : 'rgba(110,130,120,0.8)';
+  ctx.fillText(danger ? '⚠ FULL — ' + Math.max(0, DANGER_SECONDS - dangerT).toFixed(1) + 's' : 'FULL', WALL_X_R - 10, FILL_Y - 9);
+  ctx.restore();
+}
+
+function drawBinWalls() {
+  for (const side of [0, 1]) {
+    const x = side === 0 ? WALL_X_L - WALL_T : WALL_X_R;
+    const g = ctx.createLinearGradient(x, 0, x + WALL_T, 0);
+    g.addColorStop(0, side === 0 ? '#dbe0e4' : '#9aa3ab');
+    g.addColorStop(0.5, '#c2c9cf');
+    g.addColorStop(1, side === 0 ? '#9aa3ab' : '#dbe0e4');
+    ctx.fillStyle = g;
+    ctx.fillRect(x, RIM_Y, WALL_T, FLOOR_Y - RIM_Y + WALL_T);
+    // rim lip
+    ctx.fillStyle = '#e4e9ec';
+    ctx.fillRect(x - 4, RIM_Y - 8, WALL_T + 8, 10);
+    ctx.fillStyle = 'rgba(60,70,76,0.35)';
+    ctx.fillRect(x - 4, RIM_Y + 1, WALL_T + 8, 2);
+  }
+  // floor
+  const fg = ctx.createLinearGradient(0, FLOOR_Y, 0, FLOOR_Y + WALL_T + 10);
+  fg.addColorStop(0, '#cfd5da'); fg.addColorStop(1, '#9aa3ab');
+  ctx.fillStyle = fg;
+  ctx.fillRect(WALL_X_L - WALL_T - 4, FLOOR_Y, (WALL_X_R - WALL_X_L) + WALL_T * 2 + 8, WALL_T + 12);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillRect(WALL_X_L - WALL_T - 4, FLOOR_Y, (WALL_X_R - WALL_X_L) + WALL_T * 2 + 8, 2);
+}
+
+function drawDropper(nowMs) {
+  const t = TIERS[currentTier];
+  const cooled = nowMs - lastDropAt >= DROP_COOLDOWN;
+  const x = clamp(aimX, WALL_X_L + t.r + 2, WALL_X_R - t.r - 2);
+  // aim guide
+  ctx.save();
+  ctx.strokeStyle = 'rgba(43,34,27,0.16)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 9]);
+  ctx.beginPath(); ctx.moveTo(x, DROP_Y + t.r + 4); ctx.lineTo(x, FLOOR_Y - 4); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  // ladle clamp
+  ctx.fillStyle = '#b6bfc6';
+  ctx.fillRect(x - 16, DROP_Y - t.r - 22, 32, 8);
+  ctx.fillStyle = '#9aa3ab';
+  ctx.fillRect(x - 4, DROP_Y - t.r - 16, 8, 12);
+  // held item
+  ctx.globalAlpha = cooled ? 1 : 0.45;
+  drawDisc(x, DROP_Y, t, 0, cooled ? 1 : 0.92, 0, nowMs);
+  ctx.globalAlpha = 1;
+}
+
+function drawFood(b, nowMs) {
+  const t = TIERS[b.foodTier];
+  // pop-in / squash factors (dt-normalized so animation speed matches on 30/60/120Hz)
+  if (b.popT > 0) b.popT = Math.max(0, b.popT - 3.3 * frameDt);
+  if (b.squash > 0) b.squash = Math.max(0, b.squash - 3.6 * frameDt);
+  const pop = b.popT > 0 ? (b.popT > 0.55 ? 0.6 + (1 - b.popT) : 1.15 - (0.55 - b.popT) * 0.33) : 1;
+  drawDisc(b.position.x, b.position.y, t, b.angle, pop, b.squash, nowMs);
+}
+
+function drawDisc(x, y, t, angle, popScale, squash, nowMs) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  const sy = 1 - 0.16 * squash, sx = 1 + 0.12 * squash;
+  ctx.scale(sx * popScale, sy * popScale);
+
+  const isEntree = t === TIERS[TIERS.length - 1];
+  const g = ctx.createRadialGradient(-t.r * 0.35, -t.r * 0.4, t.r * 0.15, 0, 0, t.r * 1.05);
+  g.addColorStop(0, lighten(t.color));
+  g.addColorStop(1, t.color);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(0, 0, t.r, 0, Math.PI * 2); ctx.fill();
+  ctx.lineWidth = Math.max(2, t.r * 0.07);
+  ctx.strokeStyle = t.rim;
+  ctx.stroke();
+  // gloss
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(-t.r * 0.3, -t.r * 0.42, t.r * 0.34, t.r * 0.18, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  // emoji face
+  ctx.font = Math.round(t.r * 1.18) + 'px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(t.emoji, 0, t.r * 0.06);
+  // the entrée gets its orbiting stars
+  if (isEntree) {
+    const a0 = (nowMs || 0) / 600;
+    ctx.font = Math.round(t.r * 0.3) + 'px serif';
+    for (let i = 0; i < 5; i++) {
+      const a = a0 + i * (Math.PI * 2 / 5);
+      ctx.fillText('⭐', Math.cos(a) * t.r * 0.78, Math.sin(a) * t.r * 0.78);
+    }
+  }
+  ctx.restore();
+}
+
+function lighten(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n >> 16) + 38), g = Math.min(255, ((n >> 8) & 255) + 38), b = Math.min(255, (n & 255) + 38);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ================================================================ main loop
+let lastT = 0, acc = 0, frameDt = 1 / 60;
+function loop(t) {
+  requestAnimationFrame(loop);
+  if (!lastT) lastT = t;
+  let dt = Math.min((t - lastT) / 1000, 0.05);
+  lastT = t;
+  frameDt = dt || 1 / 60;
+  frame++;
+
+  if (running && !paused) {
+    acc += dt;
+    let steps = 0;
+    while (acc >= 1 / 60 && steps < 3) {
+      Matter.Engine.update(engine, 1000 / 60);
+      processMerges();
+      acc -= 1 / 60; steps++;
+    }
+    if (steps === 3) acc = 0;
+    checkDanger(dt);
+    if (frame % 30 === 0) tidyWorld();
+    stepFx(dt);
+    if (combo > 1 && performance.now() - lastMergeAt > 1500) { combo = 0; updateHud(); }
+  } else {
+    stepFx(dt);
+  }
+  tickToast();
+  if (engine) draw(t);
+}
+
+// ==================================================================== input
+function canvasX(clientX) {
+  const rect = canvas.getBoundingClientRect();
+  return (clientX - rect.left) / view.scale;
+}
+
+let pointerDown = false;
+canvas.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  snd.init(); snd.resume();
+  pointerDown = true;
+  aimX = canvasX(e.clientX);
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ok */ }
+});
+canvas.addEventListener('pointermove', (e) => {
+  aimX = canvasX(e.clientX);
+});
+canvas.addEventListener('pointerup', (e) => {
+  e.preventDefault();
+  if (pointerDown) { aimX = canvasX(e.clientX); dropFood(); }
+  pointerDown = false;
+});
+canvas.addEventListener('pointercancel', () => { pointerDown = false; });
+// scoped to the canvas so the overlay menus can still touch-scroll on short screens
+canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+const keys = {};
+window.addEventListener('keydown', (e) => {
+  if (e.repeat) { keys[e.code] = true; return; }
+  keys[e.code] = true;
+  if (e.code === 'Space' || e.code === 'ArrowDown') {
+    e.preventDefault();
+    snd.init(); snd.resume();
+    if (running && !paused) dropFood();
+  }
+  if (e.code === 'KeyM') toggleMute();
+  if (e.code === 'KeyP' || e.code === 'Escape') { if (running) togglePause(); }
+});
+window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+setInterval(() => {
+  if (!running || paused) return;
+  if (keys.ArrowLeft || keys.KeyA) aimX = clamp(aimX - 7, WALL_X_L, WALL_X_R);
+  if (keys.ArrowRight || keys.KeyD) aimX = clamp(aimX + 7, WALL_X_L, WALL_X_R);
+}, 16);
+
+// ------------------------------------------------------------ pause / mute
+function togglePause(forcePause) {
+  if (!running) return;
+  paused = forcePause === true ? true : !paused;
+  $('pause-overlay').classList.toggle('hidden', !paused);
+  if (paused) snd.suspend(); else { snd.resume(); lastT = 0; }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && running && !paused) togglePause(true);
+});
+
+function toggleMute() {
+  snd.muted = !snd.muted;
+  try { localStorage.setItem(MUTE_KEY, snd.muted ? '1' : '0'); } catch (e) { /* ok */ }
+  $('mute-btn').textContent = snd.muted ? '🔇' : '🔊';
+}
+
+// ------------------------------------------------------------------ wiring
+function toMenu() {
+  running = false; paused = false;
+  $('pause-overlay').classList.add('hidden');
+  $('over-overlay').classList.add('hidden');
+  $('hud').classList.add('hidden');
+  $('start-best').textContent = 'Best: ' + best;
+  buildMenuGrid();
+  $('start-overlay').classList.remove('hidden');
+}
+
+$('start-btn').addEventListener('click', () => { snd.init(); snd.resume(); snd.ui(); startRound(); });
+$('retry-btn').addEventListener('click', () => { snd.ui(); startRound(); });
+$('resume-btn').addEventListener('click', () => { snd.ui(); togglePause(); });
+$('over-menu-btn').addEventListener('click', () => { snd.ui(); toMenu(); });
+$('pause-menu-btn').addEventListener('click', () => { snd.ui(); toMenu(); });
+$('mute-btn').addEventListener('click', () => { snd.init(); toggleMute(); });
+$('pause-btn').addEventListener('click', () => { snd.ui(); togglePause(); });
+
+// ------------------------------------------------------------------- boot
+(function boot() {
+  if (typeof Matter === 'undefined') {
+    $('start-overlay').classList.add('hidden');
+    $('error-overlay').classList.remove('hidden');
+    return;
+  }
+  try { snd.muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) { /* ok */ }
+  if (snd.muted) $('mute-btn').textContent = '🔇';
+  fitCanvas();
+  buildWorld();           // a quiet, empty bin behind the start menu
+  $('start-best').textContent = 'Best: ' + best;
+  buildMenuGrid();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

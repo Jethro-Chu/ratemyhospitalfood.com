@@ -6,7 +6,7 @@ import AnimatedSection from '@/components/AnimatedSection';
 import PixelSprite from '@/components/games/PixelSprite';
 import { SPRITES as DASH_SPRITES } from '@/lib/games/trayDash/sprites';
 import Link from 'next/link';
-import { Gamepad2, Play, Sparkles, Star, Smartphone, Layers, Lock, Zap, Trophy } from 'lucide-react';
+import { Gamepad2, Play, Sparkles, Star, Smartphone, Layers, Lock, Zap, Trophy, Hand } from 'lucide-react';
 
 const COMING_SOON = [
     { title: 'Mystery Meat Match', tag: 'Memory Game', blurb: 'Flip cafeteria trays and match the mystery dishes before the lunch bell.', emoji: '🍖' },
@@ -143,6 +143,64 @@ export default function GamesPage() {
 
                                 <Link
                                     href="/games/tray-dash"
+                                    className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold py-3.5 px-7 rounded-xl text-[15px] transition-all active:scale-[0.97] shadow-warm hover:shadow-warm-md w-full sm:w-fit"
+                                >
+                                    <Play className="w-4 h-4" /> Play Now
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </AnimatedSection>
+
+                {/* Featured game #3 — Slop Drop */}
+                <AnimatedSection delay={100} className="mt-8">
+                    <div className="relative overflow-hidden rounded-3xl border border-cream-300/70 shadow-warm-lg bg-cream-50">
+                        <div className="grid grid-cols-1 lg:grid-cols-2">
+
+                            {/* Cafeteria bin scene — pure CSS + emoji, like the game itself */}
+                            <div className="relative p-8 sm:p-10 flex items-end justify-center min-h-[240px] overflow-hidden bg-[#e7efe9]">
+                                <div className="absolute top-5 left-5 inline-flex items-center gap-1.5 bg-cream-50/90 border border-brand-200/60 text-brand-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest shadow-warm-sm z-10">
+                                    <Sparkles className="w-3 h-3" /> Now Playable
+                                </div>
+                                <div className="absolute top-8 right-12 text-3xl animate-float" aria-hidden="true">🍮</div>
+                                <div className="absolute top-20 right-24 text-2xl animate-float-delay" aria-hidden="true">🟩</div>
+                                <div className="absolute top-12 left-12 text-2xl animate-float-delay" aria-hidden="true">🧊</div>
+                                {/* the bin */}
+                                <div className="relative w-[230px] h-[110px] mb-1">
+                                    <div className="absolute inset-x-0 bottom-0 h-[96px] rounded-b-xl border-x-8 border-b-8 border-[#b3bcc3] bg-gradient-to-b from-[#dde4e6] to-[#c6cdd2]" />
+                                    <div className="absolute -left-2 top-0 w-[26px] h-2.5 bg-[#e4e9ec] rounded-sm" />
+                                    <div className="absolute -right-2 top-0 w-[26px] h-2.5 bg-[#e4e9ec] rounded-sm" />
+                                    <div className="absolute bottom-2 inset-x-4 flex items-end justify-center gap-0.5 text-3xl" aria-hidden="true">
+                                        <span className="translate-y-1">🍖</span>
+                                        <span className="text-4xl">🍕</span>
+                                        <span className="translate-y-1">🍳</span>
+                                        <span className="-translate-y-3 text-2xl">🍎</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Details */}
+                            <div className="p-7 sm:p-9 flex flex-col">
+                                <span className="inline-flex items-center gap-1.5 bg-honey-100 text-honey-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest w-fit mb-3">
+                                    Physics Merge
+                                </span>
+                                <h2 className="font-display text-[26px] sm:text-[30px] font-semibold text-ink-900 leading-tight">
+                                    Slop Drop
+                                </h2>
+                                <p className="text-ink-600 text-[14.5px] leading-relaxed mt-3">
+                                    Drop cafeteria food into the serving bin. Two of the same slop merge into one
+                                    greater slop — climb from Ice Chips to the Fabled Five-Star Entrée without
+                                    overflowing the bin. Every merge gets a review.
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mt-5">
+                                    <Feature icon={Hand}>One-finger play</Feature>
+                                    <Feature icon={Smartphone}>Phone &amp; desktop</Feature>
+                                    <Feature icon={Star}>11-item menu</Feature>
+                                </div>
+
+                                <Link
+                                    href="/games/slop-drop"
                                     className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-semibold py-3.5 px-7 rounded-xl text-[15px] transition-all active:scale-[0.97] shadow-warm hover:shadow-warm-md w-full sm:w-fit"
                                 >
                                     <Play className="w-4 h-4" /> Play Now
