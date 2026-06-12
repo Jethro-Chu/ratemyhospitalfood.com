@@ -77,7 +77,7 @@ export default function HowItWorks() {
                         </p>
                         <h2
                             id="how-it-works-title"
-                            className="font-display font-extrabold uppercase text-[9vw] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-extrabold uppercase text-[12vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[0.95]"
                         >
                             Three bites,<br />
                             <span className="text-outline">no nonsense.</span>

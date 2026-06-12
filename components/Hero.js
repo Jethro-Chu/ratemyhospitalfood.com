@@ -157,7 +157,7 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                             Real reviews · Real cafeterias
                         </div>
 
-                        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tight text-ink-900 text-[11vw] sm:text-[64px] lg:text-[86px]">
+                        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tight text-ink-900 text-[16vw] sm:text-[84px] lg:text-[128px]">
                             <span className="sr-only">Hospital food, rated.</span>
                             <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="Hospital" /></span>
                             <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="food," className="text-outline-ember" /></span>

@@ -111,7 +111,7 @@ export default function FeaturedReviews({ reviews }) {
                         </p>
                         <h2
                             id="featured-reviews-title"
-                            className="font-display font-extrabold uppercase text-[8.5vw] sm:text-[54px] lg:text-[68px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-extrabold uppercase text-[11vw] sm:text-[64px] lg:text-[88px] tracking-tight text-ink-900 leading-[0.95]"
                         >
                             What people are<br />
                             <span className="gradient-text">actually saying.</span>

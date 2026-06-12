@@ -39,7 +39,7 @@ export default function StatsSection({ stats }) {
                     <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
                         ( By the numbers )
                     </p>
-                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[9vw] sm:text-[52px] lg:text-[64px] tracking-tight text-ink-900 leading-[0.95]">
+                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[12vw] sm:text-[64px] lg:text-[84px] tracking-tight text-ink-900 leading-[0.95]">
                         Growing one<br />
                         <span className="gradient-text">tray at a time.</span>
                     </h2>

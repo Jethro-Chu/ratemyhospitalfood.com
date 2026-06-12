@@ -1,24 +1,24 @@
 import "./globals.css";
-import { Space_Grotesk, Syne, JetBrains_Mono } from "next/font/google";
+import { DM_Sans, Bricolage_Grotesque, DM_Mono } from "next/font/google";
 
-const spaceGrotesk = Space_Grotesk({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans",
 });
 
-const syne = Syne({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-display",
   weight: ["500", "600", "700", "800"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const dmMono = DM_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-mono",
-  weight: ["400", "500", "700"],
+  weight: ["400", "500"],
 });
 
 export const metadata = {
@@ -42,8 +42,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${syne.variable} ${jetbrainsMono.variable}`}>
-      <body className={spaceGrotesk.className}>
+    <html lang="en" className={`${dmSans.variable} ${bricolage.variable} ${dmMono.variable}`}>
+      <body className={dmSans.className}>
         {children}
       </body>
     </html>

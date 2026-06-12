@@ -92,7 +92,7 @@ export default function FoodShowcase() {
                     <p className="fsm-rise font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
                         On the tray today
                     </p>
-                    <h2 className="fsm-rise font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[9vw]">
+                    <h2 className="fsm-rise font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[12vw]">
                         <span className="block text-outline">Real food</span>
                         <span className="block gradient-text">Real reviews</span>
                     </h2>

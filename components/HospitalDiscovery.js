@@ -53,7 +53,7 @@ export default function HospitalDiscovery({ hospitals }) {
                         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-honey-400 mb-4">
                             ( The leaderboard )
                         </p>
-                        <h2 id="discover-title" className="font-display font-extrabold uppercase text-[9.5vw] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]">
+                        <h2 id="discover-title" className="font-display font-extrabold uppercase text-[12.5vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[0.95]">
                             Most-loved<br />
                             <span className="text-outline">cafeterias.</span>
                         </h2>
