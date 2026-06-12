@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #F4F2E9;
-  --background: #0B0B0F;
-  --brand:      #FF5A1F;
-  --honey:      #FFC53D;
-  --paper:      #15151B;
-  --border:     #2A2A36;
+  --foreground: #17130D;
+  --background: #FAF6EF;
+  --brand:      #F04A0A;
+  --honey:      #E9A60E;
+  --paper:      #FFFEFB;
+  --border:     #E3D9C9;
 }
 
 * {
@@ -36,7 +36,7 @@ body::after {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -46,15 +46,15 @@ a {
 }
 
 ::selection {
-  background: rgba(255, 90, 31, 0.85);
-  color: #0B0B0F;
+  background: rgba(240, 74, 10, 0.9);
+  color: #FFFEFB;
 }
 
-/* Scrollbar - dark */
+/* Scrollbar - light */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2A2A36; border-radius: 100px; }
-::-webkit-scrollbar-thumb:hover { background: #4D4D60; }
+::-webkit-scrollbar-thumb { background: #D0C2AC; border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: #B5A48A; }
 
 /* Focus ring - ember */
 .focus-ring {
@@ -62,8 +62,8 @@ a {
   transition: box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .focus-ring:focus {
-  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.25);
-  border-color: #FF5A1F;
+  box-shadow: 0 0 0 3px rgba(240, 74, 10, 0.22);
+  border-color: #F04A0A;
 }
 
 input:focus, textarea:focus, button:focus-visible {
@@ -78,7 +78,7 @@ input:focus, textarea:focus, button:focus-visible {
 
 /* Ember gradient text */
 .gradient-text {
-  background: linear-gradient(120deg, #FF5A1F 0%, #FFC53D 90%);
+  background: linear-gradient(120deg, #F04A0A 0%, #D18F06 90%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -87,27 +87,27 @@ input:focus, textarea:focus, button:focus-visible {
 /* Hollow/outlined display text */
 .text-outline {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(244, 242, 233, 0.28);
+  -webkit-text-stroke: 1px rgba(23, 19, 13, 0.30);
 }
 .text-outline-ember {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 90, 31, 0.55);
+  -webkit-text-stroke: 1.5px rgba(240, 74, 10, 0.8);
 }
 
 /* Subtle dot-grid texture (kept for sections that want it) */
 .paper-grid {
   background-image:
-    radial-gradient(circle, rgba(255, 90, 31, 0.10) 1px, transparent 1px);
+    radial-gradient(circle, rgba(240, 74, 10, 0.10) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
-/* Hairline borders that read on near-black */
-.hairline    { border-color: rgba(244, 242, 233, 0.08); }
+/* Hairline borders that read on paper */
+.hairline    { border-color: rgba(23, 19, 13, 0.08); }
 .glass-panel {
-  background: rgba(21, 21, 27, 0.72);
+  background: rgba(255, 254, 251, 0.72);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(244, 242, 233, 0.08);
+  border: 1px solid rgba(23, 19, 13, 0.10);
 }
 
 /* Marquee track helper — pair with a duplicated inline list */

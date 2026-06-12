@@ -58,12 +58,12 @@ function EmberField({ count = 700 }) {
             </bufferGeometry>
             <pointsMaterial
                 size={0.045}
-                color="#FF7440"
+                color="#E84508"
                 transparent
-                opacity={0.65}
+                opacity={0.55}
                 sizeAttenuation
                 depthWrite={false}
-                blending={THREE.AdditiveBlending}
+                blending={THREE.NormalBlending}
             />
         </points>
     );
@@ -87,11 +87,11 @@ function MoltenCore({ detail = 48 }) {
             <mesh ref={mesh} position={[0, 0, -1]}>
                 <icosahedronGeometry args={[1.7, detail]} />
                 <MeshDistortMaterial
-                    color="#FF5A1F"
-                    emissive="#7A1E04"
-                    emissiveIntensity={0.55}
-                    roughness={0.25}
-                    metalness={0.15}
+                    color="#F04A0A"
+                    emissive="#A33007"
+                    emissiveIntensity={0.35}
+                    roughness={0.3}
+                    metalness={0.1}
                     distort={0.42}
                     speed={1.6}
                 />
@@ -125,7 +125,7 @@ export default function HeroScene() {
                 aria-hidden="true"
                 style={{
                     background:
-                        'radial-gradient(ellipse 60% 50% at 70% 40%, rgba(255,90,31,0.18) 0%, rgba(11,11,15,0) 70%)',
+                        'radial-gradient(ellipse 60% 50% at 70% 40%, rgba(240,74,10,0.14) 0%, rgba(250,246,239,0) 70%)',
                 }}
             />
         );
@@ -153,7 +153,7 @@ export default function HeroScene() {
                 className="absolute inset-0"
                 style={{
                     background:
-                        'radial-gradient(ellipse 90% 70% at 50% 45%, rgba(11,11,15,0) 30%, rgba(11,11,15,0.85) 100%), linear-gradient(180deg, rgba(11,11,15,0.55) 0%, rgba(11,11,15,0) 25%, rgba(11,11,15,0) 60%, #0B0B0F 100%)',
+                        'radial-gradient(ellipse 90% 70% at 50% 45%, rgba(250,246,239,0) 30%, rgba(250,246,239,0.85) 100%), linear-gradient(180deg, rgba(250,246,239,0.55) 0%, rgba(250,246,239,0) 25%, rgba(250,246,239,0) 60%, #FAF6EF 100%)',
                 }}
             />
         </div>
