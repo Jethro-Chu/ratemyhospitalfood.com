@@ -14,6 +14,7 @@ import HospitalDiscovery from '@/components/HospitalDiscovery';
 import StatsSection from '@/components/StatsSection';
 import FinalCTA from '@/components/FinalCTA';
 import AnimatedSection from '@/components/AnimatedSection';
+import MobileActionBar from '@/components/MobileActionBar';
 import Link from 'next/link';
 
 export default function Home() {
@@ -172,6 +173,7 @@ export default function Home() {
       )}
 
       <Footer />
+      <MobileActionBar />
     </div>
   );
 }

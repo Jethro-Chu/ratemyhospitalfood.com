@@ -77,9 +77,9 @@ export default function FinalCTA() {
                 />
             </div>
 
-            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-28 sm:py-36 text-center">
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-36 text-center">
 
-                <h2 id="final-cta-title" className="font-display font-extrabold uppercase tracking-tight text-ink-900 leading-[0.95] text-[13vw] sm:text-[72px] lg:text-[92px]">
+                <h2 id="final-cta-title" className="font-display font-extrabold uppercase tracking-tight text-ink-900 leading-[0.95] text-[9vw] sm:text-[72px] lg:text-[92px]">
                     <span className="block overflow-hidden pb-1"><span className="cta-line block">Had hospital</span></span>
                     <span className="block overflow-hidden pb-2">
                         <span className="cta-line block">food <span className="gradient-text">recently?</span></span>

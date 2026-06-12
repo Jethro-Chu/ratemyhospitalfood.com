@@ -67,7 +67,7 @@ export default function HowItWorks() {
             className="relative bg-cream-100 overflow-hidden"
             aria-labelledby="how-it-works-title"
         >
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32">
 
                 {/* Header */}
                 <div className="hiw-head flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14 sm:mb-20">
@@ -77,7 +77,7 @@ export default function HowItWorks() {
                         </p>
                         <h2
                             id="how-it-works-title"
-                            className="font-display font-extrabold uppercase text-[40px] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-extrabold uppercase text-[9vw] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]"
                         >
                             Three bites,<br />
                             <span className="text-outline">no nonsense.</span>

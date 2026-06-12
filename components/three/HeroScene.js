@@ -1,10 +1,23 @@
 'use client';
 
-import { useMemo, useRef, Suspense } from 'react';
+import { useMemo, useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import useReducedMotion from '@/hooks/useReducedMotion';
+
+/** True below the md breakpoint — used to serve a much lighter scene. */
+function useIsMobile() {
+    const [mobile, setMobile] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 767px)');
+        const update = () => setMobile(mq.matches);
+        update();
+        mq.addEventListener('change', update);
+        return () => mq.removeEventListener('change', update);
+    }, []);
+    return mobile;
+}
 
 /**
  * Drifting ember particle field. Points slowly orbit and the whole
@@ -57,7 +70,7 @@ function EmberField({ count = 700 }) {
 }
 
 /** Molten centerpiece blob, gently breathing and chasing the pointer. */
-function MoltenCore() {
+function MoltenCore({ detail = 48 }) {
     const mesh = useRef(null);
 
     useFrame((state) => {
@@ -72,7 +85,7 @@ function MoltenCore() {
     return (
         <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.8}>
             <mesh ref={mesh} position={[0, 0, -1]}>
-                <icosahedronGeometry args={[1.7, 48]} />
+                <icosahedronGeometry args={[1.7, detail]} />
                 <MeshDistortMaterial
                     color="#FF5A1F"
                     emissive="#7A1E04"
@@ -103,6 +116,7 @@ function Rig() {
  */
 export default function HeroScene() {
     const reduced = useReducedMotion();
+    const mobile = useIsMobile();
 
     if (reduced) {
         return (
@@ -120,17 +134,17 @@ export default function HeroScene() {
     return (
         <div className="absolute inset-0" aria-hidden="true">
             <Canvas
-                dpr={[1, 1.75]}
-                camera={{ position: [0, 0, 7], fov: 42 }}
-                gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+                dpr={mobile ? [1, 1.25] : [1, 1.75]}
+                camera={{ position: [0, 0, 7], fov: mobile ? 52 : 42 }}
+                gl={{ antialias: !mobile, alpha: true, powerPreference: 'high-performance' }}
                 style={{ background: 'transparent' }}
             >
                 <Suspense fallback={null}>
                     <ambientLight intensity={0.35} />
                     <pointLight position={[6, 4, 6]} intensity={120} color="#FFC53D" />
                     <pointLight position={[-6, -3, 4]} intensity={60} color="#FF5A1F" />
-                    <MoltenCore />
-                    <EmberField />
+                    <MoltenCore detail={mobile ? 20 : 48} />
+                    <EmberField count={mobile ? 240 : 700} />
                     <Rig />
                 </Suspense>
             </Canvas>

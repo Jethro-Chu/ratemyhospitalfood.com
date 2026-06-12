@@ -45,7 +45,7 @@ export default function HospitalDiscovery({ hospitals }) {
             className="relative bg-cream-100 overflow-hidden"
             aria-labelledby="discover-title"
         >
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32">
 
                 {/* Heading */}
                 <div className="hd-head flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14 sm:mb-20">
@@ -53,7 +53,7 @@ export default function HospitalDiscovery({ hospitals }) {
                         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-honey-400 mb-4">
                             ( The leaderboard )
                         </p>
-                        <h2 id="discover-title" className="font-display font-extrabold uppercase text-[40px] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]">
+                        <h2 id="discover-title" className="font-display font-extrabold uppercase text-[9.5vw] sm:text-[56px] lg:text-[72px] tracking-tight text-ink-900 leading-[0.95]">
                             Most-loved<br />
                             <span className="text-outline">cafeterias.</span>
                         </h2>

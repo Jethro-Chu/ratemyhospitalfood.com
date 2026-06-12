@@ -1,13 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { gsap, ScrollTrigger } from '@/lib/gsapClient';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from '@/lib/gsapClient';
 import useReducedMotion from '@/hooks/useReducedMotion';
 
+const VIDEO_SRC = 'https://videos.pexels.com/video-files/30141959/12925634_1920_1080_24fps.mp4';
+
 /**
- * GSAP-pinned cinema section. The stage pins for ~150vh of scroll
- * while the food video scales up from a small tile to near-fullscreen
- * and a giant outlined headline slides through behind it.
+ * Desktop: GSAP-pinned cinema — the stage pins for ~160vh of scroll
+ * while the food video scales from a small tile to fullscreen and a
+ * giant outlined headline slides through behind it.
+ *
+ * Mobile: no pinning (pinned scrub + browser-chrome resize is janky on
+ * phones) — a static editorial composition with a simple rise-in.
  *
  * Asset: Pexels Video #30141959 ("Plates of food on a table"),
  * licensed under the Pexels License (free for commercial use).
@@ -15,16 +20,29 @@ import useReducedMotion from '@/hooks/useReducedMotion';
 export default function FoodShowcase() {
     const rootRef = useRef(null);
     const reduced = useReducedMotion();
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        if (reduced) return;
+        const mq = window.matchMedia('(min-width: 768px)');
+        const update = () => setIsDesktop(mq.matches);
+        update();
+        setMounted(true);
+        mq.addEventListener('change', update);
+        return () => mq.removeEventListener('change', update);
+    }, []);
+
+    // CSS position:sticky does the pinning; GSAP only scrubs the
+    // animation across the tall outer section (pin spacers proved
+    // unreliable in this layout).
+    useEffect(() => {
+        if (reduced || !isDesktop) return;
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: rootRef.current,
                     start: 'top top',
-                    end: '+=160%',
-                    pin: true,
+                    end: 'bottom bottom',
                     scrub: 0.6,
                 },
                 defaults: { ease: 'none' },
@@ -46,14 +64,67 @@ export default function FoodShowcase() {
                 { opacity: 0.1, duration: 0.4 }, 0.6);
         }, rootRef);
         return () => ctx.revert();
-    }, [reduced]);
+    }, [reduced, isDesktop]);
 
+    // Simple rise-in for the mobile composition
+    useEffect(() => {
+        if (reduced || isDesktop || !mounted) return;
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.fsm-rise',
+                { y: 36, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: 'power3.out',
+                    scrollTrigger: { trigger: rootRef.current, start: 'top 75%' },
+                });
+        }, rootRef);
+        return () => ctx.revert();
+    }, [reduced, isDesktop, mounted]);
+
+    // ----- Mobile / reduced-motion-on-small-screens layout -----
+    if (mounted && !isDesktop) {
+        return (
+            <section
+                ref={rootRef}
+                className="relative w-full overflow-hidden bg-cream-100 border-y border-ink-900/10 py-16"
+                aria-label="Featured food showcase"
+            >
+                <div className="px-4">
+                    <p className="fsm-rise font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
+                        On the tray today
+                    </p>
+                    <h2 className="fsm-rise font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[9vw]">
+                        <span className="block text-outline">Real food</span>
+                        <span className="block gradient-text">Real reviews</span>
+                    </h2>
+
+                    <div className="fsm-rise mt-7 rounded-3xl overflow-hidden border border-ink-900/10 shadow-warm-xl">
+                        <video
+                            className="w-full aspect-[4/3] object-cover"
+                            autoPlay loop muted playsInline preload="metadata"
+                            aria-hidden="true"
+                        >
+                            <source src={VIDEO_SRC} type="video/mp4" />
+                        </video>
+                    </div>
+
+                    <p className="fsm-rise mt-6 text-ink-600 text-[15px] leading-relaxed">
+                        Hospital dining is having a moment. From mystery casserole to
+                        unexpectedly great pho — we&apos;ve seen it all.
+                    </p>
+                </div>
+            </section>
+        );
+    }
+
+    // ----- Desktop sticky cinema -----
     return (
         <section
             ref={rootRef}
-            className="relative w-full h-screen overflow-hidden bg-cream-100 border-y border-ink-900/10"
+            className="relative w-full bg-cream-100 border-y border-ink-900/10"
+            style={{ height: '260vh' }}
             aria-label="Featured food showcase"
         >
+            <div className="sticky top-0 h-screen overflow-hidden">
             {/* Giant outlined headlines behind/around the video */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-0 select-none" aria-hidden="true">
                 <span className="fs-headline-top font-display font-extrabold uppercase whitespace-nowrap leading-none text-outline text-[16vw]">
@@ -69,17 +140,10 @@ export default function FoodShowcase() {
                 <div className="fs-video w-full h-full overflow-hidden will-change-transform shadow-warm-xl">
                     <video
                         className="w-full h-full object-cover"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        preload="metadata"
+                        autoPlay loop muted playsInline preload="metadata"
                         aria-hidden="true"
                     >
-                        <source
-                            src="https://videos.pexels.com/video-files/30141959/12925634_1920_1080_24fps.mp4"
-                            type="video/mp4"
-                        />
+                        <source src={VIDEO_SRC} type="video/mp4" />
                     </video>
                     {/* Tint so the caption stays readable at full bleed */}
                     <div className="absolute inset-0 bg-gradient-to-t from-cream-100/90 via-transparent to-cream-100/40" />
@@ -95,6 +159,7 @@ export default function FoodShowcase() {
                     Hospital dining is having a moment. From mystery casserole to
                     unexpectedly great pho — we&apos;ve seen it all.
                 </p>
+            </div>
             </div>
         </section>
     );

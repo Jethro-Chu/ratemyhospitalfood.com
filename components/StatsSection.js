@@ -33,13 +33,13 @@ export default function StatsSection({ stats }) {
             {/* Faint dot grid */}
             <div className="absolute inset-0 paper-grid opacity-40" aria-hidden="true" />
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32">
 
                 <div className="mb-14 sm:mb-20">
                     <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
                         ( By the numbers )
                     </p>
-                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[38px] sm:text-[52px] lg:text-[64px] tracking-tight text-ink-900 leading-[0.95]">
+                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[9vw] sm:text-[52px] lg:text-[64px] tracking-tight text-ink-900 leading-[0.95]">
                         Growing one<br />
                         <span className="gradient-text">tray at a time.</span>
                     </h2>

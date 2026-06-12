@@ -26,22 +26,44 @@ export default function FeaturedReviews({ reviews }) {
     const reviewsToShow = (reviews && reviews.length > 0) ? reviews.slice(0, 6) : [];
     const count = reviewsToShow.length;
 
+    // Chrome's initial snap can land the mobile swipe track mid-list;
+    // force it back to the first card.
     useEffect(() => {
-        if (reduced || !isDesktop || count === 0) return;
-        const ctx = gsap.context(() => {
-            const track = trackRef.current;
-            const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+        if (isDesktop && !reduced) return;
+        const t = setTimeout(() => {
+            if (trackRef.current) trackRef.current.scrollLeft = 0;
+        }, 80);
+        return () => clearTimeout(t);
+    }, [isDesktop, reduced, count]);
 
-            gsap.to(track, {
-                x: () => -getDistance(),
+    // CSS position:sticky does the pinning (via the tall outer section);
+    // GSAP only scrubs the horizontal travel. Pin spacers proved
+    // unreliable in this layout.
+    const [travel, setTravel] = useState(0);
+
+    useEffect(() => {
+        if (reduced || !isDesktop || count === 0) { setTravel(0); return; }
+        const measure = () => {
+            if (trackRef.current) {
+                setTravel(Math.max(0, trackRef.current.scrollWidth - window.innerWidth));
+            }
+        };
+        measure();
+        window.addEventListener('resize', measure);
+        return () => window.removeEventListener('resize', measure);
+    }, [reduced, isDesktop, count]);
+
+    useEffect(() => {
+        if (reduced || !isDesktop || count === 0 || travel === 0) return;
+        const ctx = gsap.context(() => {
+            gsap.to(trackRef.current, {
+                x: -travel,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: rootRef.current,
                     start: 'top top',
-                    end: () => `+=${getDistance()}`,
-                    pin: true,
+                    end: 'bottom bottom',
                     scrub: 0.5,
-                    invalidateOnRefresh: true,
                 },
             });
 
@@ -51,13 +73,13 @@ export default function FeaturedReviews({ reviews }) {
                 scrollTrigger: {
                     trigger: rootRef.current,
                     start: 'top top',
-                    end: () => `+=${getDistance()}`,
+                    end: 'bottom bottom',
                     scrub: 0.3,
                 },
             });
         }, rootRef);
         return () => ctx.revert();
-    }, [reduced, isDesktop, count]);
+    }, [reduced, isDesktop, count, travel]);
 
     if (count === 0) return null;
 
@@ -74,10 +96,11 @@ export default function FeaturedReviews({ reviews }) {
     return (
         <section
             ref={rootRef}
-            className="relative bg-cream-50 overflow-hidden border-y border-ink-900/10"
+            className="relative bg-cream-50 border-y border-ink-900/10"
+            style={horizontal ? { height: `calc(100vh + ${travel}px)` } : undefined}
             aria-labelledby="featured-reviews-title"
         >
-            <div className={horizontal ? 'h-screen flex flex-col justify-center' : 'py-20 sm:py-24'}>
+            <div className={horizontal ? 'sticky top-0 h-screen overflow-hidden flex flex-col justify-center' : 'py-16 sm:py-24'}>
 
                 {/* Heading */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full mb-10 sm:mb-12 flex items-end justify-between gap-6">
@@ -88,13 +111,13 @@ export default function FeaturedReviews({ reviews }) {
                         </p>
                         <h2
                             id="featured-reviews-title"
-                            className="font-display font-extrabold uppercase text-[38px] sm:text-[54px] lg:text-[68px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-extrabold uppercase text-[8.5vw] sm:text-[54px] lg:text-[68px] tracking-tight text-ink-900 leading-[0.95]"
                         >
                             What people are<br />
                             <span className="gradient-text">actually saying.</span>
                         </h2>
                     </div>
-                    {horizontal && (
+                    {horizontal ? (
                         <div className="hidden lg:flex flex-col items-end gap-2 pb-2 shrink-0">
                             <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-ink-400">
                                 Scroll →
@@ -103,6 +126,10 @@ export default function FeaturedReviews({ reviews }) {
                                 <div className="fr-progress h-full w-full bg-brand-500 origin-left" style={{ transform: 'scaleX(0)' }} />
                             </div>
                         </div>
+                    ) : (
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-ink-400 pb-1 shrink-0">
+                            Swipe →
+                        </span>
                     )}
                 </div>
 
@@ -112,13 +139,13 @@ export default function FeaturedReviews({ reviews }) {
                         ref={trackRef}
                         className={horizontal
                             ? 'flex gap-6 pl-4 sm:pl-6 lg:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] pr-[40vw] will-change-transform w-max'
-                            : 'flex flex-col gap-4 px-4 sm:px-6 max-w-3xl mx-auto'}
+                            : 'flex gap-4 px-4 sm:px-6 overflow-x-auto snap-x snap-mandatory scroll-pl-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'}
                     >
                         {reviewsToShow.map((review, i) => (
                             <article
                                 key={review.id || i}
-                                className={`relative bg-cream-100 rounded-3xl border border-ink-900/10 p-7 shadow-warm-md hover:border-brand-500/40 transition-colors ${
-                                    horizontal ? 'w-[380px] shrink-0' : 'w-full'
+                                className={`relative bg-cream-100 rounded-3xl border border-ink-900/10 p-6 sm:p-7 shadow-warm-md hover:border-brand-500/40 transition-colors ${
+                                    horizontal ? 'w-[380px] shrink-0' : 'w-[85%] max-w-[360px] shrink-0 snap-start'
                                 }`}
                             >
                                 <span className="absolute top-5 right-6 font-display font-extrabold text-[44px] leading-none text-outline select-none" aria-hidden="true">

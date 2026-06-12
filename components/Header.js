@@ -35,13 +35,17 @@ export default function Header() {
         href === '/' ? pathname === '/' : pathname.startsWith(href);
 
     return (
-        <header
-            className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-                scrolled
-                    ? 'bg-cream-100/80 backdrop-blur-xl border-b border-ink-900/10'
-                    : 'bg-transparent border-b border-transparent'
-            }`}
-        >
+        <header className="sticky top-0 z-50 w-full">
+            {/* backdrop-filter lives on this inner bar, not the header —
+                it would otherwise become the containing block for the
+                fixed mobile overlay and clip it to the 64px header box */}
+            <div
+                className={`transition-all duration-300 ${
+                    scrolled || mobileOpen
+                        ? 'bg-cream-100/80 backdrop-blur-xl border-b border-ink-900/10'
+                        : 'bg-transparent border-b border-transparent'
+                }`}
+            >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
 
                 <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Rate My Hospital Food home">
@@ -49,10 +53,10 @@ export default function Header() {
                         <Utensils className="w-[18px] h-[18px] text-cream-100" strokeWidth={2.5} />
                     </div>
                     <div className="flex flex-col leading-none">
-                        <span className="font-display font-bold text-[15px] text-ink-900 tracking-tight whitespace-nowrap uppercase">
+                        <span className="font-display font-bold text-[13px] sm:text-[15px] text-ink-900 tracking-tight whitespace-nowrap uppercase">
                             Rate My<span className="text-brand-500">*</span>Hospital Food
                         </span>
-                        <span className="font-mono text-[9px] text-ink-500 uppercase tracking-[0.3em] mt-1">Cafeteria intel</span>
+                        <span className="hidden sm:block font-mono text-[9px] text-ink-500 uppercase tracking-[0.3em] mt-1">Cafeteria intel</span>
                     </div>
                 </Link>
 
@@ -94,10 +98,11 @@ export default function Header() {
                     </button>
                 </div>
             </div>
+            </div>
 
             {/* Full-screen overlay menu on mobile */}
             {mobileOpen && (
-                <div className="md:hidden fixed inset-0 top-16 z-40 bg-cream-100/97 backdrop-blur-2xl flex flex-col px-6 pt-10 pb-8 animate-fade-up overflow-y-auto">
+                <div className="md:hidden fixed inset-0 top-16 z-40 bg-cream-100/95 backdrop-blur-2xl flex flex-col px-6 pt-10 pb-8 animate-fade-up overflow-y-auto">
                     <nav className="flex flex-col" aria-label="Mobile">
                         {navLinks.map(({ href, label, index }, i) => {
                             const active = isActive(href);

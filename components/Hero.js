@@ -44,8 +44,18 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const searchContainerRef = useRef(null);
     const rootRef = useRef(null);
+    const stripRef = useRef(null);
     const router = useRouter();
     const reduced = useReducedMotion();
+
+    // Chrome's initial snap can land the mobile review strip on card 2;
+    // force it back to the first card once content is in.
+    useEffect(() => {
+        const t = setTimeout(() => {
+            if (stripRef.current) stripRef.current.scrollLeft = 0;
+        }, 80);
+        return () => clearTimeout(t);
+    }, [heroReviews]);
 
     // Entrance choreography
     useEffect(() => {
@@ -55,6 +65,9 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                 .fromTo('.hero-char',
                     { yPercent: 110, opacity: 0, rotateX: -40 },
                     { yPercent: 0, opacity: 1, rotateX: 0, duration: 1.1, stagger: 0.028 }, 0.15)
+                .fromTo('.hero-line',
+                    { yPercent: 110 },
+                    { yPercent: 0, duration: 1.1 }, 0.5)
                 .fromTo('.hero-fade',
                     { y: 28, opacity: 0 },
                     { y: 0, opacity: 1, duration: 0.9, stagger: 0.1 }, 0.55)
@@ -132,7 +145,7 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                 <HeroScene />
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-10 sm:pt-20 min-h-[92vh] flex flex-col">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-10 sm:pt-20 min-h-[88svh] sm:min-h-[92svh] flex flex-col">
 
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-10 flex-grow">
 
@@ -144,11 +157,15 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                             Real reviews · Real cafeterias
                         </div>
 
-                        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tight text-ink-900 text-[15vw] sm:text-[76px] lg:text-[96px]">
+                        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tight text-ink-900 text-[11vw] sm:text-[64px] lg:text-[86px]">
                             <span className="sr-only">Hospital food, rated.</span>
-                            <span className="block overflow-hidden pb-1"><SplitChars text="Hospital" /></span>
-                            <span className="block overflow-hidden pb-1"><SplitChars text="food," className="text-outline-ember" /></span>
-                            <span className="block overflow-hidden pb-2"><SplitChars text="rated." className="gradient-text" /></span>
+                            <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="Hospital" /></span>
+                            <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="food," className="text-outline-ember" /></span>
+                            {/* gradient line animates as one block — background-clip:text
+                                breaks when each char carries its own transform */}
+                            <span className="block overflow-hidden pb-2 whitespace-nowrap">
+                                <span className="hero-line gradient-text inline-block will-change-transform" aria-hidden="true">rated.</span>
+                            </span>
                         </h1>
 
                         <p className="hero-fade text-[15.5px] sm:text-[17px] text-ink-600 mt-6 max-w-md leading-relaxed">
@@ -163,8 +180,8 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                                 <input
                                     type="text"
                                     id="hospital-search"
-                                    placeholder="Search by hospital or city…"
-                                    className="flex-grow bg-transparent border-none outline-none text-ink-900 placeholder:text-ink-400 text-[15px] py-3 pl-3 w-full font-medium"
+                                    placeholder="Hospital or city…"
+                                    className="flex-grow bg-transparent border-none outline-none text-ink-900 placeholder:text-ink-400 text-[16px] py-3 pl-3 w-full font-medium"
                                     value={searchTerm}
                                     onChange={(e) => { setSearchTerm(e.target.value); setShowSuggestions(true); setHighlightedIndex(-1); }}
                                     onKeyDown={handleKeyDown}
@@ -297,6 +314,51 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                         )}
                     </div>
                 </div>
+
+                {/* Mobile/tablet — swipeable live review cards */}
+                {heroReviews && heroReviews.length > 0 && (
+                    <div className="hero-fade lg:hidden mt-10">
+                        <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-ink-500 mb-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse-dot" />
+                            Live reviews — swipe
+                        </div>
+                        <div ref={stripRef} className="-mx-4 px-4 flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-pl-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {heroReviews.map((review, i) => {
+                                if (!review) return null;
+                                const badgeStyles = [
+                                    'bg-brand-100 text-brand-700',
+                                    'bg-emerald-100 text-emerald-700',
+                                    'bg-honey-100 text-honey-700',
+                                ];
+                                return (
+                                    <div
+                                        key={review.id || i}
+                                        className="glass-panel rounded-2xl p-4 shrink-0 w-[82%] max-w-[340px] snap-start"
+                                    >
+                                        <div className="flex items-start justify-between gap-2 mb-2">
+                                            <div className="font-display font-bold text-ink-900 text-[14px] leading-tight line-clamp-1">
+                                                {review.hospitalName}
+                                            </div>
+                                            <span className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded-md uppercase tracking-[0.12em] shrink-0 ${badgeStyles[i % badgeStyles.length]}`}>
+                                                {review.badge}
+                                            </span>
+                                        </div>
+                                        <div className="inline-flex items-center gap-1 bg-honey-100 px-2 py-0.5 rounded-md mb-2">
+                                            <Star className="w-3 h-3 fill-honey-400 text-honey-400" />
+                                            <span className="text-[11px] font-bold text-honey-700 font-mono">{Number(review.rating).toFixed(1)}</span>
+                                        </div>
+                                        <p className="text-ink-700 text-[12.5px] leading-relaxed line-clamp-2">
+                                            &ldquo;{review.comment}&rdquo;
+                                        </p>
+                                        <div className="mt-2.5 pt-2.5 border-t border-ink-900/10 font-mono text-[10px] text-ink-500 uppercase tracking-[0.1em]">
+                                            — {review.firstName}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Scroll cue */}
                 <div className="hero-fade mt-10 flex justify-center">
