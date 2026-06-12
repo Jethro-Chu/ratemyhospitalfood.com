@@ -1,50 +1,79 @@
 import Link from 'next/link';
-import { Utensils, Heart, Radar } from 'lucide-react';
+import { Utensils, Heart, Radar, ArrowUpRight } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-cream-300/60 bg-cream-50 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-10">
+    <footer className="relative border-t border-ink-900/10 bg-cream-100 mt-auto overflow-hidden">
+
+      {/* Giant ghost wordmark */}
+      <div
+        className="pointer-events-none select-none absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap font-display font-extrabold uppercase leading-none text-outline opacity-40 text-[18vw] sm:text-[13vw]"
+        aria-hidden="true"
+      >
+        Hospital Food
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-28 sm:pb-36">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-10">
 
           {/* Brand */}
-          <div className="sm:col-span-1">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-brand-500 ring-1 ring-brand-600/30 flex items-center justify-center shadow-warm-md">
-                <Utensils className="w-4 h-4 text-white" strokeWidth={2.5} />
+          <div className="sm:col-span-6">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center shadow-glow">
+                <Utensils className="w-4 h-4 text-cream-100" strokeWidth={2.5} />
               </div>
-              <p className="font-display font-semibold text-[15px] text-ink-900">Rate My Hospital Food</p>
+              <p className="font-display font-bold text-[15px] uppercase tracking-tight text-ink-900">
+                Rate My<span className="text-brand-500">*</span>Hospital Food
+              </p>
             </div>
-            <p className="text-[13px] text-ink-500 leading-relaxed max-w-xs">
+            <p className="text-[13.5px] text-ink-500 leading-relaxed max-w-sm">
               A community-driven guide to the best (and worst) hospital cafeterias.
               Real reviews from patients, staff, and visitors.
             </p>
           </div>
 
           {/* Explore */}
-          <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-widest text-ink-400 mb-3">Explore</h3>
-            <ul className="flex flex-col gap-2 text-[14px]">
-              <li><Link href="/"               className="text-ink-600 hover:text-brand-600 transition-colors">Home</Link></li>
-              <li><Link href="/top-rated"      className="text-ink-600 hover:text-brand-600 transition-colors">Top Rated</Link></li>
-              <li><Link href="/recent-reviews" className="text-ink-600 hover:text-brand-600 transition-colors">Recent Reviews</Link></li>
-              <li><Link href="/games"          className="text-ink-600 hover:text-brand-600 transition-colors">Games</Link></li>
+          <div className="sm:col-span-3">
+            <h3 className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">Explore</h3>
+            <ul className="flex flex-col gap-2.5 text-[14px]">
+              {[
+                ['/',               'Home'],
+                ['/top-rated',      'Top Rated'],
+                ['/recent-reviews', 'Recent Reviews'],
+                ['/games',          'Games'],
+              ].map(([href, label]) => (
+                <li key={href}>
+                  <Link href={href} className="group inline-flex items-center gap-1 text-ink-600 hover:text-ink-900 transition-colors">
+                    {label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-500" />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contribute */}
-          <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-widest text-ink-400 mb-3">Contribute</h3>
-            <ul className="flex flex-col gap-2 text-[14px]">
-              <li><Link href="/add"    className="text-ink-600 hover:text-brand-600 transition-colors">Add a Hospital</Link></li>
-              <li><Link href="/search" className="text-ink-600 hover:text-brand-600 transition-colors">Write a Review</Link></li>
+          <div className="sm:col-span-3">
+            <h3 className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-honey-400 mb-4">Contribute</h3>
+            <ul className="flex flex-col gap-2.5 text-[14px]">
+              {[
+                ['/add',    'Add a Hospital'],
+                ['/search', 'Write a Review'],
+              ].map(([href, label]) => (
+                <li key={href}>
+                  <Link href={href} className="group inline-flex items-center gap-1 text-ink-600 hover:text-ink-900 transition-colors">
+                    {label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-honey-400" />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-cream-300/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-ink-400">
+        <div className="mt-14 pt-6 border-t border-ink-900/10 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-400">
           <p className="inline-flex items-center gap-2">
-            &copy; {new Date().getFullYear()} Rate My Hospital Food. For entertainment purposes.
+            &copy; {new Date().getFullYear()} Rate My Hospital Food · For entertainment purposes
             <Link
               href="/abyss"
               aria-label="Signal detected below safe depth"
@@ -54,13 +83,13 @@ export default function Footer() {
               <Radar className="w-3.5 h-3.5" />
             </Link>
           </p>
-          <p className="inline-flex items-center gap-1.5">
+          <p className="inline-flex items-center gap-1.5 normal-case tracking-normal">
             Built with <Heart className="w-3 h-3 fill-brand-500 text-brand-500" /> by{' '}
             <a
               href="https://www.instagram.com/jethrochu"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-ink-700 hover:text-brand-600 transition-colors"
+              className="font-medium text-ink-700 hover:text-brand-500 transition-colors"
             >
               @jethrochu
             </a>

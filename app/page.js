@@ -69,7 +69,7 @@ export default function Home() {
     <div className="min-h-screen bg-cream-100 flex flex-col antialiased">
       <Header />
 
-      {/* 1. HERO – cinematic search + floating cards */}
+      {/* 1. HERO – Three.js ember scene + giant type + search */}
       <Hero
         hospitals={hospitals}
         heroReviews={heroReviews}
@@ -80,20 +80,25 @@ export default function Home() {
 
       {/* Search results grid (preserved from original behavior) */}
       {showResults && (
-        <section id="search-results" className="bg-cream-50 border-y border-cream-300/60">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 animate-fade-up">
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <section id="search-results" className="bg-cream-50 border-y border-ink-900/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 animate-fade-up">
+            <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
               <div>
-                <h2 className="font-display text-[28px] sm:text-[34px] font-semibold text-ink-900 tracking-tight">Search results</h2>
-                <p className="text-ink-500 text-sm mt-0.5">Results for &ldquo;{searchTerm}&rdquo;</p>
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-3">
+                  ( Results )
+                </p>
+                <h2 className="font-display font-extrabold uppercase text-[32px] sm:text-[44px] tracking-tight text-ink-900 leading-none">
+                  Search results
+                </h2>
+                <p className="text-ink-500 text-sm mt-2">Results for &ldquo;{searchTerm}&rdquo;</p>
               </div>
-              <span className="text-xs font-bold text-ink-600 bg-cream-100 border border-cream-300 px-3 py-1.5 rounded-full shadow-warm-sm w-fit">
+              <span className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-ink-600 bg-cream-100 border border-ink-900/10 px-4 py-2 rounded-full w-fit">
                 {filteredHospitals.length} found
               </span>
             </div>
 
             {filteredHospitals.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filteredHospitals.map((hospital, i) => (
                   <AnimatedSection key={hospital.id} delay={Math.min(i, 8) * 60} distance={16}>
                     <HospitalCard hospital={hospital} />
@@ -101,15 +106,15 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 px-6 bg-cream-100 rounded-3xl border border-cream-300/70 shadow-warm-sm max-w-md mx-auto">
+              <div className="text-center py-16 px-6 bg-cream-100 rounded-3xl border border-ink-900/10 max-w-md mx-auto">
                 <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-4">
                   <Search className="w-6 h-6 text-ink-400" />
                 </div>
-                <h3 className="font-display text-lg font-semibold text-ink-900 mb-1">No hospitals found</h3>
-                <p className="text-ink-500 text-sm mb-5">Help the community by adding it.</p>
+                <h3 className="font-display text-lg font-bold uppercase tracking-tight text-ink-900 mb-1">No hospitals found</h3>
+                <p className="text-ink-500 text-sm mb-6">Help the community by adding it.</p>
                 <Link
                   href="/add"
-                  className="bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all inline-flex items-center gap-2 active:scale-95 shadow-warm"
+                  className="bg-brand-500 hover:bg-brand-600 text-cream-100 font-mono text-[11px] font-bold uppercase tracking-[0.14em] py-3 px-6 rounded-full transition-all inline-flex items-center gap-2 active:scale-95 hover:shadow-glow"
                 >
                   <Plus className="w-4 h-4" />
                   Add Hospital
@@ -123,33 +128,33 @@ export default function Home() {
       {/* Cinematic scroll story — only when user hasn't submitted a search */}
       {!showResults && (
         <>
-          {/* 2. FOOD SHOWCASE – Apple-style sticky scroll centerpiece */}
+          {/* 2. FOOD SHOWCASE – GSAP pinned cinema section */}
           <FoodShowcase />
 
-          {/* 3. HOW IT WORKS – 3-step story */}
+          {/* 3. HOW IT WORKS – editorial numbered rows */}
           <HowItWorks />
 
-          {/* 4. FEATURED REVIEWS – sticky horizontal slide */}
+          {/* 4. FEATURED REVIEWS – GSAP horizontal scrub gallery */}
           <FeaturedReviews reviews={heroReviews} />
 
-          {/* 5. HOSPITAL DISCOVERY – zigzag card layout */}
+          {/* 5. HOSPITAL DISCOVERY – leaderboard grid */}
           {loading ? (
-            <section className="py-20 flex items-center justify-center">
+            <section className="py-24 flex items-center justify-center">
               <div className="w-9 h-9 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
             </section>
           ) : trendingHospitals.length > 0 ? (
             <HospitalDiscovery hospitals={trendingHospitals} />
           ) : (
-            <section className="bg-cream-50 border-y border-cream-300/60 py-20">
-              <div className="max-w-md mx-auto px-4 text-center bg-cream-100 rounded-3xl border border-cream-300/70 py-12">
+            <section className="bg-cream-100 py-24">
+              <div className="max-w-md mx-auto px-4 text-center bg-cream-50 rounded-3xl border border-ink-900/10 py-14">
                 <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-4">
                   <Building2 className="w-6 h-6 text-ink-400" />
                 </div>
-                <h3 className="font-display text-lg font-semibold text-ink-900 mb-1">No hospitals yet</h3>
-                <p className="text-ink-500 text-sm mb-5">Be the first to add one.</p>
+                <h3 className="font-display text-lg font-bold uppercase tracking-tight text-ink-900 mb-1">No hospitals yet</h3>
+                <p className="text-ink-500 text-sm mb-6">Be the first to add one.</p>
                 <Link
                   href="/add"
-                  className="bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all inline-flex items-center gap-2 active:scale-95 shadow-warm"
+                  className="bg-brand-500 hover:bg-brand-600 text-cream-100 font-mono text-[11px] font-bold uppercase tracking-[0.14em] py-3 px-6 rounded-full transition-all inline-flex items-center gap-2 active:scale-95 hover:shadow-glow"
                 >
                   <Plus className="w-4 h-4" />
                   Add Hospital
@@ -158,7 +163,7 @@ export default function Home() {
             </section>
           )}
 
-          {/* 6. STATS – animated count-up */}
+          {/* 6. STATS – ledger count-up */}
           <StatsSection stats={stats} />
 
           {/* 7. FINAL CTA */}

@@ -1,12 +1,11 @@
 'use client';
 
-import { MessageSquare, Building2, Star, TrendingUp } from 'lucide-react';
 import useInView from '@/hooks/useInView';
 import useCountUp from '@/hooks/useCountUp';
 
 /**
- * Pinned big-number stats. When the section first enters view,
- * each number counts up from 0 to its real value over ~1.4s.
+ * Giant ledger-style numbers. Each counts up from 0 when the section
+ * first enters view (hooks unchanged from the original build).
  */
 export default function StatsSection({ stats }) {
     const [ref, inView] = useInView({ threshold: 0.3 });
@@ -20,50 +19,47 @@ export default function StatsSection({ stats }) {
     const topScoreValue  = useCountUp(topScoreNum,    inView, 1500, 1);
 
     const items = [
-        { label: 'Reviews submitted',    value: reviewsValue,   raw: totalReviews,   icon: MessageSquare, tone: 'bg-brand-100 text-brand-700'     },
-        { label: 'Hospitals listed',     value: hospitalsValue, raw: totalHospitals, icon: Building2,     tone: 'bg-honey-100 text-honey-700'     },
-        { label: 'Highest score so far', value: topScoreValue,  raw: topScoreNum,    icon: Star,          tone: 'bg-emerald-100 text-emerald-700', decimals: 1 },
+        { n: '01', label: 'Reviews submitted',    value: reviewsValue,   accent: 'text-brand-500'   },
+        { n: '02', label: 'Hospitals listed',     value: hospitalsValue, accent: 'text-honey-400'   },
+        { n: '03', label: 'Highest score so far', value: topScoreValue,  accent: 'text-emerald-700', decimals: 1 },
     ];
 
     return (
         <section
             ref={ref}
-            className="relative bg-cream-100 overflow-hidden border-y border-cream-300/60"
+            className="relative bg-cream-50 overflow-hidden border-y border-ink-900/10"
             aria-labelledby="stats-title"
         >
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-0 w-[600px] h-[600px] bg-brand-200/20 rounded-full blur-3xl" aria-hidden="true" />
+            {/* Faint dot grid */}
+            <div className="absolute inset-0 paper-grid opacity-40" aria-hidden="true" />
 
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32">
 
-                <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-                    <div className="inline-flex items-center gap-1.5 bg-cream-50 border border-honey-200/80 text-honey-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest mb-3">
-                        <TrendingUp className="w-3 h-3" />
-                        By the numbers
-                    </div>
-                    <h2 id="stats-title" className="font-display text-[34px] sm:text-[44px] lg:text-[54px] font-semibold tracking-tight text-ink-900 leading-[1.05]">
-                        Growing one tray at a time.
+                <div className="mb-14 sm:mb-20">
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
+                        ( By the numbers )
+                    </p>
+                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[38px] sm:text-[52px] lg:text-[64px] tracking-tight text-ink-900 leading-[0.95]">
+                        Growing one<br />
+                        <span className="gradient-text">tray at a time.</span>
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                    {items.map(({ label, value, raw, icon: Icon, tone, decimals }) => {
+                <div className="grid grid-cols-1 md:grid-cols-3 border-t border-ink-900/10">
+                    {items.map(({ n, label, value, accent, decimals }) => {
                         const formatted = decimals
                             ? Number(value).toFixed(decimals)
                             : Number(value).toLocaleString();
                         return (
                             <div
                                 key={label}
-                                className="bg-cream-50 border border-cream-300/70 rounded-3xl p-7 sm:p-8 shadow-warm-sm hover:shadow-warm-md transition-shadow"
+                                className="relative py-10 sm:py-12 px-2 sm:px-8 border-b md:border-b-0 md:border-r border-ink-900/10 last:border-r-0 last:border-b-0 group"
                             >
-                                <div className={`w-12 h-12 rounded-2xl ${tone} flex items-center justify-center mb-5`}>
-                                    <Icon className="w-5 h-5" strokeWidth={2.5} />
-                                </div>
-
-                                <div className="font-display text-[56px] sm:text-[72px] font-semibold text-ink-900 leading-none tabular-nums tracking-tight">
+                                <span className={`font-mono text-[11px] font-bold ${accent}`}>{n}</span>
+                                <div className="font-display font-extrabold text-[64px] sm:text-[84px] lg:text-[96px] text-ink-900 leading-none tabular-nums tracking-tight mt-4">
                                     {formatted}
                                 </div>
-
-                                <div className="text-[12.5px] font-bold uppercase tracking-widest text-ink-500 mt-3">
+                                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-ink-500 mt-5">
                                     {label}
                                 </div>
                             </div>

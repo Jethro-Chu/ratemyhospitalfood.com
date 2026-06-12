@@ -1,17 +1,24 @@
 import "./globals.css";
-import { Inter, Fraunces } from "next/font/google";
+import { Space_Grotesk, Syne, JetBrains_Mono } from "next/font/google";
 
-const inter = Inter({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
 
-const fraunces = Fraunces({
+const syne = Syne({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-fraunces",
-  axes: ["SOFT", "opsz"],
+  variable: "--font-display",
+  weight: ["500", "600", "700", "800"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+  weight: ["400", "500", "700"],
 });
 
 export const metadata = {
@@ -35,8 +42,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
-      <body className={inter.className}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${syne.variable} ${jetbrainsMono.variable}`}>
+      <body className={spaceGrotesk.className}>
         {children}
       </body>
     </html>

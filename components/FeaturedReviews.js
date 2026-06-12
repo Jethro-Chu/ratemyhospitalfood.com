@@ -1,18 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Star, MessageSquare } from 'lucide-react';
+import { gsap } from '@/lib/gsapClient';
 import useReducedMotion from '@/hooks/useReducedMotion';
 
 /**
- * Sticky pin section. As the user scrolls through the outer 300vh
- * container, the inner stage stays fixed and the review cards slide
- * horizontally (left-to-right) across it. Mobile collapses to a
- * normal vertical stack of cards.
+ * GSAP-pinned horizontal gallery. On desktop the section pins and the
+ * review cards scrub sideways as the user scrolls; on mobile (or with
+ * reduced motion) it collapses to a vertical stack.
  */
 export default function FeaturedReviews({ reviews }) {
-    const ref = useRef(null);
-    const [progress, setProgress] = useState(0);
+    const rootRef  = useRef(null);
+    const trackRef = useRef(null);
     const [isDesktop, setIsDesktop] = useState(false);
     const reduced = useReducedMotion();
 
@@ -24,33 +23,43 @@ export default function FeaturedReviews({ reviews }) {
         return () => mq.removeEventListener('change', update);
     }, []);
 
-    useEffect(() => {
-        if (reduced || !isDesktop) return;
-        let raf = 0;
-        const compute = () => {
-            const el = ref.current;
-            if (!el) return;
-            const rect = el.getBoundingClientRect();
-            const vh = window.innerHeight;
-            // Progress through the pinned travel: 0 when section enters
-            // viewport top, 1 when bottom of inner reaches viewport bottom.
-            const travel = rect.height - vh;
-            const raw = travel > 0 ? -rect.top / travel : 0;
-            setProgress(Math.max(0, Math.min(1, raw)));
-        };
-        const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(compute); };
-        compute();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll, { passive: true });
-        return () => {
-            cancelAnimationFrame(raf);
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onScroll);
-        };
-    }, [reduced, isDesktop]);
-
     const reviewsToShow = (reviews && reviews.length > 0) ? reviews.slice(0, 6) : [];
-    if (reviewsToShow.length === 0) return null;
+    const count = reviewsToShow.length;
+
+    useEffect(() => {
+        if (reduced || !isDesktop || count === 0) return;
+        const ctx = gsap.context(() => {
+            const track = trackRef.current;
+            const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+            gsap.to(track, {
+                x: () => -getDistance(),
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: rootRef.current,
+                    start: 'top top',
+                    end: () => `+=${getDistance()}`,
+                    pin: true,
+                    scrub: 0.5,
+                    invalidateOnRefresh: true,
+                },
+            });
+
+            gsap.to('.fr-progress', {
+                scaleX: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: rootRef.current,
+                    start: 'top top',
+                    end: () => `+=${getDistance()}`,
+                    scrub: 0.3,
+                },
+            });
+        }, rootRef);
+        return () => ctx.revert();
+    }, [reduced, isDesktop, count]);
+
+    if (count === 0) return null;
 
     const ratingTone = (r) => {
         if (r >= 4.5) return 'bg-emerald-100 text-emerald-700 ring-emerald-200';
@@ -60,105 +69,100 @@ export default function FeaturedReviews({ reviews }) {
         return 'bg-red-100 text-red-700 ring-red-200';
     };
 
-    // Total horizontal travel: enough to slide the row from off-screen-right to off-screen-left
-    const trackTranslate = isDesktop && !reduced ? -progress * 70 : 0; // % of track width
-    const headlineY = isDesktop && !reduced ? Math.max(0, (0.15 - progress) * 100) : 0;
-    const headlineOpacity = isDesktop && !reduced ? Math.min(1, progress * 4) : 1;
+    const horizontal = isDesktop && !reduced;
 
     return (
         <section
-            ref={ref}
-            className="relative bg-cream-100 overflow-hidden"
-            style={{ height: isDesktop ? '300vh' : 'auto' }}
+            ref={rootRef}
+            className="relative bg-cream-50 overflow-hidden border-y border-ink-900/10"
             aria-labelledby="featured-reviews-title"
         >
-            {/* Decorative blurs */}
-            <div className="absolute top-1/4 right-0 -z-0 w-[420px] h-[420px] bg-brand-200/25 rounded-full blur-3xl translate-x-1/4" aria-hidden="true" />
-            <div className="absolute bottom-1/4 left-0 -z-0 w-[420px] h-[420px] bg-honey-200/25 rounded-full blur-3xl -translate-x-1/4" aria-hidden="true" />
-
-            <div className={isDesktop ? 'sticky top-0 h-screen flex flex-col justify-center' : 'py-16 sm:py-20'}>
+            <div className={horizontal ? 'h-screen flex flex-col justify-center' : 'py-20 sm:py-24'}>
 
                 {/* Heading */}
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 w-full mb-10 sm:mb-14">
-                    <div
-                        className="max-w-2xl"
-                        style={{ transform: `translate3d(0, ${headlineY}px, 0)`, opacity: headlineOpacity, transition: 'transform 0.3s, opacity 0.3s' }}
-                    >
-                        <div className="inline-flex items-center gap-1.5 bg-cream-50 border border-brand-200/60 text-brand-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest mb-3">
-                            <MessageSquare className="w-3 h-3" />
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full mb-10 sm:mb-12 flex items-end justify-between gap-6">
+                    <div className="max-w-3xl">
+                        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4 inline-flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse-dot" />
                             Live from the cafeteria
-                        </div>
+                        </p>
                         <h2
                             id="featured-reviews-title"
-                            className="font-display text-[36px] sm:text-[48px] lg:text-[60px] font-semibold tracking-tight text-ink-900 leading-[1.0]"
+                            className="font-display font-extrabold uppercase text-[38px] sm:text-[54px] lg:text-[68px] tracking-tight text-ink-900 leading-[0.95]"
                         >
-                            What people are actually saying.
+                            What people are<br />
+                            <span className="gradient-text">actually saying.</span>
                         </h2>
                     </div>
+                    {horizontal && (
+                        <div className="hidden lg:flex flex-col items-end gap-2 pb-2 shrink-0">
+                            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-ink-400">
+                                Scroll →
+                            </span>
+                            <div className="h-px w-40 bg-ink-200 overflow-hidden">
+                                <div className="fr-progress h-full w-full bg-brand-500 origin-left" style={{ transform: 'scaleX(0)' }} />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Horizontal track */}
-                <div className="w-full overflow-hidden">
+                {/* Track */}
+                <div className={horizontal ? 'w-full overflow-hidden' : ''}>
                     <div
-                        className={isDesktop && !reduced
-                            ? 'flex gap-5 sm:gap-6 px-[10vw] will-change-transform'
+                        ref={trackRef}
+                        className={horizontal
+                            ? 'flex gap-6 pl-4 sm:pl-6 lg:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] pr-[40vw] will-change-transform w-max'
                             : 'flex flex-col gap-4 px-4 sm:px-6 max-w-3xl mx-auto'}
-                        style={isDesktop && !reduced ? {
-                            transform: `translate3d(${trackTranslate}vw, 0, 0)`,
-                            width: 'max-content',
-                        } : undefined}
                     >
                         {reviewsToShow.map((review, i) => (
                             <article
                                 key={review.id || i}
-                                className={`bg-cream-50 rounded-3xl border border-cream-300/70 p-6 shadow-warm-md hover:shadow-warm-lg transition-shadow ${
-                                    isDesktop && !reduced ? 'w-[360px] shrink-0' : 'w-full'
+                                className={`relative bg-cream-100 rounded-3xl border border-ink-900/10 p-7 shadow-warm-md hover:border-brand-500/40 transition-colors ${
+                                    horizontal ? 'w-[380px] shrink-0' : 'w-full'
                                 }`}
                             >
-                                <div className="flex items-start justify-between gap-3 mb-4">
-                                    <div className={`inline-flex items-center justify-center min-w-[48px] h-12 px-3 rounded-xl ring-1 ${ratingTone(Number(review.rating))} font-display font-semibold text-xl leading-none`}>
-                                        {Number(review.rating).toFixed(1)}
-                                    </div>
-                                    <span className="text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider bg-cream-100 text-ink-600 border border-cream-300/70">
-                                        {review.badge || 'Review'}
-                                    </span>
+                                <span className="absolute top-5 right-6 font-display font-extrabold text-[44px] leading-none text-outline select-none" aria-hidden="true">
+                                    {String(i + 1).padStart(2, '0')}
+                                </span>
+
+                                <div className={`inline-flex items-center justify-center min-w-[52px] h-12 px-3 rounded-xl ring-1 ${ratingTone(Number(review.rating))} font-mono font-bold text-xl leading-none mb-5`}>
+                                    {Number(review.rating).toFixed(1)}
                                 </div>
 
-                                <h3 className="font-display text-[18px] font-semibold text-ink-900 leading-snug mb-2 line-clamp-2">
+                                <h3 className="font-display text-[19px] font-bold uppercase tracking-tight text-ink-900 leading-snug mb-3 line-clamp-2 pr-10">
                                     {review.hospitalName || review.hospital_name}
                                 </h3>
 
-                                <p className="text-ink-700 text-[14px] italic leading-relaxed line-clamp-4 mb-4">
+                                <p className="text-ink-600 text-[14.5px] leading-relaxed line-clamp-4 mb-5">
                                     &ldquo;{review.comment || 'No comment provided.'}&rdquo;
                                 </p>
 
-                                <div className="pt-3 border-t border-cream-200 flex items-center gap-2">
-                                    <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
-                                        {(review.firstName || review.name || 'A').charAt(0).toUpperCase()}
+                                <div className="pt-4 border-t border-ink-900/10 flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2.5">
+                                        <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center text-cream-100 text-[11px] font-bold shrink-0">
+                                            {(review.firstName || review.name || 'A').charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-600">
+                                            {review.firstName || review.name || 'Anonymous'}
+                                        </span>
                                     </div>
-                                    <span className="text-[13.5px] font-semibold text-ink-800">
-                                        {review.firstName || review.name || 'Anonymous'}
+                                    <span className="font-mono text-[9px] font-bold px-2 py-1 rounded-md uppercase tracking-[0.15em] bg-cream-200 text-ink-500">
+                                        {review.badge || 'Review'}
                                     </span>
                                 </div>
                             </article>
                         ))}
+
+                        {/* End-cap inside the horizontal track */}
+                        {horizontal && (
+                            <div className="w-[320px] shrink-0 flex items-center">
+                                <p className="font-display font-extrabold uppercase text-[40px] leading-[1] text-outline select-none">
+                                    Your turn<br />next →
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
-
-                {/* Hint row only on desktop pinned mode */}
-                {isDesktop && !reduced && (
-                    <div className="max-w-6xl mx-auto px-4 sm:px-6 w-full mt-8 flex items-center justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-widest text-ink-400">
-                            Scroll to see more
-                        </span>
-                        <div className="h-1 w-32 rounded-full bg-cream-300 overflow-hidden">
-                            <div
-                                className="h-full bg-brand-500 transition-all duration-150"
-                                style={{ width: `${progress * 100}%` }}
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
         </section>
     );
