@@ -39,7 +39,7 @@ export default function StatsSection({ stats }) {
                     <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
                         ( By the numbers )
                     </p>
-                    <h2 id="stats-title" className="font-display font-extrabold uppercase text-[12vw] sm:text-[64px] lg:text-[84px] tracking-tight text-ink-900 leading-[0.95]">
+                    <h2 id="stats-title" className="font-display font-bold text-[12vw] sm:text-[64px] lg:text-[84px] tracking-tight text-ink-900 leading-[1.02]">
                         Growing one<br />
                         <span className="gradient-text">tray at a time.</span>
                     </h2>
@@ -56,7 +56,7 @@ export default function StatsSection({ stats }) {
                                 className="relative py-10 sm:py-12 px-2 sm:px-8 border-b md:border-b-0 md:border-r border-ink-900/10 last:border-r-0 last:border-b-0 group"
                             >
                                 <span className={`font-mono text-[11px] font-bold ${accent}`}>{n}</span>
-                                <div className="font-display font-extrabold text-[64px] sm:text-[84px] lg:text-[96px] text-ink-900 leading-none tabular-nums tracking-tight mt-4">
+                                <div className="font-display font-bold text-[64px] sm:text-[84px] lg:text-[96px] text-ink-900 leading-none tabular-nums tracking-tight mt-4">
                                     {formatted}
                                 </div>
                                 <div className="font-mono text-[11px] font-bold uppercase tracking-[0.25em] text-ink-500 mt-5">

@@ -157,10 +157,10 @@ export default function Hero({ hospitals, heroReviews, searchTerm, setSearchTerm
                             Real reviews · Real cafeterias
                         </div>
 
-                        <h1 className="font-display font-extrabold uppercase leading-[0.92] tracking-tight text-ink-900 text-[16vw] sm:text-[84px] lg:text-[128px]">
+                        <h1 className="font-display font-bold leading-[1.02] tracking-tight text-ink-900 text-[16vw] sm:text-[84px] lg:text-[128px]">
                             <span className="sr-only">Hospital food, rated.</span>
                             <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="Hospital" /></span>
-                            <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="food," className="text-outline-ember" /></span>
+                            <span className="block overflow-hidden pb-1 whitespace-nowrap"><SplitChars text="food," className="text-brand-500" /></span>
                             {/* gradient line animates as one block — background-clip:text
                                 breaks when each char carries its own transform */}
                             <span className="block overflow-hidden pb-2 whitespace-nowrap">

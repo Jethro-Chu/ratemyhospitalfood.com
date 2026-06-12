@@ -77,10 +77,10 @@ export default function HowItWorks() {
                         </p>
                         <h2
                             id="how-it-works-title"
-                            className="font-display font-extrabold uppercase text-[12vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-bold text-[12vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[1.02]"
                         >
                             Three bites,<br />
-                            <span className="text-outline">no nonsense.</span>
+                            <span className="gradient-text">no nonsense.</span>
                         </h2>
                     </div>
                     <p className="text-ink-500 text-[15px] leading-relaxed max-w-xs sm:text-right">
@@ -98,14 +98,14 @@ export default function HowItWorks() {
                                 key={step.n}
                                 className="hiw-row group grid grid-cols-[auto_1fr] sm:grid-cols-[120px_auto_1fr_auto] items-center gap-x-5 sm:gap-x-10 gap-y-2 py-8 sm:py-10 border-b border-ink-900/10 transition-colors duration-300 hover:bg-cream-50/60 px-2 sm:px-4 -mx-2 sm:-mx-4"
                             >
-                                <span className="font-display font-extrabold text-[40px] sm:text-[64px] leading-none text-outline transition-all duration-300">
+                                <span className="font-display font-bold text-[40px] sm:text-[64px] leading-none text-cream-400 transition-all duration-300">
                                     {step.n}
                                 </span>
                                 <div className={`hidden sm:flex w-14 h-14 rounded-2xl items-center justify-center ${step.chip}`}>
                                     <Icon className="w-[22px] h-[22px]" strokeWidth={2.2} />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="font-display text-[22px] sm:text-[28px] font-bold uppercase tracking-tight text-ink-900 leading-tight">
+                                    <h3 className="font-display text-[22px] sm:text-[28px] font-bold tracking-tight text-ink-900 leading-tight">
                                         {step.title}
                                     </h3>
                                     <p className="text-ink-500 text-[14.5px] leading-relaxed mt-1.5 max-w-xl">

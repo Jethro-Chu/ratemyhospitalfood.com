@@ -53,9 +53,9 @@ export default function HospitalDiscovery({ hospitals }) {
                         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-honey-400 mb-4">
                             ( The leaderboard )
                         </p>
-                        <h2 id="discover-title" className="font-display font-extrabold uppercase text-[12.5vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[0.95]">
+                        <h2 id="discover-title" className="font-display font-bold text-[12.5vw] sm:text-[64px] lg:text-[96px] tracking-tight text-ink-900 leading-[1.02]">
                             Most-loved<br />
-                            <span className="text-outline">cafeterias.</span>
+                            <span className="gradient-text">cafeterias.</span>
                         </h2>
                     </div>
                     <p className="text-ink-500 text-[15px] leading-relaxed max-w-xs sm:text-right">
@@ -70,7 +70,7 @@ export default function HospitalDiscovery({ hospitals }) {
                         return (
                             <div key={hospital.id} className={`hd-cell relative ${isOdd ? 'md:mt-16' : ''}`}>
                                 <span
-                                    className="absolute -top-6 -left-1 sm:-left-3 font-display font-extrabold text-[72px] sm:text-[96px] leading-none text-outline select-none z-10 pointer-events-none"
+                                    className="absolute -top-6 -left-1 sm:-left-3 font-display font-bold text-[72px] sm:text-[96px] leading-none text-cream-400/80 select-none z-10 pointer-events-none"
                                     aria-hidden="true"
                                 >
                                     {String(i + 1).padStart(2, '0')}

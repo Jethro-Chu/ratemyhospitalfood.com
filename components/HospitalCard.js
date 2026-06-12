@@ -62,7 +62,7 @@ export default function HospitalCard({ hospital }) {
                         </div>
                     </div>
 
-                    <h3 className="font-display text-[19px] font-bold uppercase tracking-tight text-ink-900 leading-snug group-hover:text-brand-600 transition-colors mb-2">
+                    <h3 className="font-display text-[19px] font-bold tracking-tight text-ink-900 leading-snug group-hover:text-brand-600 transition-colors mb-2">
                         {hospital.name}
                     </h3>
 

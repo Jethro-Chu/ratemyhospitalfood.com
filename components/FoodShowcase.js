@@ -92,9 +92,9 @@ export default function FoodShowcase() {
                     <p className="fsm-rise font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-4">
                         On the tray today
                     </p>
-                    <h2 className="fsm-rise font-display font-extrabold uppercase tracking-tight leading-[0.95] text-[12vw]">
-                        <span className="block text-outline">Real food</span>
-                        <span className="block gradient-text">Real reviews</span>
+                    <h2 className="fsm-rise font-display font-bold tracking-tight leading-[1.05] text-[12vw]">
+                        <span className="block text-ink-900">Real food,</span>
+                        <span className="block gradient-text">real reviews.</span>
                     </h2>
 
                     <div className="fsm-rise mt-7 rounded-3xl overflow-hidden border border-ink-900/10 shadow-warm-xl">
@@ -127,11 +127,11 @@ export default function FoodShowcase() {
             <div className="sticky top-0 h-screen overflow-hidden">
             {/* Giant outlined headlines behind/around the video */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-0 select-none" aria-hidden="true">
-                <span className="fs-headline-top font-display font-extrabold uppercase whitespace-nowrap leading-none text-outline text-[16vw]">
-                    Real food
+                <span className="fs-headline-top font-display font-bold whitespace-nowrap leading-none text-cream-400 text-[16vw]">
+                    Real food,
                 </span>
-                <span className="fs-headline-bottom font-display font-extrabold uppercase whitespace-nowrap leading-none gradient-text text-[16vw]">
-                    Real reviews
+                <span className="fs-headline-bottom font-display font-bold whitespace-nowrap leading-[1.1] gradient-text text-[16vw]">
+                    real reviews.
                 </span>
             </div>
 

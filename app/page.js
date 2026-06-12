@@ -88,7 +88,7 @@ export default function Home() {
                 <p className="font-mono text-[10px] font-bold uppercase tracking-[0.3em] text-brand-500 mb-3">
                   ( Results )
                 </p>
-                <h2 className="font-display font-extrabold uppercase text-[32px] sm:text-[44px] tracking-tight text-ink-900 leading-none">
+                <h2 className="font-display font-bold text-[32px] sm:text-[44px] tracking-tight text-ink-900 leading-tight">
                   Search results
                 </h2>
                 <p className="text-ink-500 text-sm mt-2">Results for &ldquo;{searchTerm}&rdquo;</p>
@@ -111,7 +111,7 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-4">
                   <Search className="w-6 h-6 text-ink-400" />
                 </div>
-                <h3 className="font-display text-lg font-bold uppercase tracking-tight text-ink-900 mb-1">No hospitals found</h3>
+                <h3 className="font-display text-lg font-bold tracking-tight text-ink-900 mb-1">No hospitals found</h3>
                 <p className="text-ink-500 text-sm mb-6">Help the community by adding it.</p>
                 <Link
                   href="/add"
@@ -151,7 +151,7 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-4">
                   <Building2 className="w-6 h-6 text-ink-400" />
                 </div>
-                <h3 className="font-display text-lg font-bold uppercase tracking-tight text-ink-900 mb-1">No hospitals yet</h3>
+                <h3 className="font-display text-lg font-bold tracking-tight text-ink-900 mb-1">No hospitals yet</h3>
                 <p className="text-ink-500 text-sm mb-6">Be the first to add one.</p>
                 <Link
                   href="/add"

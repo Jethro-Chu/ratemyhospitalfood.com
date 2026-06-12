@@ -73,13 +73,13 @@ export default function FinalCTA() {
                         'No login required',
                         'Takes under a minute',
                     ]}
-                    className="font-display font-extrabold uppercase text-[22px] sm:text-[28px] text-outline"
+                    className="font-display font-bold text-[22px] sm:text-[28px] text-cream-500"
                 />
             </div>
 
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-36 text-center">
 
-                <h2 id="final-cta-title" className="font-display font-extrabold uppercase tracking-tight text-ink-900 leading-[0.95] text-[12vw] sm:text-[92px] lg:text-[120px]">
+                <h2 id="final-cta-title" className="font-display font-bold tracking-tight text-ink-900 leading-[1.02] text-[12vw] sm:text-[92px] lg:text-[120px]">
                     <span className="block overflow-hidden pb-1"><span className="cta-line block">Had hospital</span></span>
                     <span className="block overflow-hidden pb-2">
                         <span className="cta-line block">food <span className="gradient-text">recently?</span></span>

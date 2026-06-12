@@ -7,7 +7,7 @@ export default function Footer() {
 
       {/* Giant ghost wordmark */}
       <div
-        className="pointer-events-none select-none absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap font-display font-extrabold uppercase leading-none text-outline opacity-40 text-[18vw] sm:text-[13vw]"
+        className="pointer-events-none select-none absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap font-display font-bold leading-none text-cream-300 opacity-60 text-[18vw] sm:text-[13vw]"
         aria-hidden="true"
       >
         Hospital Food
@@ -22,7 +22,7 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center shadow-glow">
                 <Utensils className="w-4 h-4 text-cream-100" strokeWidth={2.5} />
               </div>
-              <p className="font-display font-bold text-[15px] uppercase tracking-tight text-ink-900">
+              <p className="font-display font-bold text-[16px] tracking-tight text-ink-900">
                 Rate My<span className="text-brand-500">*</span>Hospital Food
               </p>
             </div>

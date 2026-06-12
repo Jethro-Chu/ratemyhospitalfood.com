@@ -53,7 +53,7 @@ export default function Header() {
                         <Utensils className="w-[18px] h-[18px] text-cream-100" strokeWidth={2.5} />
                     </div>
                     <div className="flex flex-col leading-none">
-                        <span className="font-display font-bold text-[13px] sm:text-[15px] text-ink-900 tracking-tight whitespace-nowrap uppercase">
+                        <span className="font-display font-bold text-[14px] sm:text-[16px] text-ink-900 tracking-tight whitespace-nowrap">
                             Rate My<span className="text-brand-500">*</span>Hospital Food
                         </span>
                         <span className="hidden sm:block font-mono text-[9px] text-ink-500 uppercase tracking-[0.3em] mt-1">Cafeteria intel</span>
@@ -116,7 +116,7 @@ export default function Header() {
                                     style={{ animationDelay: `${i * 60}ms` }}
                                 >
                                     <span className="font-mono text-[11px] text-brand-500">{index}</span>
-                                    <span className={`font-display text-[32px] font-bold uppercase tracking-tight leading-none ${
+                                    <span className={`font-display text-[32px] font-bold tracking-tight leading-none ${
                                         active ? 'text-brand-500' : 'text-ink-900 group-hover:text-brand-500'
                                     } transition-colors`}>
                                         {label}

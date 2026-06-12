@@ -111,7 +111,7 @@ export default function FeaturedReviews({ reviews }) {
                         </p>
                         <h2
                             id="featured-reviews-title"
-                            className="font-display font-extrabold uppercase text-[11vw] sm:text-[64px] lg:text-[88px] tracking-tight text-ink-900 leading-[0.95]"
+                            className="font-display font-bold text-[11vw] sm:text-[64px] lg:text-[88px] tracking-tight text-ink-900 leading-[1.02]"
                         >
                             What people are<br />
                             <span className="gradient-text">actually saying.</span>
@@ -148,7 +148,7 @@ export default function FeaturedReviews({ reviews }) {
                                     horizontal ? 'w-[380px] shrink-0' : 'w-[85%] max-w-[360px] shrink-0 snap-start'
                                 }`}
                             >
-                                <span className="absolute top-5 right-6 font-display font-extrabold text-[44px] leading-none text-outline select-none" aria-hidden="true">
+                                <span className="absolute top-5 right-6 font-display font-bold text-[44px] leading-none text-cream-300 select-none" aria-hidden="true">
                                     {String(i + 1).padStart(2, '0')}
                                 </span>
 
@@ -156,7 +156,7 @@ export default function FeaturedReviews({ reviews }) {
                                     {Number(review.rating).toFixed(1)}
                                 </div>
 
-                                <h3 className="font-display text-[19px] font-bold uppercase tracking-tight text-ink-900 leading-snug mb-3 line-clamp-2 pr-10">
+                                <h3 className="font-display text-[19px] font-bold tracking-tight text-ink-900 leading-snug mb-3 line-clamp-2 pr-10">
                                     {review.hospitalName || review.hospital_name}
                                 </h3>
 
@@ -183,7 +183,7 @@ export default function FeaturedReviews({ reviews }) {
                         {/* End-cap inside the horizontal track */}
                         {horizontal && (
                             <div className="w-[320px] shrink-0 flex items-center">
-                                <p className="font-display font-extrabold uppercase text-[40px] leading-[1] text-outline select-none">
+                                <p className="font-display font-bold text-[40px] leading-[1.05] text-cream-500 select-none">
                                     Your turn<br />next →
                                 </p>
                             </div>
