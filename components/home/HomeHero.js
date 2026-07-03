@@ -47,7 +47,12 @@ export default function HomeHero() {
           Search hospitals, read real food reviews, and see what patients, visitors, and staff are saying.
         </p>
 
-        <div className="mt-8 w-full flex justify-center animate-fade-up-delay-3">
+        {/* relative z-30 lifts the search + its autocomplete dropdown above the
+            sibling hero blocks below. Those blocks animate in with a transform
+            (animate-fade-up-*), which makes each its own stacking context; since
+            they come later in the DOM they would otherwise paint over the
+            dropdown. The /search page guards its box the same way. */}
+        <div className="mt-8 w-full flex justify-center animate-fade-up-delay-3 relative z-30">
           <HeroSearch />
         </div>
 

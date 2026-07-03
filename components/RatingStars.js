@@ -20,9 +20,13 @@ export default function RatingStars({ rating = 0, size = 16, className = '' }) {
         ))}
       </div>
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${pct}%` }} aria-hidden="true">
-        <div className="flex gap-0.5">
+        {/* w-max keeps this row at its natural width so the stars stay full
+            size and line up exactly with the base row. Without it the row
+            inherits the clipped (pct%) width and the fixed-size star SVGs
+            flex-shrink to fit, drifting out of alignment and smearing the fill. */}
+        <div className="flex gap-0.5 w-max">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} size={size} className="text-honey-400 fill-honey-400" strokeWidth={1.5} />
+            <Star key={i} size={size} className="shrink-0 text-honey-400 fill-honey-400" strokeWidth={1.5} />
           ))}
         </div>
       </div>
