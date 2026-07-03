@@ -92,6 +92,7 @@ module.exports = {
         'marquee':         'marquee 28s linear infinite',
         'marquee-slow':    'marquee 44s linear infinite',
         'pulse-dot':       'pulseDot 2s ease-in-out infinite',
+        'slide-up':        'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both',
       },
       keyframes: {
         fadeUp: {
@@ -118,6 +119,10 @@ module.exports = {
         pulseDot: {
           '0%, 100%': { opacity: '1' },
           '50%':      { opacity: '0.35' },
+        },
+        slideUp: {
+          from: { opacity: '0', transform: 'translateY(24px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
         },
       },
     },

@@ -1,19 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getHospitalById } from '@/lib/actions';
 import RatingModal from '@/components/RatingModal';
-import Link from 'next/link';
-import { MapPin, ArrowLeft, Star, MessageSquare, PenLine, Utensils, Loader2 } from 'lucide-react';
+import RatingStars from '@/components/RatingStars';
+import ReviewCard from '@/components/ReviewCard';
+import EmptyState from '@/components/EmptyState';
+import Reveal from '@/components/Reveal';
+import { Shimmer, ReviewCardSkeleton } from '@/components/Skeletons';
+import { getHospitalById } from '@/lib/actions';
+import { getRatingTone } from '@/lib/ratingTone';
+import { pluralize, firstNameOf } from '@/lib/format';
+import { MapPin, Globe, PenLine } from 'lucide-react';
+
+const MAX_STRIP_PHOTOS = 10;
 
 export default function HospitalDetail({ params }) {
-    const [hospital, setHospital]     = useState(null);
-    const [loading, setLoading]       = useState(true);
-    const [notFound, setNotFound]     = useState(false);
+    const [hospital, setHospital] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // ?review=true opens the modal straight away, then tidies the URL.
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const urlParams = new URLSearchParams(window.location.search);
@@ -48,56 +58,79 @@ export default function HospitalDetail({ params }) {
         }
     }, [params.id]);
 
+    // Closing the modal re-fetches, so a fresh review shows up immediately.
     const handleCloseInternal = async () => {
         setIsModalOpen(false);
         const updated = await getHospitalById(params.id);
-        setHospital(updated);
+        if (updated) setHospital(updated);
     };
 
-    const renderStars = (ratingValue, size = 'w-3.5 h-3.5') => {
-        const stars = [];
-        const rounded = Math.round(ratingValue);
-        for (let i = 1; i <= 5; i++) {
-            stars.push(
-                <Star
-                    key={i}
-                    className={`${size} ${
-                        i <= rounded ? 'text-honey-400 fill-honey-400' : 'text-cream-300 fill-cream-300'
-                    }`}
-                />
-            );
-        }
-        return stars;
+    const scrollToReview = (reviewId) => {
+        const el = document.getElementById('review-' + reviewId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-cream-100 flex flex-col antialiased">
+            <div className="min-h-screen bg-cream-100 flex flex-col">
                 <Header />
-                <div className="flex-grow flex flex-col items-center justify-center py-20">
-                    <Loader2 className="w-9 h-9 text-brand-500 animate-spin mb-3" />
-                    <div className="text-ink-500 text-sm font-medium">Loading…</div>
-                </div>
+                <main className="flex-grow">
+                    <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 w-full">
+                        <div className="rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-sm p-6 sm:p-10">
+                            <Shimmer className="h-3 w-28" />
+                            <Shimmer className="mt-4 h-10 sm:h-12 w-3/4 max-w-xl" />
+                            <Shimmer className="mt-4 h-4 w-64 max-w-full" />
+                            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                                <div>
+                                    <div className="flex items-center gap-4">
+                                        <Shimmer className="h-16 w-24 rounded-2xl" />
+                                        <div className="space-y-2.5">
+                                            <Shimmer className="h-5 w-32" />
+                                            <Shimmer className="h-6 w-36 rounded-full" />
+                                            <Shimmer className="h-3 w-20" />
+                                        </div>
+                                    </div>
+                                    <Shimmer className="mt-6 h-11 w-48 rounded-full" />
+                                </div>
+                                <div className="space-y-3">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Shimmer key={i} className="h-2.5 w-full rounded-full" />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 w-full">
+                        <div className="max-w-2xl">
+                            <Shimmer className="h-9 w-44" />
+                            <div className="mt-8 space-y-5">
+                                <ReviewCardSkeleton />
+                                <ReviewCardSkeleton />
+                                <ReviewCardSkeleton />
+                            </div>
+                        </div>
+                    </section>
+                </main>
+                <Footer />
             </div>
         );
     }
 
-    if (!hospital) {
+    if (notFound || !hospital) {
         return (
-            <div className="min-h-screen bg-cream-100 flex flex-col antialiased">
+            <div className="min-h-screen bg-cream-100 flex flex-col">
                 <Header />
-                <main className="flex-grow flex flex-col items-center justify-center px-4 py-20">
-                    <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mb-4">
-                        <MapPin className="w-6 h-6 text-ink-400" />
-                    </div>
-                    <h3 className="font-display text-xl font-semibold text-ink-900 mb-1">Hospital not found</h3>
-                    <p className="text-ink-500 text-sm mb-5">It may have been removed.</p>
-                    <Link
-                        href="/"
-                        className="bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all active:scale-95 shadow-warm"
-                    >
-                        Back to home
-                    </Link>
+                <main className="flex-grow flex items-center justify-center px-4 sm:px-6 py-14 sm:py-20">
+                    <EmptyState
+                        emoji="🏥"
+                        title="We couldn't find that hospital."
+                        message="It may have been removed, or the link is off."
+                        actionHref="/search"
+                        actionLabel="Search hospitals"
+                        secondaryHref="/add"
+                        secondaryLabel="Add a hospital"
+                        className="w-full max-w-xl"
+                    />
                 </main>
                 <Footer />
             </div>
@@ -106,19 +139,19 @@ export default function HospitalDetail({ params }) {
 
     const rating = Number(hospital.rating || 0);
     const numRatings = Number(hospital.numRatings || 0);
+    const reviews = hospital.reviews || [];
+    const tone = getRatingTone(rating);
 
-    let ratingLabel = 'Not yet rated';
-    let ratingTone  = 'bg-cream-200 text-ink-500 ring-cream-300';
-    if (rating > 0) {
-        if      (rating >= 4.5) { ratingLabel = 'Shockingly good';  ratingTone = 'bg-emerald-100 text-emerald-700 ring-emerald-200'; }
-        else if (rating >= 3.5) { ratingLabel = 'Would eat again';  ratingTone = 'bg-green-100 text-green-700 ring-green-200';       }
-        else if (rating >= 2.5) { ratingLabel = 'It did the job';   ratingTone = 'bg-honey-100 text-honey-700 ring-honey-200';       }
-        else if (rating >= 1.5) { ratingLabel = 'Pack snacks';      ratingTone = 'bg-orange-100 text-orange-700 ring-orange-200';    }
-        else                    { ratingLabel = 'Pray before eating'; ratingTone = 'bg-red-100 text-red-700 ring-red-200';           }
-    }
+    const distribution = [5, 4, 3, 2, 1].map((star) => {
+        const count = reviews.filter((r) => Math.round(Number(r.rating) || 0) === star).length;
+        const pct = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0;
+        return { star, count, pct };
+    });
+
+    const photos = reviews.filter((r) => r.image_url).slice(0, MAX_STRIP_PHOTOS);
 
     return (
-        <div className="min-h-screen bg-cream-100 flex flex-col antialiased">
+        <div className="min-h-screen bg-cream-100 flex flex-col">
             <Header />
 
             <RatingModal
@@ -128,161 +161,185 @@ export default function HospitalDetail({ params }) {
                 hospitalName={hospital.name}
             />
 
-            {/* ── HERO BANNER ── */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-cream-200/50 to-cream-100 border-b border-cream-300/60">
-                <div className="absolute top-0 right-0 -z-10 w-[400px] h-[400px] bg-brand-200/30 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4" aria-hidden="true" />
+            <main className="flex-grow pb-28 md:pb-0">
+                {/* ── Summary hero ── */}
+                <section className="relative overflow-hidden">
+                    <div
+                        className="absolute -top-24 right-0 w-[420px] h-[420px] bg-brand-500/10 blur-3xl rounded-full pointer-events-none"
+                        aria-hidden="true"
+                    />
+                    <div
+                        className="absolute top-40 -left-32 w-[320px] h-[320px] bg-honey-400/10 blur-3xl rounded-full pointer-events-none"
+                        aria-hidden="true"
+                    />
 
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-10">
-                    <Link
-                        href="/"
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-500 hover:text-brand-600 transition-colors mb-6"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back
-                    </Link>
-
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                        <div className="animate-fade-up max-w-2xl">
-                            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.05] mb-3">
+                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 w-full">
+                        <div className="rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-sm p-6 sm:p-10 animate-fade-up">
+                            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">( Hospital )</p>
+                            <h1 className="mt-3 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl leading-[1.05]">
                                 {hospital.name}
                             </h1>
-                            <p className="text-ink-600 text-[15px] flex items-center gap-1.5 mb-4">
-                                <MapPin className="w-4 h-4 shrink-0 text-ink-400" />
-                                {hospital.location}
-                            </p>
-                            {hospital.tags && hospital.tags.length > 0 && (
-                                <div className="flex gap-1.5 flex-wrap">
-                                    {hospital.tags.map(tag => (
-                                        <span key={tag} className="bg-brand-50 border border-brand-100 text-brand-700 text-[10.5px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
-                                            {tag}
+                            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                                <p className="inline-flex items-center gap-1.5 text-[15px] text-ink-700">
+                                    <MapPin className="w-4 h-4 shrink-0 text-ink-400" aria-hidden="true" />
+                                    {hospital.location}
+                                </p>
+                                {hospital.website && (
+                                    <a
+                                        href={hospital.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-brand-600 hover:text-brand-700 transition-colors"
+                                    >
+                                        <Globe className="w-4 h-4 shrink-0" aria-hidden="true" />
+                                        Visit website
+                                    </a>
+                                )}
+                            </div>
+
+                            {/* Rating block: score on the left, distribution beside it on desktop */}
+                            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                                <div>
+                                    <div className="flex items-center gap-4">
+                                        <span className="font-display font-bold tracking-tight text-ink-900 text-6xl leading-none">
+                                            {rating > 0 ? rating.toFixed(1) : '—'}
                                         </span>
+                                        <div>
+                                            <RatingStars rating={rating} size={20} />
+                                            <span
+                                                className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${tone.chip}`}
+                                            >
+                                                <span aria-hidden="true">{tone.emoji}</span> {tone.label}
+                                            </span>
+                                            <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-400">
+                                                {pluralize(numRatings, 'review')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-cream-50 font-semibold text-[14px] py-2.5 px-6 rounded-full transition-all duration-150 active:scale-[0.97] shadow-warm-sm hover:shadow-glow"
+                                    >
+                                        <PenLine className="w-4 h-4" aria-hidden="true" />
+                                        Rate this hospital
+                                    </button>
+                                </div>
+
+                                <div className="space-y-2.5" aria-label="Rating distribution">
+                                    {distribution.map(({ star, count, pct }) => (
+                                        <div key={star} className="flex items-center gap-3">
+                                            <span className="font-mono text-[11px] text-ink-500 w-7 shrink-0">
+                                                {star}★
+                                            </span>
+                                            <div className="flex-1 h-2.5 rounded-full bg-cream-200 overflow-hidden">
+                                                <div
+                                                    className="h-full rounded-full bg-honey-400 transition-all duration-500"
+                                                    style={{ width: `${pct}%` }}
+                                                />
+                                            </div>
+                                            <span className="font-mono text-[11px] text-ink-400 w-7 shrink-0 text-right">
+                                                {count}
+                                            </span>
+                                        </div>
                                     ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── Photo strip ── */}
+                {photos.length > 0 && (
+                    <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-10 sm:mt-12 w-full">
+                        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">( Photo evidence )</p>
+                        <p className="mt-1.5 text-[13px] text-ink-500">Tap a photo to jump to its review.</p>
+                        <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar snap-x pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+                            {photos.map((r) => (
+                                <button
+                                    key={r.id}
+                                    type="button"
+                                    onClick={() => scrollToReview(r.id)}
+                                    className="relative w-40 h-28 shrink-0 snap-start rounded-2xl overflow-hidden border border-ink-900/10 shadow-warm-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-warm-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100"
+                                    aria-label={`Jump to ${firstNameOf(r.name)}'s review`}
+                                >
+                                    <Image
+                                        src={r.image_url}
+                                        alt={`Food photo from ${firstNameOf(r.name)}'s review`}
+                                        fill
+                                        sizes="160px"
+                                        className="object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* ── Reviews ── */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 w-full">
+                    <div className="max-w-2xl">
+                        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">( Reviews )</p>
+                        <div className="mt-2 flex items-center gap-3">
+                            <h2 className="font-display font-bold tracking-tight text-ink-900 text-3xl sm:text-4xl">
+                                Reviews
+                            </h2>
+                            <span className="rounded-full bg-cream-200 text-ink-600 font-mono text-[12px] px-3 py-1">
+                                {numRatings}
+                            </span>
+                        </div>
+
+                        <div className="mt-8 space-y-5">
+                            {reviews.length > 0 ? (
+                                reviews.map((r, i) => (
+                                    <div key={r.id || i} id={'review-' + r.id}>
+                                        <Reveal delay={Math.min(i * 40, 300)}>
+                                            <ReviewCard review={r} />
+                                        </Reveal>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="rounded-3xl border border-dashed border-ink-900/15 bg-cream-50/70 px-6 py-14 text-center">
+                                    <div className="mx-auto w-16 h-16 rounded-full bg-cream-200/70 flex items-center justify-center text-[28px] animate-float">
+                                        <span aria-hidden="true">🍽️</span>
+                                    </div>
+                                    <h3 className="mt-5 font-display font-bold text-xl text-ink-900">No reviews yet</h3>
+                                    <p className="mt-2 text-[14px] text-ink-500 max-w-sm mx-auto leading-relaxed">
+                                        Be the first to rate the food here.
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="mt-6 inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-cream-50 font-semibold text-[14px] py-2.5 px-6 rounded-full transition-all duration-150 active:scale-[0.97] shadow-warm-sm hover:shadow-glow"
+                                    >
+                                        <PenLine className="w-4 h-4" aria-hidden="true" />
+                                        Rate this hospital
+                                    </button>
                                 </div>
                             )}
                         </div>
+                    </div>
+                </section>
+            </main>
 
-                        {/* Rating card */}
-                        <div className="bg-cream-50 border border-cream-300/80 rounded-3xl p-5 shrink-0 lg:max-w-xs w-full lg:w-auto shadow-warm-md animate-fade-up-delay">
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-display font-semibold text-2xl ring-1 ${ratingTone}`}>
-                                    {rating > 0 ? rating.toFixed(1) : '—'}
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="text-[13.5px] font-bold text-ink-900">{ratingLabel}</div>
-                                    <div className="flex items-center gap-1.5 mt-1">
-                                        <div className="flex items-center gap-0.5">
-                                            {renderStars(rating, 'w-3 h-3')}
-                                        </div>
-                                    </div>
-                                    <div className="text-[11px] text-ink-500 mt-1">
-                                        {numRatings} {numRatings === 1 ? 'review' : 'reviews'}
-                                    </div>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setIsModalOpen(true)}
-                                className="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all active:scale-[0.98] inline-flex items-center justify-center gap-2 shadow-warm hover:shadow-warm-md"
-                            >
-                                <PenLine className="w-4 h-4" />
-                                Write a Review
-                            </button>
-                        </div>
+            {/* ── Mobile sticky CTA ── */}
+            {!isModalOpen && (
+                <div
+                    className="md:hidden fixed bottom-0 left-0 right-0 z-40 px-4"
+                    style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 12px)' }}
+                >
+                    <div className="glass-panel rounded-full shadow-warm-xl p-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsModalOpen(true)}
+                            className="w-full inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 active:bg-brand-400 text-cream-50 font-semibold text-[14px] py-3.5 px-6 rounded-full transition-all duration-150 active:scale-[0.98] shadow-warm-sm"
+                        >
+                            <PenLine className="w-4 h-4" aria-hidden="true" />
+                            Rate this hospital
+                        </button>
                     </div>
                 </div>
-            </div>
-
-            {/* ── REVIEWS ── */}
-            <div className="max-w-3xl mx-auto w-full px-4 sm:px-6 py-12 flex-grow">
-                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-cream-300/60">
-                    <MessageSquare className="w-4 h-4 text-brand-500" />
-                    <h2 className="font-display text-xl font-semibold text-ink-900">Reviews</h2>
-                    <span className="text-[11px] font-bold text-ink-600 bg-cream-200/70 px-2 py-0.5 rounded-md ml-1">
-                        {numRatings}
-                    </span>
-                </div>
-
-                <div className="space-y-3 animate-fade-up-delay">
-                    {hospital.reviews && hospital.reviews.length > 0 ? (
-                        hospital.reviews.map((review, i) => {
-                            const revRating = Number(review.rating || 0);
-                            let rLabel = '';
-                            let badge  = '';
-                            let badgeTone = 'text-brand-700 bg-brand-50';
-                            if      (revRating === 5) { rLabel = 'Shockingly good';   badge = 'Hidden Gem';        badgeTone = 'text-emerald-700 bg-emerald-50'; }
-                            else if (revRating >= 4)  { rLabel = 'Would eat again';   badge = 'Solid Pick';        badgeTone = 'text-green-700 bg-green-50';     }
-                            else if (revRating >= 3)  { rLabel = 'It did the job';    badge = 'Cafeteria Classic'; badgeTone = 'text-honey-700 bg-honey-50';     }
-                            else if (revRating >= 2)  { rLabel = 'Pack snacks';       badge = 'BYO Sauce';         badgeTone = 'text-orange-700 bg-orange-50';   }
-                            else if (revRating >= 1)  { rLabel = 'Pray before eating';badge = 'Needs Salt';        badgeTone = 'text-red-700 bg-red-50';         }
-
-                            return (
-                                <div key={review.id || i} className="bg-cream-50 rounded-2xl border border-cream-300/70 p-5 hover:border-brand-200 hover:shadow-warm-sm transition-all duration-200">
-                                    <div className="flex gap-4 items-start">
-                                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-display font-semibold text-base ring-1 shrink-0 ${
-                                            revRating >= 4 ? 'bg-emerald-100 text-emerald-700 ring-emerald-200' :
-                                            revRating >= 3 ? 'bg-honey-100 text-honey-700 ring-honey-200' :
-                                            revRating > 0  ? 'bg-orange-100 text-orange-700 ring-orange-200' :
-                                                             'bg-cream-200 text-ink-500 ring-cream-300'
-                                        }`}>
-                                            {revRating.toFixed(1)}
-                                        </div>
-                                        <div className="flex-grow min-w-0">
-                                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                                <div className="flex items-center gap-0.5">
-                                                    {renderStars(revRating, 'w-3 h-3')}
-                                                </div>
-                                                {rLabel && <span className="text-[10.5px] font-bold text-ink-500 uppercase tracking-wider">{rLabel}</span>}
-                                                {badge && <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ml-auto ${badgeTone}`}>{badge}</span>}
-                                            </div>
-
-                                            <p className="text-ink-800 text-[14px] leading-relaxed whitespace-pre-wrap">
-                                                {review.comment || <span className="text-ink-300 italic">No comment provided.</span>}
-                                            </p>
-
-                                            {review.image_url && (
-                                                <div className="mt-3">
-                                                    <a href={review.image_url} target="_blank" rel="noopener noreferrer" className="block w-fit">
-                                                        <img
-                                                            src={review.image_url}
-                                                            alt="Food photo from review"
-                                                            className="rounded-xl border border-cream-300 max-h-52 max-w-[300px] w-auto object-cover hover:opacity-90 transition-opacity"
-                                                            loading="lazy"
-                                                            decoding="async"
-                                                        />
-                                                    </a>
-                                                </div>
-                                            )}
-
-                                            <div className="mt-3 pt-3 border-t border-cream-200 flex items-center gap-2">
-                                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
-                                                    {(review.name || 'A').charAt(0).toUpperCase()}
-                                                </div>
-                                                <span className="font-semibold text-ink-800 text-[13.5px]">{review.name || 'Anonymous'}</span>
-                                                <span className="text-ink-300">·</span>
-                                                <span className="text-ink-500 text-[12.5px]">{review.date}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <div className="text-center py-16 bg-cream-50 rounded-3xl border border-cream-300/70 shadow-warm-sm">
-                            <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-3">
-                                <Utensils className="w-6 h-6 text-ink-400" />
-                            </div>
-                            <h3 className="font-display text-lg font-semibold text-ink-900 mb-1">No reviews yet</h3>
-                            <p className="text-ink-500 text-sm mb-5">Someone has to take the first bite.</p>
-                            <button
-                                onClick={() => setIsModalOpen(true)}
-                                className="bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all active:scale-95 inline-flex items-center gap-2 shadow-warm hover:shadow-warm-md"
-                            >
-                                <PenLine className="w-4 h-4" />
-                                Write a Review
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
+            )}
 
             <Footer />
         </div>

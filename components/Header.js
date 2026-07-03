@@ -81,7 +81,7 @@ export default function Header() {
 
                 <div className="flex items-center gap-2 shrink-0">
                     <Link
-                        href="/search"
+                        href="/search?intent=review"
                         className="hidden sm:inline-flex items-center gap-1.5 bg-brand-500 hover:bg-brand-600 text-cream-100 font-mono text-[11px] font-bold uppercase tracking-[0.12em] py-2.5 px-4 rounded-full transition-all duration-150 active:scale-[0.97] hover:shadow-glow"
                     >
                         <PenLine className="w-3.5 h-3.5" strokeWidth={2.5} />
@@ -127,7 +127,7 @@ export default function Header() {
                         })}
                     </nav>
                     <Link
-                        href="/search"
+                        href="/search?intent=review"
                         onClick={() => setMobileOpen(false)}
                         className="mt-8 flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-cream-100 font-mono text-[12px] font-bold uppercase tracking-[0.14em] py-4 px-4 rounded-full transition-all active:scale-[0.97] shadow-glow"
                     >

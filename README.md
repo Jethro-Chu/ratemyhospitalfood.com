@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rate My Hospital Food
 
-## Getting Started
+The community guide to hospital cafeteria food — search hospitals, read real food
+reviews from patients, visitors, and staff, and rate the trays yourself.
+Live at [ratemyhospitalfood.com](https://ratemyhospitalfood.com).
 
-First, run the development server:
+## Stack
+
+- **Next.js 14** (App Router, mostly server components; plain JavaScript)
+- **Vercel Postgres** (Neon) via `@vercel/postgres` — schema managed by the idempotent `GET /seed` route
+- **Vercel Blob** for review photo uploads (client-side compression first)
+- **Tailwind CSS v3** with a custom warm theme (`cream` surfaces, `ink` text, `brand` ember orange, `honey` gold)
+- **lucide-react** icons
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. You'll need Postgres/Blob credentials in `.env.local`
+(`POSTGRES_URL`, `BLOB_READ_WRITE_TOKEN`, …). Visit `/seed` once to create/migrate
+the tables and indexes.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## How it's laid out
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | What it is |
+| --- | --- |
+| `app/page.js` | Homepage: hero search, top rated, recent + popular reviews, how it works |
+| `app/search/` | The single search surface (`?q=` prefill, `?intent=review` for review-first flow) |
+| `app/hospital/[id]/` | Hospital page: rating summary + distribution, photo strip, reviews (`?review=true` opens the modal) |
+| `app/top-rated/`, `app/recent-reviews/` | Server-rendered lists with skeleton loading |
+| `app/add/` | Add a hospital (dedupes case-insensitively, then jumps into the review flow) |
+| `app/api/review`, `app/api/upload`, `app/api/react` | Review writes, photo uploads, Helpful/Funny reactions |
+| `lib/actions.js` | All Postgres queries (server actions) |
+| `lib/ratingTone.js` | The one rating vocabulary ("Chef's kiss" → "Pack snacks") |
+| `components/` | Shared UI: `HospitalCard`, `ReviewCard`, `RatingStars`, skeletons, empty states |
+| `app/games/`, `app/abyss/` | The arcade. `/abyss` is a hidden easter egg (check the footer radar) |
 
-## Learn More
+## House style
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Fun but kind. The site jokes with hospital food, never at the people who cook or
+eat it. One rating vocabulary everywhere, warm paper palette, rounded cards,
+no scroll-jacking, and every list has a real skeleton, empty, and error state.

@@ -23,11 +23,15 @@ const dmMono = DM_Mono({
 
 export const metadata = {
   metadataBase: new URL('https://ratemyhospitalfood.com'),
-  title: 'Rate My Hospital Food',
-  description: 'Find and review hospital cafeteria food. Real reviews from real patients and staff.',
+  title: {
+    default: 'Rate My Hospital Food — Find out which hospitals actually have good food',
+    template: '%s · Rate My Hospital Food',
+  },
+  description:
+    'Search hospitals, read real food reviews from patients, visitors, and staff — and rate the trays yourself. Free, no sign-up.',
   openGraph: {
     title: 'Rate My Hospital Food',
-    description: 'Find and review hospital cafeteria food.',
+    description: 'Find out which hospitals actually have good food. Real reviews, real cafeterias.',
     url: 'https://ratemyhospitalfood.com',
     siteName: 'Rate My Hospital Food',
     locale: 'en_US',
@@ -36,7 +40,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Rate My Hospital Food',
-    description: 'Find and review hospital cafeteria food.',
+    description: 'Find out which hospitals actually have good food. Real reviews, real cafeterias.',
   },
 };
 

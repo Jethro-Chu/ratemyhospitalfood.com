@@ -44,6 +44,22 @@ export async function GET() {
       ALTER TABLE reviews ADD COLUMN IF NOT EXISTS image_url TEXT;
     `;
 
+    // 6. Migrate: reaction counters for Helpful / Funny buttons
+    await client.sql`
+      ALTER TABLE reviews ADD COLUMN IF NOT EXISTS helpful_count INT NOT NULL DEFAULT 0;
+    `;
+    await client.sql`
+      ALTER TABLE reviews ADD COLUMN IF NOT EXISTS funny_count INT NOT NULL DEFAULT 0;
+    `;
+
+    // 7. Indexes for the hot query paths (joins + newest-first sorts)
+    await client.sql`
+      CREATE INDEX IF NOT EXISTS idx_reviews_hospital_id ON reviews(hospital_id);
+    `;
+    await client.sql`
+      CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON reviews(created_at DESC);
+    `;
+
     return Response.json({ message: 'Database tables created/updated successfully!' });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

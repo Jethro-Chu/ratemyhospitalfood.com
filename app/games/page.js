@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Gamepad2, Play, Sparkles, Star, Smartphone, Layers, Lock, Zap, Trophy, Hand } from 'lucide-react';
 
 const COMING_SOON = [
-    { title: 'Mystery Meat Match', tag: 'Memory Game', blurb: 'Flip cafeteria trays and match the mystery dishes before the lunch bell.', emoji: '🍖' },
+    { title: 'Tray Match', tag: 'Memory Game', blurb: 'Flip cafeteria trays and pair up the dishes before the lunch bell rings.', emoji: '🍱' },
     { title: 'Soup or Nope', tag: 'Quick Decisions', blurb: 'Swipe yes or no on each bowl. Trust your gut. Survive the broth.', emoji: '🥣' },
 ];
 

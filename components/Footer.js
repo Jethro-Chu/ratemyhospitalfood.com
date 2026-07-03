@@ -27,8 +27,8 @@ export default function Footer() {
               </p>
             </div>
             <p className="text-[13.5px] text-ink-500 leading-relaxed max-w-sm">
-              A community-driven guide to the best (and worst) hospital cafeterias.
-              Real reviews from patients, staff, and visitors.
+              The community guide to hospital cafeteria food. Honest, friendly
+              reviews from patients, staff, and visitors — so you know before you go.
             </p>
           </div>
 
@@ -58,7 +58,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-2.5 text-[14px]">
               {[
                 ['/add',    'Add a Hospital'],
-                ['/search', 'Write a Review'],
+                ['/search?intent=review', 'Write a Review'],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link href={href} className="group inline-flex items-center gap-1 text-ink-600 hover:text-ink-900 transition-colors">

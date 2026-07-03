@@ -28,7 +28,7 @@ export default function MobileActionBar() {
         >
             <div className="glass-panel rounded-full shadow-warm-xl p-2 flex items-center gap-2">
                 <Link
-                    href="/search"
+                    href="/search?intent=review"
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-500 active:bg-brand-400 text-cream-100 font-mono text-[11px] font-bold uppercase tracking-[0.12em] py-3.5 rounded-full transition-colors"
                 >
                     <PenLine className="w-4 h-4" strokeWidth={2.5} />

@@ -1,83 +1,92 @@
-'use client';
-import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HospitalCard from '@/components/HospitalCard';
+import EmptyState from '@/components/EmptyState';
+import Reveal from '@/components/Reveal';
 import { getHospitals } from '@/lib/actions';
-import { Star, Trophy, Loader2 } from 'lucide-react';
-import Link from 'next/link';
 
-export default function TopRated() {
-    const [hospitals, setHospitals] = useState([]);
-    const [loading, setLoading]     = useState(true);
+export const revalidate = 300;
 
-    useEffect(() => {
-        async function loadHospitals() {
-            try {
-                const data = await getHospitals();
-                const topRatedHospitals = (data || []).filter(h => h.rating >= 4.5);
-                setHospitals(topRatedHospitals);
-            } catch (err) {
-                console.error('Failed to load', err);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadHospitals();
-    }, []);
+const MEDALS = ['🥇', '🥈', '🥉'];
+const TILTS = ['-rotate-6', 'rotate-3', '-rotate-3'];
 
-    return (
-        <div className="min-h-screen bg-cream-100 flex flex-col antialiased">
-            <Header />
-
-            {/* Page header */}
-            <div className="relative overflow-hidden border-b border-cream-300/60 bg-gradient-to-b from-cream-200/40 to-cream-100">
-                <div className="absolute top-0 right-0 -z-10 w-[420px] h-[420px] bg-honey-200/40 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4" aria-hidden="true" />
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-12">
-                    <div className="animate-fade-up max-w-2xl">
-                        <div className="inline-flex items-center gap-1.5 bg-honey-100 border border-honey-200/80 text-honey-700 rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-widest mb-3">
-                            <Trophy className="w-3 h-3" />
-                            Hall of Fame
-                        </div>
-                        <h1 className="font-display text-[36px] sm:text-[48px] font-semibold text-ink-900 tracking-tight leading-tight">
-                            Top-rated hospitals
-                        </h1>
-                        <p className="text-ink-600 text-[15px] mt-2 leading-relaxed">
-                            The cafeterias people are actually excited to eat at. Ranked 4.5+ stars by patients and staff.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <main className="flex-grow max-w-6xl mx-auto w-full px-4 sm:px-6 py-12">
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="w-9 h-9 text-brand-500 animate-spin mb-3" />
-                        <div className="text-ink-500 text-sm font-medium">Loading top-rated hospitals…</div>
-                    </div>
-                ) : hospitals.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-up-delay">
-                        {hospitals.map(hospital => (
-                            <HospitalCard hospital={hospital} key={hospital.id} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-16 bg-cream-50 rounded-3xl border border-cream-300/70 shadow-warm-sm max-w-md mx-auto animate-fade-up-delay">
-                        <div className="w-12 h-12 rounded-2xl bg-cream-200 flex items-center justify-center mx-auto mb-3">
-                            <Star className="w-6 h-6 text-ink-400" />
-                        </div>
-                        <h3 className="font-display text-lg font-semibold text-ink-900 mb-1">No 4.5+ cafeterias yet</h3>
-                        <p className="text-ink-500 text-sm mb-5">The search for edible hospital food continues.</p>
-                        <Link
-                            href="/search"
-                            className="bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-all inline-flex items-center gap-2 active:scale-95 shadow-warm"
-                        >
-                            Be the first to rate one
-                        </Link>
-                    </div>
-                )}
-            </main>
-            <Footer />
-        </div>
+export default async function TopRatedPage() {
+  const hospitals = (await getHospitals()) || [];
+  const rated = hospitals
+    .filter((h) => Number(h.numRatings) > 0)
+    .sort(
+      (a, b) =>
+        Number(b.rating) - Number(a.rating) ||
+        Number(b.numRatings) - Number(a.numRatings)
     );
+
+  return (
+    <div className="min-h-screen bg-cream-100 flex flex-col">
+      <Header />
+
+      <main className="flex-grow">
+        {/* Page header */}
+        <section className="relative overflow-hidden">
+          <div
+            className="pointer-events-none absolute -top-24 right-[-10%] w-[420px] h-[420px] bg-brand-500/10 blur-3xl rounded-full"
+            aria-hidden="true"
+          />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10 sm:pb-12">
+            <div className="animate-fade-up max-w-2xl">
+              <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">
+                ( The leaderboard )
+              </p>
+              <h1 className="mt-3 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl leading-[1.05]">
+                The trays worth <span className="gradient-text">traveling</span> for.
+              </h1>
+              <p className="mt-4 text-ink-700 text-[15px] sm:text-base leading-relaxed max-w-xl">
+                Ranked by average food rating, straight from real reviews.
+              </p>
+              <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-400">
+                {rated.length} of {hospitals.length} listed hospitals have ratings
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Leaderboard grid */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-14 sm:pb-20">
+          {rated.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {rated.map((hospital, i) => (
+                <Reveal key={hospital.id} delay={Math.min(i * 50, 400)} className="h-full">
+                  <div className="relative h-full">
+                    {i < 3 && (
+                      <div
+                        className={`pointer-events-none absolute -top-2.5 -left-2 z-20 ${TILTS[i]} inline-flex items-center gap-1 rounded-full bg-cream-50 border border-ink-900/10 shadow-warm-md px-2.5 py-1`}
+                      >
+                        <span className="text-[14px] leading-none" aria-hidden="true">
+                          {MEDALS[i]}
+                        </span>
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-ink-700">
+                          No. {i + 1}
+                        </span>
+                      </div>
+                    )}
+                    <HospitalCard hospital={hospital} />
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              emoji="🏆"
+              title="No rated cafeterias yet"
+              message="Someone has to take the first bite."
+              actionHref="/search"
+              actionLabel="Find your hospital"
+              className="max-w-xl mx-auto"
+            />
+          )}
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
