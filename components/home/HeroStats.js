@@ -3,22 +3,18 @@ import { formatCount } from '@/lib/format';
 
 export default async function HeroStats() {
   const stats = await getHomepageStats();
-  if (!stats.totalReviews && !stats.totalHospitals) return null;
-
   const items = [
-    { value: formatCount(stats.totalReviews), label: 'Food reviews' },
-    { value: formatCount(stats.totalHospitals), label: 'Hospitals listed' },
-    { value: stats.topScore, label: 'Top food score' },
+    { value: formatCount(stats.totalReviews || 0), label: 'Reviews' },
+    { value: formatCount(stats.totalHospitals || 0), label: 'Hospitals' },
+    { value: stats.topScore || '0.0', label: 'Best score' },
   ];
 
   return (
-    <dl className="mt-10 grid grid-cols-3 divide-x divide-ink-900/10 rounded-3xl bg-cream-50/80 backdrop-blur border border-ink-900/10 shadow-warm-sm w-full max-w-md py-4">
+    <dl className="mt-6 grid grid-cols-3 gap-3">
       {items.map(({ value, label }) => (
-        <div key={label} className="px-3 sm:px-5 text-center">
-          <dd className="font-display font-bold text-2xl text-ink-900 leading-none">{value}</dd>
-          <dt className="mt-1.5 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-ink-400">
-            {label}
-          </dt>
+        <div key={label}>
+          <dd className="font-display text-xl font-bold text-white">{value}</dd>
+          <dt className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-cream-500">{label}</dt>
         </div>
       ))}
     </dl>

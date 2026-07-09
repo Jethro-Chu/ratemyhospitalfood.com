@@ -6,7 +6,6 @@ import HomeHero from '@/components/home/HomeHero';
 import TopRatedSection from '@/components/home/TopRatedSection';
 import RecentReviewsSection from '@/components/home/RecentReviewsSection';
 import PopularReviewsSection from '@/components/home/PopularReviewsSection';
-import HowItWorksSection from '@/components/home/HowItWorksSection';
 import AddReviewCTA from '@/components/home/AddReviewCTA';
 import { Shimmer, HospitalGridSkeleton, ReviewListSkeleton } from '@/components/Skeletons';
 
@@ -40,7 +39,6 @@ export default function Home() {
         <Suspense fallback={null}>
           <PopularReviewsSection />
         </Suspense>
-        <HowItWorksSection />
         <AddReviewCTA />
       </main>
       <Footer />

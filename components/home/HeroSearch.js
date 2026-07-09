@@ -93,8 +93,8 @@ export default function HeroSearch() {
   const showDropdown = open && trimmed.length > 0;
 
   return (
-    <form onSubmit={onSubmit} role="search" className="relative w-full max-w-xl" ref={boxRef}>
-      <div className="relative flex items-center h-14 sm:h-16 pl-5 pr-2 rounded-full bg-cream-50 border border-ink-900/10 shadow-warm-lg focus-within:border-brand-500/60 focus-within:shadow-glow transition-all duration-200">
+    <form onSubmit={onSubmit} role="search" className="relative w-full" ref={boxRef}>
+      <div className="relative flex min-h-[62px] items-center rounded-lg border border-white/20 bg-white p-1.5 pl-4 shadow-warm-xl transition-colors focus-within:border-brand-300">
         <Search className="w-5 h-5 text-ink-400 shrink-0" aria-hidden="true" />
         <input
           type="text"
@@ -117,11 +117,11 @@ export default function HeroSearch() {
           aria-activedescendant={highlighted >= 0 ? `hero-option-${highlighted}` : undefined}
           aria-label="Search by hospital name or city"
           placeholder="Hospital name or city…"
-          className="flex-1 min-w-0 bg-transparent px-3 text-base text-ink-900 placeholder:text-ink-400 outline-none"
+          className="min-w-0 flex-1 bg-transparent px-3 text-base text-ink-900 outline-none placeholder:text-ink-400"
         />
         <button
           type="submit"
-          className="shrink-0 inline-flex items-center gap-1.5 h-10 sm:h-12 px-5 sm:px-6 rounded-full bg-brand-500 hover:bg-brand-600 text-cream-50 font-semibold text-[14px] transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex h-12 shrink-0 items-center gap-2 rounded-md bg-brand-500 px-4 text-sm font-bold text-white transition-colors hover:bg-brand-600 sm:px-6"
         >
           Search
           <ArrowRight className="w-4 h-4 hidden sm:block" aria-hidden="true" />
@@ -129,7 +129,7 @@ export default function HeroSearch() {
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full inset-x-0 mt-2 z-20 rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-xl overflow-hidden text-left animate-pop">
+        <div className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-lg border border-ink-900/10 bg-white text-left shadow-warm-xl animate-pop">
           {status === 'loading' && (
             <div className="p-4 space-y-3">
               <Shimmer className="h-4 w-2/3" />
@@ -154,7 +154,7 @@ export default function HeroSearch() {
                     onClick={() => goTo(h)}
                     onMouseEnter={() => setHighlighted(i)}
                     className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
-                      highlighted === i ? 'bg-cream-100' : ''
+                      highlighted === i ? 'bg-brand-50' : ''
                     }`}
                   >
                     <span className="min-w-0 flex-1">
@@ -164,7 +164,7 @@ export default function HeroSearch() {
                         <span className="truncate">{h.location}</span>
                       </span>
                     </span>
-                    <span className="shrink-0 font-mono text-[12px] font-bold text-ink-600 bg-cream-200 rounded-full px-2.5 py-1">
+                    <span className="shrink-0 rounded-md bg-cream-200 px-2.5 py-1 font-mono text-[12px] font-bold text-ink-700">
                       {Number(h.rating) > 0 ? Number(h.rating).toFixed(1) : '—'}
                     </span>
                   </button>

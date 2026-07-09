@@ -83,11 +83,11 @@ export default function ReviewCard({ review, showHospital = false, className = '
 
   return (
     <article
-      className={`flex flex-col rounded-3xl bg-cream-50 border border-ink-900/10 p-5 sm:p-6 shadow-warm-sm hover:shadow-warm-md transition-shadow duration-300 ${className}`}
+      className={`flex flex-col rounded-lg bg-white border border-ink-900/10 p-5 shadow-warm-sm hover:border-brand-500/30 hover:shadow-warm-md transition-all duration-200 ${className}`}
     >
       <div className="flex items-start gap-3">
         <div
-          className="w-10 h-10 shrink-0 rounded-full bg-cream-200 ring-1 ring-ink-900/10 flex items-center justify-center font-display font-bold text-ink-700 uppercase"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-ink-900 font-display font-bold uppercase text-white"
           aria-hidden="true"
         >
           {reviewer.charAt(0)}
@@ -110,7 +110,7 @@ export default function ReviewCard({ review, showHospital = false, className = '
           </p>
         </div>
         <span
-          className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${tone.chip}`}
+          className={`inline-flex shrink-0 items-center gap-1 rounded-sm px-2.5 py-1 text-[10px] font-bold ${tone.chip}`}
         >
           <span aria-hidden="true">{tone.emoji}</span> {tone.label}
         </span>
@@ -144,7 +144,7 @@ export default function ReviewCard({ review, showHospital = false, className = '
         <button
           type="button"
           onClick={() => setLightbox(true)}
-          className="group/photo relative mt-4 block w-full overflow-hidden rounded-2xl border border-ink-900/10 aspect-[16/10]"
+          className="group/photo relative mt-4 block w-full overflow-hidden rounded-md border border-ink-900/10 aspect-[16/10]"
           aria-label={`Enlarge food photo from ${reviewer}'s review`}
         >
           <Image
@@ -154,7 +154,7 @@ export default function ReviewCard({ review, showHospital = false, className = '
             sizes="(max-width: 640px) 100vw, 420px"
             className="object-cover transition-transform duration-500 group-hover/photo:scale-[1.04]"
           />
-          <span className="absolute bottom-2 right-2 rounded-full bg-ink-900/60 text-cream-50 font-mono text-[10px] uppercase tracking-[0.12em] px-2.5 py-1 opacity-0 group-hover/photo:opacity-100 transition-opacity">
+          <span className="absolute bottom-2 right-2 rounded-sm bg-ink-900/75 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-white opacity-0 transition-opacity group-hover/photo:opacity-100">
             Enlarge
           </span>
         </button>

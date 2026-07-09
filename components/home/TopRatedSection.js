@@ -12,17 +12,13 @@ export default async function TopRatedSection() {
     .slice(0, 6);
 
   return (
-    <section className="py-14 sm:py-20" aria-labelledby="top-rated-heading">
+    <section className="py-12 sm:py-16" aria-labelledby="top-rated-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           id="top-rated-heading"
-          eyebrow="( Top rated )"
-          title={
-            <>
-              The trays worth <span className="gradient-text">traveling</span> for.
-            </>
-          }
-          sub="The highest-rated hospital cafeterias on the site right now."
+          eyebrow="Live ranking"
+          title="The cafeterias leading the board."
+          sub="Average scores from every published community rating."
           linkHref="/top-rated"
           linkLabel="See the full leaderboard"
         />
@@ -40,7 +36,7 @@ export default async function TopRatedSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {top.map((hospital, i) => (
               <Reveal key={hospital.id} delay={Math.min(i * 60, 300)}>
-                <HospitalCard hospital={hospital} />
+                <HospitalCard hospital={hospital} rank={i + 1} />
               </Reveal>
             ))}
           </div>

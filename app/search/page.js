@@ -26,13 +26,7 @@ function PageShell({ children }) {
   return (
     <div className="min-h-screen bg-cream-100 flex flex-col">
       <Header />
-      <main className="flex-grow relative">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="absolute -top-24 right-0 w-[420px] h-[420px] bg-brand-500/10 blur-3xl rounded-full translate-x-1/3" />
-          <div className="absolute top-64 left-0 w-[360px] h-[360px] bg-honey-200/40 blur-3xl rounded-full -translate-x-1/2" />
-        </div>
-        <div className="relative">{children}</div>
-      </main>
+      <main className="flex-grow">{children}</main>
       <Footer />
     </div>
   );
@@ -40,7 +34,7 @@ function PageShell({ children }) {
 
 function SearchShellInput() {
   return (
-    <div className="flex items-center gap-3 rounded-full bg-cream-50 border border-ink-900/15 shadow-warm-lg pl-5 pr-3 py-2">
+    <div className="flex items-center gap-3 rounded-lg border border-ink-900/15 bg-white py-2 pl-5 pr-3 shadow-warm-md">
       <Search className="w-5 h-5 text-ink-400 shrink-0" aria-hidden="true" />
       <input
         type="text"
@@ -56,11 +50,11 @@ function SearchShellInput() {
 function SearchFallback() {
   return (
     <PageShell>
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">( Search )</p>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="max-w-2xl">
+          <p className="section-kicker">Hospital directory</p>
           <h1 className="mt-4 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl">
-            Find your <span className="gradient-text">hospital</span>.
+            Find a hospital cafeteria.
           </h1>
           <p className="mt-4 text-ink-700 text-[16px] leading-relaxed">
             Search by name or city. Ratings, reviews, and photos await.
@@ -216,18 +210,18 @@ function SearchContent() {
 
   return (
     <PageShell>
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
         {/* Heading */}
-        <div className="max-w-2xl mx-auto text-center animate-fade-up">
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">
-            {isReviewMode ? '( Write a review )' : '( Search )'}
+        <div className="max-w-3xl animate-fade-up">
+          <p className="section-kicker">
+            {isReviewMode ? 'Choose a hospital' : 'Hospital directory'}
           </p>
           <h1 className="mt-4 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl leading-[1.08]">
             {isReviewMode ? (
               'Which hospital are you reviewing?'
             ) : (
               <>
-                Find your <span className="gradient-text">hospital</span>.
+                Find a hospital cafeteria.
               </>
             )}
           </h1>
@@ -239,8 +233,8 @@ function SearchContent() {
         </div>
 
         {/* Search box + suggestions */}
-        <div className="max-w-2xl mx-auto mt-8 relative z-30" ref={boxRef}>
-          <div className="flex items-center gap-3 rounded-full bg-cream-50 border border-ink-900/15 shadow-warm-lg pl-5 pr-3 py-2 focus-within:border-brand-500/60 transition-colors duration-200">
+        <div className="relative z-30 mt-8 max-w-3xl" ref={boxRef}>
+          <div className="flex items-center gap-3 rounded-lg border border-ink-900/15 bg-white py-2 pl-5 pr-3 shadow-warm-md transition-colors duration-200 focus-within:border-brand-500">
             <Search className="w-5 h-5 text-ink-400 shrink-0" aria-hidden="true" />
             <input
               ref={inputRef}
@@ -268,7 +262,7 @@ function SearchContent() {
                 type="button"
                 onClick={clearSearch}
                 aria-label="Clear search"
-                className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-ink-400 hover:text-ink-700 hover:bg-cream-200/70 transition-colors duration-150"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-400 transition-colors duration-150 hover:bg-cream-200/70 hover:text-ink-700"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -276,7 +270,7 @@ function SearchContent() {
           </div>
 
           {dropdownOpen && (
-            <div className="absolute top-full inset-x-0 mt-2 rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-lg overflow-hidden">
+            <div className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-lg border border-ink-900/10 bg-white shadow-warm-lg">
               {suggestions.length > 0 ? (
                 <ul
                   id={LISTBOX_ID}
@@ -299,7 +293,7 @@ function SearchContent() {
                         onClick={() => handleSelect(hospital)}
                         onMouseEnter={() => setHighlightedIndex(index)}
                         className={`flex items-center gap-3 px-5 py-3 cursor-pointer transition-colors duration-100 ${
-                          highlighted ? 'bg-brand-500/10' : ''
+                          highlighted ? 'bg-brand-50' : ''
                         } ${index !== suggestions.length - 1 ? 'border-b border-ink-900/5' : ''}`}
                       >
                         <div className="min-w-0 flex-grow">
@@ -310,7 +304,7 @@ function SearchContent() {
                           </p>
                         </div>
                         <span
-                          className={`shrink-0 inline-flex items-center rounded-full px-2.5 py-1 font-mono text-[11px] font-bold ${tone.chip}`}
+                          className={`inline-flex shrink-0 items-center rounded-sm px-2.5 py-1 font-mono text-[11px] font-bold ${tone.chip}`}
                           aria-label={rating > 0 ? `Rated ${rating.toFixed(1)} out of 5` : 'Not yet rated'}
                         >
                           {rating > 0 ? rating.toFixed(1) : '—'}
@@ -344,7 +338,7 @@ function SearchContent() {
           {status === 'error' && (
             <div
               role="alert"
-              className="max-w-xl mx-auto rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-sm px-6 py-12 text-center"
+              className="mx-auto max-w-xl rounded-lg border border-ink-900/10 bg-white px-6 py-12 text-center shadow-warm-sm"
             >
               <div className="mx-auto w-16 h-16 rounded-full bg-cream-200/70 flex items-center justify-center text-[28px]">
                 <span aria-hidden="true">🫖</span>
@@ -357,14 +351,14 @@ function SearchContent() {
                 <button
                   type="button"
                   onClick={loadHospitals}
-                  className="inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-cream-50 font-semibold text-[14px] py-2.5 px-6 rounded-full transition-all duration-150 active:scale-[0.97] shadow-warm-sm hover:shadow-glow"
+                  className="action-primary"
                 >
                   <RefreshCw className="w-4 h-4" aria-hidden="true" />
                   Try again
                 </button>
                 <Link
                   href="/add"
-                  className="inline-flex items-center justify-center gap-2 border border-ink-900/15 hover:border-brand-500 hover:text-brand-600 text-ink-700 font-semibold text-[14px] py-2.5 px-6 rounded-full transition-all duration-150 active:scale-[0.97]"
+                  className="action-secondary"
                 >
                   Add a hospital instead
                 </Link>

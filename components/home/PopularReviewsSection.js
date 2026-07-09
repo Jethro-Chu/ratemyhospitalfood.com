@@ -9,19 +9,15 @@ export default async function PopularReviewsSection() {
 
   return (
     <section
-      className="py-14 sm:py-20 bg-cream-200/40 border-y border-ink-900/5"
+      className="bg-cream-200/70 py-12 sm:py-16"
       aria-labelledby="popular-reviews-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           id="popular-reviews-heading"
-          eyebrow="( Crowd favorites )"
-          title={
-            <>
-              Reviews people keep <span className="gradient-text">talking about</span>.
-            </>
-          }
-          sub="The takes readers found the most helpful — or the funniest."
+          eyebrow="Community picks"
+          title="The reviews moving the conversation."
+          sub="The reports readers marked most helpful or funniest."
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {reviews.map((review, i) => (

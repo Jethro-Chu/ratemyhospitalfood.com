@@ -15,21 +15,16 @@ export default async function RecentReviewsPage() {
       <Header />
 
       <main className="flex-grow">
-        {/* Page header */}
-        <section className="relative overflow-hidden">
-          <div
-            className="pointer-events-none absolute -top-24 right-[-10%] w-[420px] h-[420px] bg-brand-500/10 blur-3xl rounded-full"
-            aria-hidden="true"
-          />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10 sm:pb-12">
+        <section className="border-b border-white/10 bg-ink-900 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
             <div className="animate-fade-up max-w-2xl">
-              <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">
-                ( Fresh takes )
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-brand-300">
+                Live review feed
               </p>
-              <h1 className="mt-3 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl leading-[1.05]">
-                Hot off the <span className="gradient-text">tray line</span>.
+              <h1 className="mt-3 font-display font-extrabold tracking-tight text-white text-4xl sm:text-5xl leading-[1.05]">
+                The newest tray reports.
               </h1>
-              <p className="mt-4 text-ink-700 text-[15px] sm:text-base leading-relaxed max-w-xl">
+              <p className="mt-4 text-cream-300 text-[15px] sm:text-base leading-relaxed max-w-xl">
                 All {pluralize(total, 'review')}, newest first — straight from patients,
                 staff, and visitors.
               </p>
@@ -38,7 +33,7 @@ export default async function RecentReviewsPage() {
         </section>
 
         {/* Feed */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-14 sm:pb-20">
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 sm:py-14">
           {total === 0 ? (
             <EmptyState
               emoji="📝"

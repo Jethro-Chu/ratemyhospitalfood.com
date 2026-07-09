@@ -1,63 +1,23 @@
 import Link from 'next/link';
-import Marquee from '@/components/Marquee';
-
-const MARQUEE_ITEMS = [
-  'Rate the jello',
-  'Defend the meatloaf',
-  'Praise the soup',
-  'Snap a tray pic',
-  'Help a hungry visitor',
-  'No login needed',
-];
+import { ArrowRight, PenLine, Plus } from 'lucide-react';
 
 export default function AddReviewCTA() {
   return (
-    <section className="py-14 sm:py-20" aria-labelledby="add-review-heading">
-      <Marquee
-        items={MARQUEE_ITEMS}
-        slow
-        className="mb-10 font-display font-bold text-2xl sm:text-3xl text-ink-900/10"
-      />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-500 to-brand-600 text-cream-50 shadow-warm-xl">
-          <div
-            className="absolute -top-20 -right-20 w-72 h-72 bg-cream-50/10 rounded-full blur-3xl pointer-events-none"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-24 -left-16 w-80 h-80 bg-ink-900/10 rounded-full blur-3xl pointer-events-none"
-            aria-hidden="true"
-          />
-          <div className="relative px-6 sm:px-16 py-14 sm:py-20 text-center flex flex-col items-center">
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-cream-100/80">( Your turn )</p>
-            <h2
-              id="add-review-heading"
-              className="mt-4 font-display font-bold tracking-tight text-3xl sm:text-5xl leading-tight max-w-2xl"
-            >
-              Eaten hospital food lately?
-            </h2>
-            <p className="mt-4 text-cream-100/90 text-[15px] sm:text-base max-w-lg leading-relaxed">
-              Thirty seconds of your opinion helps the next person choose between the cafeteria
-              and the vending machine.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-              <Link
-                href="/search?intent=review"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-cream-50 hover:bg-cream-100 text-brand-600 font-semibold text-[14px] py-3 px-7 rounded-full transition-all duration-150 active:scale-[0.97] shadow-warm-md"
-              >
-                Rate a hospital
-              </Link>
-              <Link
-                href="/add"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-cream-50/40 hover:border-cream-50 text-cream-50 font-semibold text-[14px] py-3 px-7 rounded-full transition-all duration-150 active:scale-[0.97]"
-              >
-                Add a hospital
-              </Link>
-            </div>
-            <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.25em] text-cream-100/70">
-              Free · No login · Under a minute
-            </p>
-          </div>
+    <section className="border-t border-ink-900/10 bg-honey-300" aria-labelledby="add-review-heading">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 md:grid-cols-12 md:py-16">
+        <div className="md:col-span-8">
+          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-ink-700">Your tray, your call</p>
+          <h2 id="add-review-heading" className="mt-3 max-w-3xl font-display text-3xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-[42px]">
+            Had hospital food lately? Put it on the record.
+          </h2>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row md:col-span-4 md:flex-col md:items-stretch lg:flex-row">
+          <Link href="/search?intent=review" className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-ink-900 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink-800">
+            <PenLine className="h-4 w-4" /> Rate a hospital <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link href="/add" aria-label="Add a hospital" className="inline-flex items-center justify-center gap-2 rounded-md border border-ink-900/25 px-5 py-3 text-sm font-bold text-ink-900 transition-colors hover:bg-white/30">
+            <Plus className="h-4 w-4" /> Add hospital
+          </Link>
         </div>
       </div>
     </section>

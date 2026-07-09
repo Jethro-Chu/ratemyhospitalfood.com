@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #17130D;
-  --background: #FAF6EF;
-  --brand:      #F04A0A;
-  --honey:      #E9A60E;
-  --paper:      #FFFEFB;
-  --border:     #E3D9C9;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Arial Black", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --foreground: #111614;
+  --background: #F4F7F5;
+  --brand:      #08785D;
+  --honey:      #E8B522;
+  --coral:      #E9685A;
+  --paper:      #FFFFFF;
+  --border:     #D5DDD8;
 }
 
 * {
@@ -29,6 +33,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 a {
@@ -37,15 +42,15 @@ a {
 }
 
 ::selection {
-  background: rgba(240, 74, 10, 0.9);
-  color: #FFFEFB;
+  background: #08785D;
+  color: #FFFFFF;
 }
 
 /* Scrollbar - light */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D0C2AC; border-radius: 100px; }
-::-webkit-scrollbar-thumb:hover { background: #B5A48A; }
+::-webkit-scrollbar-thumb { background: #B7C3BC; border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: #8F9D95; }
 
 /* Focus ring - ember */
 .focus-ring {
@@ -53,8 +58,8 @@ a {
   transition: box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .focus-ring:focus {
-  box-shadow: 0 0 0 3px rgba(240, 74, 10, 0.22);
-  border-color: #F04A0A;
+  box-shadow: 0 0 0 3px rgba(8, 120, 93, 0.18);
+  border-color: #08785D;
 }
 
 input:focus, textarea:focus, button:focus-visible {
@@ -67,38 +72,50 @@ input:focus, textarea:focus, button:focus-visible {
   letter-spacing: -0.02em;
 }
 
-/* Ember gradient text */
+/* High-contrast accent text without decorative gradients. */
 .gradient-text {
-  background: linear-gradient(120deg, #F04A0A 0%, #D18F06 90%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #08785D;
 }
 
 /* Hollow/outlined display text */
 .text-outline {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(23, 19, 13, 0.30);
+  -webkit-text-stroke: 1px rgba(17, 22, 20, 0.28);
 }
 .text-outline-ember {
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(240, 74, 10, 0.8);
+  -webkit-text-stroke: 1.5px rgba(8, 120, 93, 0.8);
 }
 
 /* Subtle dot-grid texture (kept for sections that want it) */
 .paper-grid {
   background-image:
-    radial-gradient(circle, rgba(240, 74, 10, 0.10) 1px, transparent 1px);
-  background-size: 22px 22px;
+    linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 /* Hairline borders that read on paper */
-.hairline    { border-color: rgba(23, 19, 13, 0.08); }
+.hairline    { border-color: rgba(17, 22, 20, 0.10); }
 .glass-panel {
-  background: rgba(255, 254, 251, 0.72);
+  background: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(23, 19, 13, 0.10);
+  border: 1px solid rgba(17, 22, 20, 0.12);
+}
+
+@layer components {
+  .action-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-500 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-600 active:bg-brand-700 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .action-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink-900/15 bg-white px-5 py-3 text-sm font-bold text-ink-800 transition-colors hover:border-brand-500 hover:text-brand-600 active:bg-cream-100;
+  }
+
+  .section-kicker {
+    @apply font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-brand-600;
+  }
 }
 
 /* Marquee track helper — pair with a duplicated inline list */

@@ -1,25 +1,4 @@
 import "./globals.css";
-import { DM_Sans, Bricolage_Grotesque, DM_Mono } from "next/font/google";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-sans",
-});
-
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
-});
-
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
-  weight: ["400", "500"],
-});
 
 export const metadata = {
   metadataBase: new URL('https://ratemyhospitalfood.com'),
@@ -46,8 +25,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${bricolage.variable} ${dmMono.variable}`}>
-      <body className={dmSans.className}>
+    <html lang="en">
+      <body>
         {children}
       </body>
     </html>

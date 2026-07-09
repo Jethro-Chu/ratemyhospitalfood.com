@@ -3,21 +3,15 @@ import { ArrowRight } from 'lucide-react';
 
 export default function SectionHeader({ eyebrow, title, sub, linkHref, linkLabel, id }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 sm:mb-10">
-      <div className="max-w-2xl">
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">{eyebrow}</p>
-        <h2 id={id} className="mt-3 font-display font-bold tracking-tight text-ink-900 text-3xl sm:text-4xl leading-tight">
-          {title}
-        </h2>
-        {sub && <p className="mt-3 text-ink-500 text-[15px] leading-relaxed">{sub}</p>}
+    <div className="mb-7 flex flex-col gap-4 border-t border-ink-900/15 pt-4 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
+      <div className="max-w-3xl">
+        <p className="section-kicker">{eyebrow}</p>
+        <h2 id={id} className="mt-3 font-display text-3xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-[40px]">{title}</h2>
+        {sub && <p className="mt-3 max-w-2xl text-[15px] leading-6 text-ink-500">{sub}</p>}
       </div>
       {linkHref && (
-        <Link
-          href={linkHref}
-          className="group inline-flex items-center gap-1.5 shrink-0 font-semibold text-[14px] text-brand-600 hover:text-brand-700 transition-colors"
-        >
-          {linkLabel}
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        <Link href={linkHref} className="group inline-flex shrink-0 items-center gap-2 text-sm font-bold text-brand-600 transition-colors hover:text-brand-700">
+          {linkLabel}<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
         </Link>
       )}
     </div>

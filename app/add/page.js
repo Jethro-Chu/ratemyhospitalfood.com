@@ -5,229 +5,131 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Reveal from '@/components/Reveal';
 import { createHospitalClient } from '@/lib/actions';
-import { Loader2, Plus } from 'lucide-react';
+import { ArrowLeft, Building2, Loader2, MapPin, Plus } from 'lucide-react';
 
-const inputBase =
-    'w-full rounded-2xl bg-cream-50 px-4 py-3 text-[16px] text-ink-900 placeholder:text-ink-400 focus-ring border';
+const inputBase = 'focus-ring w-full rounded-md border bg-white px-4 py-3.5 text-[16px] text-ink-900 placeholder:text-ink-300';
 
 export default function AddHospitalPage() {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [fieldErrors, setFieldErrors] = useState({});
-    const [submitError, setSubmitError] = useState('');
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
 
-    function clearFieldError(field) {
-        setFieldErrors((prev) => {
-            if (!prev[field]) return prev;
-            const next = { ...prev };
-            delete next[field];
-            return next;
-        });
+  function clearFieldError(field) {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  async function handleSubmit(formData) {
+    const name = (formData.get('name') || '').toString().trim();
+    const location = (formData.get('location') || '').toString().trim();
+    const errors = {};
+    if (!name) errors.name = 'Enter the hospital name.';
+    else if (name.length < 3) errors.name = 'Use at least 3 characters.';
+    if (!location) errors.location = 'Enter a city and state.';
+
+    setFieldErrors(errors);
+    setSubmitError('');
+    if (Object.keys(errors).length) return;
+
+    setIsLoading(true);
+    try {
+      const result = await createHospitalClient({ name, location });
+      if (!result?.id) throw new Error('No hospital returned');
+      router.push(`/hospital/${result.id}?review=true`);
+    } catch (error) {
+      console.error(error);
+      setSubmitError('We could not save that hospital. Try again in a moment.');
+      setIsLoading(false);
     }
+  }
 
-    async function handleSubmit(formData) {
-        const name = (formData.get('name') || '').toString().trim();
-        const location = (formData.get('location') || '').toString().trim();
+  return (
+    <div className="flex min-h-screen flex-col bg-cream-100">
+      <Header />
+      <main className="flex-grow">
+        <section className="border-b border-ink-900/10 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
+            <Link href="/search" className="inline-flex items-center gap-2 text-sm font-semibold text-ink-500 transition-colors hover:text-brand-600">
+              <ArrowLeft className="h-4 w-4" /> Back to directory
+            </Link>
+            <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-16">
+              <div className="lg:col-span-5">
+                <p className="section-kicker">New listing</p>
+                <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-ink-900 sm:text-5xl">
+                  Add a hospital cafeteria.
+                </h1>
+                <p className="mt-5 max-w-lg text-base leading-7 text-ink-500">
+                  Create the listing, then you can publish its first food rating immediately.
+                </p>
 
-        const errors = {};
-        if (!name) {
-            errors.name = 'Give us the hospital name — that’s the whole point.';
-        } else if (name.length < 3) {
-            errors.name = 'Hospital names run at least 3 characters.';
-        }
-        if (!location) {
-            errors.location = 'Add a city and state so people can find it.';
-        }
+                <div className="mt-10 border-y border-ink-900/10">
+                  <InfoRow icon={Building2} label="Use the full hospital name" />
+                  <InfoRow icon={MapPin} label="Include city and state" />
+                  <InfoRow icon={Plus} label="Existing listings are reused automatically" />
+                </div>
+              </div>
 
-        setFieldErrors(errors);
-        setSubmitError('');
-        if (Object.keys(errors).length > 0) return;
+              <div className="lg:col-span-6 lg:col-start-7">
+                <form action={handleSubmit} noValidate className="rounded-lg border border-ink-900/12 bg-cream-100 p-5 shadow-warm-sm sm:p-8">
+                  <div className="border-b border-ink-900/10 pb-5">
+                    <h2 className="font-display text-xl font-extrabold text-ink-900">Hospital details</h2>
+                    <p className="mt-1 text-sm text-ink-500">Both fields are required.</p>
+                  </div>
 
-        setIsLoading(true);
-        try {
-            const result = await createHospitalClient({ name, location });
-            if (!result || !result.id) {
-                setSubmitError('We couldn’t save that — give it another try in a moment.');
-                setIsLoading(false);
-                return;
-            }
-            router.push(`/hospital/${result.id}?review=true`);
-        } catch (err) {
-            console.error(err);
-            setSubmitError('We couldn’t save that — give it another try in a moment.');
-            setIsLoading(false);
-        }
-    }
+                  <div className="mt-6 space-y-6">
+                    <Field label="Hospital name" htmlFor="hospital-name" error={fieldErrors.name} hint="Use the name shown on the building.">
+                      <input
+                        id="hospital-name" name="name" type="text" autoComplete="organization"
+                        placeholder="St. Mary's Medical Center"
+                        aria-invalid={fieldErrors.name ? 'true' : undefined}
+                        onChange={() => clearFieldError('name')}
+                        className={`${inputBase} ${fieldErrors.name ? 'border-red-700' : 'border-ink-900/15'}`}
+                      />
+                    </Field>
 
-    return (
-        <div className="min-h-screen bg-cream-100 flex flex-col">
-            <Header />
-            <main className="flex-grow">
-                <section className="relative overflow-hidden py-14 sm:py-20">
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] bg-brand-500/10 blur-3xl rounded-full"
-                    />
+                    <Field label="Location" htmlFor="hospital-location" error={fieldErrors.location} hint="City, State — for example, Duarte, CA.">
+                      <input
+                        id="hospital-location" name="location" type="text" autoComplete="address-level2"
+                        placeholder="Duarte, CA"
+                        aria-invalid={fieldErrors.location ? 'true' : undefined}
+                        onChange={() => clearFieldError('location')}
+                        className={`${inputBase} ${fieldErrors.location ? 'border-red-700' : 'border-ink-900/15'}`}
+                      />
+                    </Field>
+                  </div>
 
-                    <div className="relative max-w-lg mx-auto px-4 sm:px-6">
-                        <Reveal>
-                            <div className="text-center mb-8">
-                                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-500">
-                                    ( Add a hospital )
-                                </p>
-                                <h1 className="mt-3 font-display font-bold tracking-tight text-ink-900 text-4xl sm:text-5xl">
-                                    Put a cafeteria on the{' '}
-                                    <span className="gradient-text">map</span>.
-                                </h1>
-                                <p className="mt-4 text-ink-700 text-[15px] leading-relaxed">
-                                    Not listed yet? Add it in about 20 seconds — then leave the
-                                    first review.
-                                </p>
-                            </div>
+                  {submitError && <div role="alert" className="mt-5 rounded-md border border-red-200 bg-red-100 px-4 py-3 text-sm text-red-700">{submitError}</div>}
 
-                            <div className="rounded-3xl bg-cream-50 border border-ink-900/10 shadow-warm-sm p-6 sm:p-8">
-                                <form action={handleSubmit} noValidate className="space-y-5">
-                                    <div>
-                                        <label
-                                            htmlFor="hospital-name"
-                                            className="block text-[13px] font-semibold text-ink-700 mb-1.5"
-                                        >
-                                            Hospital name
-                                        </label>
-                                        <input
-                                            id="hospital-name"
-                                            name="name"
-                                            type="text"
-                                            autoComplete="off"
-                                            placeholder="St. Mary's Medical Center"
-                                            aria-invalid={fieldErrors.name ? 'true' : undefined}
-                                            aria-describedby={
-                                                fieldErrors.name
-                                                    ? 'hospital-name-error'
-                                                    : 'hospital-name-hint'
-                                            }
-                                            onChange={() => clearFieldError('name')}
-                                            className={`${inputBase} ${
-                                                fieldErrors.name
-                                                    ? 'border-brand-500'
-                                                    : 'border-ink-900/15'
-                                            }`}
-                                        />
-                                        {fieldErrors.name ? (
-                                            <p
-                                                id="hospital-name-error"
-                                                role="alert"
-                                                className="mt-1.5 text-[13px] text-red-700"
-                                            >
-                                                {fieldErrors.name}
-                                            </p>
-                                        ) : (
-                                            <p
-                                                id="hospital-name-hint"
-                                                className="mt-1.5 text-[13px] text-ink-500"
-                                            >
-                                                The full name, as it appears on the building.
-                                            </p>
-                                        )}
-                                    </div>
+                  <button type="submit" disabled={isLoading} className="action-primary mt-7 w-full py-3.5">
+                    {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Adding hospital…</> : <><Plus className="h-4 w-4" /> Add hospital and review</>}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
-                                    <div>
-                                        <label
-                                            htmlFor="hospital-location"
-                                            className="block text-[13px] font-semibold text-ink-700 mb-1.5"
-                                        >
-                                            Location
-                                        </label>
-                                        <input
-                                            id="hospital-location"
-                                            name="location"
-                                            type="text"
-                                            autoComplete="off"
-                                            placeholder="Duarte, CA"
-                                            aria-invalid={
-                                                fieldErrors.location ? 'true' : undefined
-                                            }
-                                            aria-describedby={
-                                                fieldErrors.location
-                                                    ? 'hospital-location-error'
-                                                    : 'hospital-location-hint'
-                                            }
-                                            onChange={() => clearFieldError('location')}
-                                            className={`${inputBase} ${
-                                                fieldErrors.location
-                                                    ? 'border-brand-500'
-                                                    : 'border-ink-900/15'
-                                            }`}
-                                        />
-                                        {fieldErrors.location ? (
-                                            <p
-                                                id="hospital-location-error"
-                                                role="alert"
-                                                className="mt-1.5 text-[13px] text-red-700"
-                                            >
-                                                {fieldErrors.location}
-                                            </p>
-                                        ) : (
-                                            <p
-                                                id="hospital-location-hint"
-                                                className="mt-1.5 text-[13px] text-ink-500"
-                                            >
-                                                City, State — e.g. Duarte, CA
-                                            </p>
-                                        )}
-                                    </div>
+function InfoRow({ icon: Icon, label }) {
+  return <div className="flex items-center gap-3 border-b border-ink-900/10 py-4 last:border-b-0"><Icon className="h-4 w-4 text-brand-600" /><span className="text-sm font-semibold text-ink-700">{label}</span></div>;
+}
 
-                                    {submitError && (
-                                        <div
-                                            role="alert"
-                                            className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700"
-                                        >
-                                            {submitError}
-                                        </div>
-                                    )}
-
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className="w-full inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-cream-50 font-semibold text-[14px] py-2.5 px-6 rounded-full transition-all duration-150 active:scale-[0.97] shadow-warm-sm hover:shadow-glow disabled:opacity-60 disabled:cursor-not-allowed"
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <Loader2
-                                                    className="w-4 h-4 animate-spin"
-                                                    aria-hidden="true"
-                                                />
-                                                Adding…
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Plus className="w-4 h-4" aria-hidden="true" />
-                                                Add hospital
-                                            </>
-                                        )}
-                                    </button>
-                                </form>
-
-                                <div className="mt-6 pt-5 border-t border-ink-900/10 text-center space-y-2">
-                                    <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-400">
-                                        Already listed? We&rsquo;ll take you straight to its page
-                                        — no duplicates.
-                                    </p>
-                                    <Link
-                                        href="/search"
-                                        className="inline-flex items-center justify-center gap-2 border border-ink-900/15 hover:border-brand-500 hover:text-brand-600 text-ink-700 font-semibold text-[13px] py-2 px-5 rounded-full transition-all duration-150 active:scale-[0.97]"
-                                    >
-                                        Search existing hospitals
-                                    </Link>
-                                </div>
-                            </div>
-                        </Reveal>
-                    </div>
-                </section>
-            </main>
-            <Footer />
-        </div>
-    );
+function Field({ label, htmlFor, error, hint, children }) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} className="mb-2 block text-sm font-bold text-ink-800">{label}</label>
+      {children}
+      <p className={`mt-2 text-xs ${error ? 'font-semibold text-red-700' : 'text-ink-400'}`} role={error ? 'alert' : undefined}>{error || hint}</p>
+    </div>
+  );
 }

@@ -160,19 +160,19 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
 
     return (
         <div
-            className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4"
+            className="fixed inset-0 z-[1000] flex items-end justify-center bg-ink-900/65 p-0 backdrop-blur-sm sm:items-center sm:p-4"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
             aria-labelledby="rating-modal-title"
         >
             <div
-                className="bg-cream-50 rounded-t-3xl sm:rounded-3xl border border-cream-300 shadow-warm-xl w-full sm:max-w-md p-6 relative flex flex-col max-h-[92vh] overflow-y-auto animate-slide-up sm:animate-pop"
+                className="relative flex max-h-[92vh] w-full flex-col overflow-y-auto rounded-t-lg border border-ink-900/15 bg-white p-5 shadow-warm-xl animate-slide-up sm:max-w-lg sm:rounded-lg sm:p-7 sm:animate-pop"
                 onClick={(e) => e.stopPropagation()}
             >
                 {succeeded ? (
                     <div className="py-14 flex flex-col items-center text-center animate-pop">
-                        <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-md bg-emerald-100">
                             <PartyPopper className="w-7 h-7 text-emerald-700" aria-hidden="true" />
                         </div>
                         <h2 className="mt-5 font-display text-2xl font-bold text-ink-900">Thanks! Your review is live.</h2>
@@ -182,14 +182,14 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                     <>
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 text-ink-400 hover:text-ink-700 hover:bg-cream-200/60 p-2 rounded-full transition-all"
+                            className="absolute right-4 top-4 rounded-md p-2 text-ink-400 transition-colors hover:bg-cream-200 hover:text-ink-700"
                             aria-label="Close"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         <div className="mb-5 pr-10">
-                            <div className="inline-flex items-center gap-1.5 bg-brand-50 text-brand-700 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider mb-2">
+                            <div className="mb-2 inline-flex items-center gap-1.5 rounded-sm bg-brand-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-brand-700">
                                 <Sparkles className="w-3 h-3" />
                                 Rate the dining
                             </div>
@@ -204,7 +204,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                         <form action={handleSubmit} className="space-y-4">
 
                             {/* Star rating */}
-                            <div className={`bg-cream-100 rounded-2xl p-5 border text-center transition-colors ${starError ? 'border-red-200 bg-red-50/60' : 'border-cream-300/70'}`}>
+                            <div className={`rounded-md border bg-cream-100 p-5 text-center transition-colors ${starError ? 'border-red-200 bg-red-50/60' : 'border-cream-300/70'}`}>
                                 <div className="mb-2.5">
                                     <StarRating
                                         rating={rating}
@@ -237,7 +237,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                                     Food Photo <span className="text-ink-400 font-normal">(optional)</span>
                                 </label>
                                 {isCompressing ? (
-                                    <div className="w-full border border-dashed border-cream-400 rounded-xl p-5 flex flex-col items-center gap-1.5 bg-cream-100">
+                                    <div className="flex w-full flex-col items-center gap-1.5 rounded-md border border-dashed border-cream-400 bg-cream-100 p-5">
                                         <Loader2 className="w-5 h-5 text-ink-400 animate-spin" />
                                         <span className="text-xs text-ink-500">Optimizing…</span>
                                     </div>
@@ -245,16 +245,16 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                                     <button
                                         type="button"
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="w-full border-2 border-dashed border-cream-400 hover:border-brand-400 rounded-xl p-5 flex flex-col items-center gap-2 transition-all hover:bg-brand-50/40 group cursor-pointer"
+                                        className="group flex w-full cursor-pointer flex-col items-center gap-2 rounded-md border border-dashed border-cream-400 p-5 transition-all hover:border-brand-400 hover:bg-brand-50/40"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-cream-200 group-hover:bg-brand-100 flex items-center justify-center transition-colors">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-cream-200 transition-colors group-hover:bg-brand-100">
                                             <Camera className="w-5 h-5 text-ink-500 group-hover:text-brand-600 transition-colors" />
                                         </div>
                                         <span className="text-sm text-ink-700 group-hover:text-ink-900 font-semibold">Add a food photo</span>
                                         <span className="text-[10px] text-ink-400 uppercase tracking-wider font-semibold">JPG · PNG · WebP</span>
                                     </button>
                                 ) : (
-                                    <div className="relative rounded-xl overflow-hidden border border-cream-300">
+                                    <div className="relative overflow-hidden rounded-md border border-cream-300">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={previewUrl} alt="Food preview" className="w-full h-44 object-cover" />
                                         <button
@@ -299,7 +299,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                                     name="name"
                                     type="text"
                                     placeholder="e.g. Anonymous Foodie"
-                                    className="w-full px-3.5 py-3 rounded-xl border border-cream-300 bg-cream-50 focus-ring text-[16px] text-ink-800 placeholder-ink-300"
+                                    className="focus-ring w-full rounded-md border border-cream-300 bg-white px-3.5 py-3 text-[16px] text-ink-800 placeholder-ink-300"
                                 />
                             </div>
 
@@ -313,12 +313,12 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                                     name="comment"
                                     placeholder="What did you eat? Would you order it again?"
                                     rows={3}
-                                    className="w-full px-3.5 py-3 rounded-xl border border-cream-300 bg-cream-50 focus-ring text-[16px] text-ink-800 placeholder-ink-300 resize-none"
+                                    className="focus-ring w-full resize-none rounded-md border border-cream-300 bg-white px-3.5 py-3 text-[16px] text-ink-800 placeholder-ink-300"
                                 />
                             </div>
 
                             {submitError && (
-                                <div role="alert" className="text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                                <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
                                     {submitError}
                                 </div>
                             )}
@@ -326,7 +326,7 @@ export default function RatingModal({ isOpen, onClose, hospitalId, hospitalName 
                             <button
                                 type="submit"
                                 disabled={isSubmitting || isCompressing}
-                                className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed text-cream-50 font-semibold py-3.5 px-4 rounded-full text-[15px] transition-all active:scale-[0.98] shadow-warm-sm hover:shadow-glow mt-2"
+                                className="action-primary mt-2 w-full py-3.5"
                             >
                                 {isSubmitting ? (
                                     <span className="inline-flex items-center gap-2">
