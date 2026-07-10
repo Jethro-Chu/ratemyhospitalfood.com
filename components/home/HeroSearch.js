@@ -94,7 +94,7 @@ export default function HeroSearch() {
 
   return (
     <form onSubmit={onSubmit} role="search" className="relative w-full" ref={boxRef}>
-      <div className="relative flex min-h-[62px] items-center rounded-lg border border-white/20 bg-white p-1.5 pl-4 shadow-warm-xl transition-colors focus-within:border-brand-300">
+      <div className="relative flex min-h-[62px] items-center rounded-lg border border-brand-800/15 bg-white p-1.5 pl-4 shadow-warm-lg transition-colors focus-within:border-brand-500">
         <Search className="w-5 h-5 text-ink-400 shrink-0" aria-hidden="true" />
         <input
           type="text"

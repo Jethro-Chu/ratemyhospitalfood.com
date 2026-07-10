@@ -95,6 +95,14 @@ input:focus, textarea:focus, button:focus-visible {
   background-size: 32px 32px;
 }
 
+.hero-grid {
+  background-color: #D1EEE4;
+  background-image:
+    linear-gradient(rgba(8, 120, 93, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 120, 93, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
 /* Hairline borders that read on paper */
 .hairline    { border-color: rgba(17, 22, 20, 0.10); }
 .glass-panel {

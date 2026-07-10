@@ -13,8 +13,8 @@ export default async function HeroStats() {
     <dl className="mt-6 grid grid-cols-3 gap-3">
       {items.map(({ value, label }) => (
         <div key={label}>
-          <dd className="font-display text-xl font-bold text-white">{value}</dd>
-          <dt className="mt-1 font-mono text-[8px] uppercase tracking-[0.14em] text-cream-500">{label}</dt>
+          <dd className="font-display text-xl font-bold text-ink-900">{value}</dd>
+          <dt className="mt-1 font-mono text-[8px] font-medium uppercase tracking-[0.14em] text-ink-500">{label}</dt>
         </div>
       ))}
     </dl>
