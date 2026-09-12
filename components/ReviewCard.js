@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
 import { X } from 'lucide-react';
@@ -34,7 +35,12 @@ export default function ReviewCard({ review, showHospital = false, className = '
   const [mine, setMine] = useState({ helpful: false, funny: false });
   const [expanded, setExpanded] = useState(false);
   const [lightbox, setLightbox] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pending = useRef({});
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Read the per-device vote memory after mount to avoid hydration mismatch.
   useEffect(() => {
@@ -177,9 +183,9 @@ export default function ReviewCard({ review, showHospital = false, className = '
         />
       </div>
 
-      {lightbox && imageUrl && (
+      {lightbox && imageUrl && mounted && createPortal(
         <div
-          className="fixed inset-0 z-[100] bg-ink-900/85 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-pop"
+          className="fixed inset-0 z-[100] overflow-y-auto overflow-x-hidden bg-ink-900/85 backdrop-blur-sm cursor-pointer p-4 sm:p-8 animate-pop"
           role="dialog"
           aria-modal="true"
           aria-label="Food photo"
@@ -188,19 +194,30 @@ export default function ReviewCard({ review, showHospital = false, className = '
           <button
             type="button"
             onClick={() => setLightbox(false)}
-            className="absolute top-4 right-4 w-11 h-11 rounded-full bg-cream-50/10 hover:bg-cream-50/25 text-cream-50 flex items-center justify-center transition-colors"
+            className="fixed top-4 right-4 z-[110] w-11 h-11 rounded-full bg-cream-50/15 hover:bg-cream-50/30 text-cream-50 flex items-center justify-center transition-colors shadow-warm-md backdrop-blur-sm cursor-pointer"
             aria-label="Close photo"
           >
             <X className="w-5 h-5" />
           </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl}
-            alt={`Food photo from ${reviewer}'s review`}
-            className="max-h-[85vh] max-w-full rounded-2xl object-contain shadow-warm-xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+
+          <div className="flex min-h-full w-full flex-col items-center justify-center py-6">
+            <div
+              className="flex flex-col items-center max-w-full cursor-default"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl}
+                alt={`Food photo from ${reviewer}'s review`}
+                className="max-h-[90vh] max-w-full w-auto h-auto rounded-xl sm:rounded-2xl object-contain shadow-warm-xl cursor-default"
+              />
+              <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.14em] text-cream-300/80 pointer-events-none select-none">
+                Click outside or press Esc to close
+              </p>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </article>
   );
