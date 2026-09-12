@@ -55,8 +55,7 @@ export default function Footer() {
             <Link href="/abyss" aria-label="Signal detected below safe depth" className="opacity-30 transition-opacity hover:opacity-100"><Radar className="h-3.5 w-3.5" /></Link>
           </p>
           <p className="inline-flex items-center gap-1.5">
-            Built with <Heart className="h-3 w-3 fill-[#E9685A] text-[#E9685A]" /> by
-            <a href="https://www.instagram.com/jethrochu" target="_blank" rel="noopener noreferrer" className="font-semibold text-white hover:text-brand-300">@jethrochu</a>
+            Built with <Heart className="h-3 w-3 fill-[#E9685A] text-[#E9685A]" /> for the community
           </p>
         </div>
       </div>
