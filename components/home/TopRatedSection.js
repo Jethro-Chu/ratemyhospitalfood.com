@@ -1,4 +1,5 @@
 import { getHospitals } from '@/lib/actions';
+import { calculateSiteWideAverage, sortLeaderboardHospitals } from '@/lib/ranking';
 import HospitalCard from '@/components/HospitalCard';
 import EmptyState from '@/components/EmptyState';
 import Reveal from '@/components/Reveal';
@@ -6,10 +7,11 @@ import SectionHeader from './SectionHeader';
 
 export default async function TopRatedSection() {
   const hospitals = await getHospitals();
-  const top = (hospitals || [])
-    .filter((h) => Number(h.numRatings) > 0)
-    .sort((a, b) => b.rating - a.rating || b.numRatings - a.numRatings)
-    .slice(0, 6);
+  const siteWideAvg = calculateSiteWideAverage(hospitals);
+  const top = sortLeaderboardHospitals(
+    (hospitals || []).filter((h) => Number(h.numRatings) > 0),
+    siteWideAvg
+  ).slice(0, 6);
 
   return (
     <section className="py-12 sm:py-16" aria-labelledby="top-rated-heading">

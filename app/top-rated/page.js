@@ -4,18 +4,17 @@ import HospitalCard from '@/components/HospitalCard';
 import EmptyState from '@/components/EmptyState';
 import Reveal from '@/components/Reveal';
 import { getHospitals } from '@/lib/actions';
+import { calculateSiteWideAverage, sortLeaderboardHospitals } from '@/lib/ranking';
 
 export const revalidate = 300;
 
 export default async function TopRatedPage() {
   const hospitals = (await getHospitals()) || [];
-  const rated = hospitals
-    .filter((h) => Number(h.numRatings) > 0)
-    .sort(
-      (a, b) =>
-        Number(b.rating) - Number(a.rating) ||
-        Number(b.numRatings) - Number(a.numRatings)
-    );
+  const siteWideAvg = calculateSiteWideAverage(hospitals);
+  const rated = sortLeaderboardHospitals(
+    hospitals.filter((h) => Number(h.numRatings) > 0),
+    siteWideAvg
+  );
 
   return (
     <div className="min-h-screen bg-cream-100 flex flex-col">
