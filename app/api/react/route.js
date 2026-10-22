@@ -1,70 +1,39 @@
 import { sql } from '@vercel/postgres';
-
-const REACTION_TYPES = ['helpful', 'funny'];
-
-async function ensureReactionColumns() {
-  await sql`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS helpful_count INT NOT NULL DEFAULT 0`;
-  await sql`ALTER TABLE reviews ADD COLUMN IF NOT EXISTS funny_count INT NOT NULL DEFAULT 0`;
-}
-
-function applyReaction(reviewId, type, step) {
-  if (type === 'helpful') {
-    return sql`
-      UPDATE reviews
-      SET helpful_count = GREATEST(0, helpful_count + ${step})
-      WHERE id = ${reviewId}
-      RETURNING helpful_count, funny_count
-    `;
-  }
-  return sql`
-    UPDATE reviews
-    SET funny_count = GREATEST(0, funny_count + ${step})
-    WHERE id = ${reviewId}
-    RETURNING helpful_count, funny_count
-  `;
-}
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { actorFromCookie, assertOrigin, checkBudget, cookieOptions, failure, readBody, SecurityError, sign, uuid } from '@/lib/security';
 
 export async function POST(request) {
-  let body;
   try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
-  }
-
-  const { reviewId, type, delta } = body || {};
-  if (!reviewId || !REACTION_TYPES.includes(type)) {
-    return Response.json({ error: 'reviewId and a valid reaction type are required' }, { status: 400 });
-  }
-  const step = Number(delta) < 0 ? -1 : 1;
-
-  try {
-    let result;
-    try {
-      result = await applyReaction(reviewId, type, step);
-    } catch (error) {
-      // 42703 = undefined column: the DB predates the reaction migration. Heal and retry.
-      if (error?.code === '42703') {
-        await ensureReactionColumns();
-        result = await applyReaction(reviewId, type, step);
-      } else {
-        throw error;
-      }
-    }
-
-    if (result.rows.length === 0) {
-      return Response.json({ error: 'Review not found' }, { status: 404 });
-    }
-    return Response.json({
-      helpfulCount: Number(result.rows[0].helpful_count),
-      funnyCount: Number(result.rows[0].funny_count),
-    });
+    assertOrigin(request);
+    const body = await readBody(request, 2048);
+    if (!uuid(body?.reviewId) || !['helpful', 'funny'].includes(body?.type) || ![1, -1].includes(body?.delta)) throw new SecurityError(400, 'Invalid reaction');
+    const jar = await cookies();
+    const actor = actorFromCookie(jar.get('food_actor')?.value);
+    const signedActor = sign(actor);
+    await checkBudget(request, 'reaction', 60, 3000);
+    // Both the ledger and counter change in one atomic statement. A browser can
+    // remove only its own reaction; repeating +1 does not increment again.
+    const result = await sql`
+      WITH added AS (
+        INSERT INTO review_reactions (review_id, actor, type)
+        SELECT ${body.reviewId}::uuid, ${actor}, ${body.type} WHERE ${body.delta} = 1
+        ON CONFLICT DO NOTHING RETURNING 1
+      ), removed AS (
+        DELETE FROM review_reactions WHERE review_id = ${body.reviewId}::uuid
+          AND actor = ${actor} AND type = ${body.type} AND ${body.delta} = -1 RETURNING 1
+      ), change AS (SELECT (SELECT count(*) FROM added) - (SELECT count(*) FROM removed) AS step)
+      UPDATE reviews SET
+        helpful_count = GREATEST(0, helpful_count + CASE WHEN ${body.type} = 'helpful' THEN change.step::int ELSE 0 END),
+        funny_count = GREATEST(0, funny_count + CASE WHEN ${body.type} = 'funny' THEN change.step::int ELSE 0 END)
+      FROM change WHERE id = ${body.reviewId}::uuid RETURNING helpful_count, funny_count
+    `;
+    if (!result.rows.length) throw new SecurityError(404, 'Review not found');
+    const response = NextResponse.json({ helpfulCount: Number(result.rows[0].helpful_count), funnyCount: Number(result.rows[0].funny_count) }, { headers: { 'Cache-Control': 'no-store' } });
+    response.cookies.set('food_actor', signedActor, cookieOptions);
+    return response;
   } catch (error) {
-    // 22P02 = malformed UUID
-    if (error?.code === '22P02') {
-      return Response.json({ error: 'Invalid review id' }, { status: 400 });
-    }
-    console.error('Reaction error:', error);
-    return Response.json({ error: 'Could not save reaction' }, { status: 500 });
+    if (error?.code === '23503') return failure(new SecurityError(404, 'Review not found'));
+    return failure(error);
   }
 }

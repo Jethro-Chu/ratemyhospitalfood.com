@@ -1,0 +1,86 @@
+{
+  "productionUpdated": false,
+  "excludedExistingWork": [],
+  "files": [
+    {
+      "path": "app/api/react/route.js",
+      "sha256": "adb73f950ef97070fdb17ff26c7bef351048c2d5076d5de7ca8b16b9756510be",
+      "state": "local-change"
+    },
+    {
+      "path": "app/api/review/route.js",
+      "sha256": "64045608100b03533bb1672a19ce3ac33937da5cc4ecdf02d3ff8ae311ef1165",
+      "state": "local-change"
+    },
+    {
+      "path": "app/api/upload/route.js",
+      "sha256": "665fe6c7d75dc26442ab51bb91ee0facc7a2863349043c4252381c1180e8f63d",
+      "state": "local-change"
+    },
+    {
+      "path": "app/seed/route.js",
+      "sha256": null,
+      "state": "local-deletion"
+    },
+    {
+      "path": "lib/actions.js",
+      "sha256": "133d159fb2edcc1097983ee16eeac1c1f4b6acd6b9b68130d514dd38843e65ff",
+      "state": "local-change"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "6bf2d999a151186dd378e4d647c065ffbbe04f3d6a511300b8c3f66fa2f977ba",
+      "state": "local-change"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "d212acb2484d6235e119a0b0f6420201fa09800a586dee578e3fb94cc5b5835d",
+      "state": "local-change"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9bd4896e1ecb6c7c825f5075ca3467028cfee9da3f83f6541bfbcb5b82f98906",
+      "state": "local-change"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "5e9012a49c63b5a58ac823c3f3eda6d4d715362e8304e960080acc9e99a040ad",
+      "state": "local-change"
+    },
+    {
+      "path": "SECURITY_AUDIT.md",
+      "sha256": "abac2a28bc4dd6108702707d324dc874c2a8a25e37fba95407f5718f001a4dd3",
+      "state": "local-change"
+    },
+    {
+      "path": "audit/dependency-audit.json",
+      "sha256": "88577318921f3118cdbb15d0cd7d1e7b5f2ecdea6fb41820ead25bd70b4d0be6",
+      "state": "local-change"
+    },
+    {
+      "path": "lib/clientIp.js",
+      "sha256": "e98083ef2bb56983f0d9ee3402638e754f734538adf98c607f8881c02b21585a",
+      "state": "local-change"
+    },
+    {
+      "path": "lib/reviewSubmission.js",
+      "sha256": "31a4ea5d0eb57dd7c7224be9f5ced01dc8ab1c6ce71026b0b35f41f1ed139d52",
+      "state": "local-change"
+    },
+    {
+      "path": "lib/security.js",
+      "sha256": "d89c26b7e236f1e461df62f2404fe5498d627c0259086e2cf8f8b2f7ce48ce10",
+      "state": "local-change"
+    },
+    {
+      "path": "migrations/20261021_security.sql",
+      "sha256": "1298696069fa9cad7409a34caf32f67087542fd2b3a35e6aa4dbe5046a6b3afe",
+      "state": "local-change"
+    },
+    {
+      "path": "scripts/verify-security.mjs",
+      "sha256": "a260b21204f22949e6b33b581797fbb8417bad55a87a2a0e27649b28b3370cb7",
+      "state": "local-change"
+    }
+  ]
+}
