@@ -1,0 +1,111 @@
+{
+  "host": "https://ratemyhospitalfood-qw9acleeb-jethro-chus-projects.vercel.app",
+  "isolated": true,
+  "checks": [
+    {
+      "check": "isolated-home",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "removed-seed",
+      "status": "404",
+      "passed": true
+    },
+    {
+      "check": "review-get",
+      "status": "405",
+      "passed": true
+    },
+    {
+      "check": "cross-origin",
+      "status": "403",
+      "passed": true
+    },
+    {
+      "check": "invalid-rating",
+      "status": "400",
+      "passed": true
+    },
+    {
+      "check": "fake-image",
+      "status": "400",
+      "passed": true
+    },
+    {
+      "check": "valid-photo",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "photo-without-receipt",
+      "status": "400",
+      "passed": true
+    },
+    {
+      "check": "photo-with-receipt",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "hospital-page",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "photo-review-rendered",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "reaction-add",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "reaction-idempotent",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "reaction-other-cannot-undo",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "reaction-owner-undo",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-0",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-1",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-2",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-3",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-4",
+      "status": "200",
+      "passed": true
+    },
+    {
+      "check": "review-budget-5",
+      "status": "429",
+      "passed": true
+    }
+  ]
+}

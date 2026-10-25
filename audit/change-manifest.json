@@ -1,5 +1,5 @@
 {
-  "productionUpdated": false,
+  "productionUpdated": true,
   "excludedExistingWork": [],
   "files": [
     {
@@ -82,5 +82,13 @@
       "sha256": "a260b21204f22949e6b33b581797fbb8417bad55a87a2a0e27649b28b3370cb7",
       "state": "local-change"
     }
-  ]
+  ],
+  "baselineSnapshotNote": "File states and hashes below describe the original October 21 prepared changes. Current release status is recorded separately.",
+  "productionRelease": {
+    "verifiedDate": "2026-10-24",
+    "gitSha": "3a88ac28c5d59fbd640cdb26c4829392bb44b269",
+    "deploymentId": "dpl_5k9kpzHF7oaNQntY88ygrycg95xA",
+    "state": "READY",
+    "verificationReport": "audit/PRODUCTION_RELEASE_20261024.md"
+  }
 }

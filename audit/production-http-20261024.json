@@ -1,0 +1,49 @@
+{
+  "checkedAtUTC": "2026-10-25T05:22:06Z",
+  "checks": [
+    {
+      "domain": "ratemyhospitalfood.com",
+      "path": "/",
+      "status": 200,
+      "finalUrl": "https://www.ratemyhospitalfood.com/",
+      "passed": true
+    },
+    {
+      "domain": "www.ratemyhospitalfood.com",
+      "path": "/",
+      "status": 200,
+      "finalUrl": "https://www.ratemyhospitalfood.com/",
+      "passed": true,
+      "securityHeadersVerified": true,
+      "syntheticFixtureAbsent": true
+    },
+    {
+      "domain": "www.ratemyhospitalfood.com",
+      "path": "/seed",
+      "status": 404,
+      "finalUrl": "https://www.ratemyhospitalfood.com/seed",
+      "passed": true
+    },
+    {
+      "domain": "www.ratemyhospitalfood.com",
+      "path": "/api/review",
+      "status": 400,
+      "finalUrl": "https://www.ratemyhospitalfood.com/api/review",
+      "passed": true
+    },
+    {
+      "domain": "www.ratemyhospitalfood.com",
+      "path": "/api/review",
+      "status": 403,
+      "finalUrl": "https://www.ratemyhospitalfood.com/api/review",
+      "passed": true
+    },
+    {
+      "domain": "www.ratemyhospitalfood.com",
+      "path": "/api/react",
+      "status": 400,
+      "finalUrl": "https://www.ratemyhospitalfood.com/api/react",
+      "passed": true
+    }
+  ]
+}
