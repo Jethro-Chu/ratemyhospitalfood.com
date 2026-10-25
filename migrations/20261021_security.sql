@@ -21,7 +21,13 @@ ALTER TABLE reviews ADD CONSTRAINT reviews_text_bounded CHECK
 -- No browser Data API is used. Deny accidental PUBLIC grants.
 REVOKE ALL ON TABLE hospitals, reviews, security_rate_limits, review_reactions FROM PUBLIC;
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
-CREATE ROLE food_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+DO $security$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'food_runtime') THEN
+    CREATE ROLE food_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+  END IF;
+END
+$security$;
 GRANT USAGE ON SCHEMA public TO food_runtime;
 GRANT SELECT ON hospitals, reviews TO food_runtime;
 GRANT INSERT (name, location) ON hospitals TO food_runtime;
